@@ -84,8 +84,15 @@ AGE_RATING_ALL_NONE = {
     "unrestrictedWebAccess": False,
     "userGeneratedContent": False,
     "violenceCartoonOrFantasy": "NONE",
+    "violenceRealisticProlongedGraphicOrSadistic": "NONE",
     "violenceRealistic": "NONE",
+    # NB: ageRatingOverride (deprecated) må IKKE sættes samtidig med V2.
+    "ageRatingOverrideV2": "NONE",
+    "koreaAgeRatingOverride": "NONE",
 }
+
+# Webbet repræsenterer "dansk" som "da" (ikke "da-DK").
+LOCALE = "da"
 
 # Skærmbilleder: (filnavn i Screenshots/, display-type i App Store)
 SCREENSHOTS = [
@@ -103,8 +110,11 @@ SCREENSHOTS = [
 # ---------------------------------------------------------------------------
 # Konfiguration + API-klient
 # ---------------------------------------------------------------------------
+CFG_PATH = os.path.join(ROOT, "asc", "config.json")
+
+
 def load_config():
-    path = os.path.join(ROOT, "asc", "config.json")
+    path = CFG_PATH
     if not os.path.exists(path):
         sys.exit(
             "Fandt ingen asc/config.json. Kopier asc/config.example.json til "
@@ -129,11 +139,18 @@ class Api:
         now = int(time.time())
         key = self.cfg["privateKey"]
         if not key.startswith("-----"):
-            key = open(os.path.expanduser(key)).read()
+            p = key if os.path.isabs(key) else os.path.join(os.path.dirname(CFG_PATH), key)
+            p = os.path.expanduser(p)
+            if not os.path.exists(p):
+                p = os.path.join(HERE, "..", "asc", key)
+            key = open(p).read()
+        # NB: Den nye IRIS-API kræver 'aud' i PAYLOAD, ikke i header
+        # (header-aud giver 401 NOT_AUTHORIZED selv med korrekt nøgle).
         self.token = jwt.encode(
-            {"iss": self.cfg["issuerId"], "iat": now - 10, "exp": now + 900},
+            {"iss": self.cfg["issuerId"], "iat": now - 10, "exp": now + 900,
+             "aud": "appstoreconnect-v1"},
             key, algorithm="ES256",
-            headers={"kid": self.cfg["keyId"], "aud": "appstoreconnect-v1"})
+            headers={"kid": self.cfg["keyId"]})
 
     def call(self, method, path, body=None):
         if self.token is None or time.time() > self.token_exp - 120:
@@ -248,18 +265,17 @@ def setup(api):
 
     # --- Version-lokalisering (beskrivelse, nøgleord, markedsføringstekst) ---
     locs = get_one(api, f"/appStoreVersions/{vid}/appStoreVersionLocalizations") or []
-    loc = next((l for l in locs if l.get("attributes", {}).get("locale") == "da-DK"), None)
+    loc = next((l for l in locs if l.get("attributes", {}).get("locale") in (LOCALE, "da-DK")), None)
     if loc is None:
-        ok, _ = api.step(
-            "opret da-DK-lokalisering på versionen",
-            "POST", "/appStoreVersionLocalizations",
+        ok, payload = api.step(
+            "opret dansk lokalisation på versionen",
+            "POST", f"/appStoreVersions/{vid}/relationships/appStoreVersionLocalizations",
             {"data": {"type": "appStoreVersionLocalizations",
-                       "attributes": {"locale": "da-DK"},
-                       "relationships": {"appStoreVersion": {"type": "appStoreVersions", "id": vid}}}},
+                       "attributes": {"locale": LOCALE},
+                       "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}},
             "Opret en dansk lokalisation i webbet (App-info → tilføj sprog: dansk).")
         if ok:
-            loc = get_one(api, f"/appStoreVersions/{vid}/appStoreVersionLocalizations")
-            loc = next((l for l in loc if l.get("attributes", {}).get("locale") == "da-DK"), None)
+            loc = payload.get("data")
     if loc:
         lid = loc["id"]
         api.step(
@@ -278,16 +294,18 @@ def setup(api):
     if infos:
         aid = infos[0]["id"]
         ilocs = get_one(api, f"/appInfos/{aid}/appInfoLocalizations") or []
-        iloc = next((l for l in ilocs if l.get("attributes", {}).get("locale") == "da-DK"), None)
-        body = {"data": {"type": "appInfoLocalizations",
-                         "attributes": {"locale": "da-DK", "name": NAME, "subtitle": SUBTITLE},
-                         "relationships": {"appInfo": {"type": "appInfos", "id": aid}}}}
+        iloc = next((l for l in ilocs if l.get("attributes", {}).get("locale") in (LOCALE, "da-DK")), None)
         if iloc:
-            body["data"]["id"] = iloc["id"]
-            api.step("app-navn + undertitel", "PATCH", f"/appInfoLocalizations/{iloc['id']}", body,
+            # PATCH med kun attributter (API'et afviser relations-feltet her)
+            patch_body = {"data": {"type": "appInfoLocalizations", "id": iloc["id"],
+                                    "attributes": {"name": NAME, "subtitle": SUBTITLE}}}
+            api.step("app-navn + undertitel", "PATCH", f"/appInfoLocalizations/{iloc['id']}", patch_body,
                      "Sæt app-navn/undertitel i webbet (App-info).")
         else:
-            api.step("opret app-navn + undertitel", "POST", "/appInfoLocalizations", body,
+            api.step("opret app-navn + undertitel",
+                     "POST", f"/appInfos/{aid}/relationships/appInfoLocalizations",
+                     {"data": {"type": "appInfoLocalizations",
+                                "attributes": {"locale": LOCALE, "name": NAME, "subtitle": SUBTITLE}}},
                      "Sæt app-navn/undertitel i webbet (App-info).")
 
         # --- Aldersvurdering (alt "Ingen" → 4+) ---
@@ -316,14 +334,9 @@ def setup(api):
                          f"Vælg kategorien i webbet (App-info) — den korrekte ID for {rel} er ikke kendt.")
 
     # --- Privatliv (Ingen data indsamles) ---
-    ok, payload = api.step(
-        "privatliv: Ingen data indsamles",
-        "POST", f"/apps/{app_id}/relationships/appPrivacyDetails",
-        {"data": {"type": "appPrivacyDetails", "attributes": {"dataNotCollected": True}}},
-        "Vælg 'Ingen data indsamles' i webbet (App-privatliv).")
-    if not ok:
-        api.manual.pop()  # det blev netop tilføjet; vi vil ikke dublere hvis det bare er et 403-på-POST
-        api.manual.append("Gå i App-privatliv i webbet og vælg 'Ingen data indsamles'.")
+    # Ressourcen findes ikke i den offentlige API (verificeret: 404 på alle veje) —
+    # det er et fast manuelt trin i webbet.
+    api.manual.append("App-privatliv i webbet: vælg 'Ingen data indsamles' (kryds af) og gem.")
 
     # --- Tilgængelighed: Danmark (kun hvis config siger ja) ---
     den = api.cfg.get("territoryDenmarkId")
@@ -350,21 +363,30 @@ def setup(api):
 
     # --- Skærmbilleder ---
     do_screenshots(api, loc_id=next(
-        (l["id"] for l in locs if l.get("attributes", {}).get("locale") == "da-DK"), None))
+        (l["id"] for l in locs if l.get("attributes", {}).get("locale") in (LOCALE, "da-DK")), None))
 
     # --- Review-info (kontakt + bemærkninger) ---
-    ok, _ = api.step(
-        "review-info (kontakt + bemærkninger)",
-        "POST", "/appStoreReviewDetails",
-        {"data": {"type": "appStoreReviewDetails",
-                   "attributes": {"contactEmail": api.cfg["contactEmail"],
-                                  "demoAccountRequired": False,
-                                  "notes": REVIEW_NOTES},
-                   "relationships": {"appStoreVersion": {"type": "appStoreVersions", "id": vid}}}},
-        "Udfyld 'Info til review' i webbet (e-mail + bemærkninger).")
-    if not ok:
-        api.manual.pop()
-        api.manual.append("Udfyld 'Info til review' i webbet (e-mail + bemærkninger).")
+    # Oprettes først uden relation, linkes bagefter via versions-relations.
+    if "FILL" in str(api.cfg.get("contactEmail", "")):
+        api.manual.append("Giv os en kontakt-e-mail (asc/config.json), eller udfyld 'Info til review' i webbet.")
+    else:
+        ok, payload = api.step(
+            "review-info (kontakt + bemærkninger)",
+            "POST", "/appStoreReviewDetails",
+            {"data": {"type": "appStoreReviewDetails",
+                       "attributes": {"contactEmail": api.cfg["contactEmail"],
+                                      "demoAccountRequired": False,
+                                      "notes": REVIEW_NOTES}}},
+            "Udfyld 'Info til review' i webbet (e-mail + bemærkninger).")
+        if ok:
+            new = payload.get("data") or {}
+            if new.get("id"):
+                api.step("link review-info til versionen",
+                         "POST", f"/appStoreVersions/{vid}/relationships/appStoreReviewDetail",
+                         {"data": {"type": "appStoreReviewDetails", "id": new["id"]}},
+                         "Udfyld 'Info til review' i webbet (e-mail + bemærkninger).")
+            else:
+                api.manual.append("Udfyld 'Info til review' i webbet (e-mail + bemærkninger).")
 
     # --- Faste manuelle trin (kan ikke laves via API) ---
     api.manual.append("Kategorier: vælg Uddannelse (primær) + Underholdning (sekundær) i App-info, hvis det ikke er sat.")
@@ -405,7 +427,7 @@ def do_screenshots(api, loc_id):
                     {"data": {"type": "appScreenshotSets",
                                "attributes": {"screenshotDisplayType": dt},
                                "relationships": {"appStoreVersionLocalization":
-                                                  {"type": "appStoreVersionLocalizations", "id": loc_id}}}},
+                                                  {"data": {"type": "appStoreVersionLocalizations", "id": loc_id}}}}},
                     "Upload skærmbillederne i webbet (App-info) for denne skærmstørrelse.")
                 if ok:
                     sset = (payload.get("data") or [None])[0] if isinstance(payload.get("data"), list) else payload.get("data")
@@ -423,7 +445,8 @@ def do_screenshots(api, loc_id):
                 "POST", "/appScreenshots",
                 {"data": {"type": "appScreenshots",
                            "attributes": {"fileName": f, "fileSize": size},
-                           "relationships": {"appScreenshotSet": {"type": "appScreenshotSets", "id": sid}}}},
+                           "relationships": {"appScreenshotSet":
+                                              {"data": {"type": "appScreenshotSets", "id": sid}}}}},
                 None)
             if not ok:
                 # Ældre API-format: base64-feltet 'file'
@@ -433,7 +456,8 @@ def do_screenshots(api, loc_id):
                     {"data": {"type": "appScreenshots",
                                "attributes": {"fileName": f, "fileSize": size,
                                               "file": base64.b64encode(open(path, "rb").read()).decode()},
-                               "relationships": {"appScreenshotSet": {"type": "appScreenshotSets", "id": sid}}}},
+                               "relationships": {"appScreenshotSet":
+                                                  {"data": {"type": "appScreenshotSets", "id": sid}}}}},
                     None)
             if ok:
                 upload_bytes(api, payload.get("data") or {}, open(path, "rb").read())
@@ -472,15 +496,15 @@ def submit(api, send=False):
         return
     vid = version["id"]
 
-    # Find build
-    code, payload = api.call("GET", f"/apps/{app_id}/builds?sort=-uploadedDate")
+    # Find build (seneste upload)
+    code, payload = api.call("GET", f"/apps/{app_id}/builds")
     builds = payload.get("data") or []
     if not builds:
         api.failures.append(("build", "ingen build i App Store Connect"))
         api.manual.append("Archive + Distribute i Xcode (README.md, krav 3) — så opdateres dette trin automatisk.")
         api.summary()
         return
-    build = builds[0]
+    build = max(builds, key=lambda b: b.get("attributes", {}).get("uploadedDate") or "")
     state = build.get("attributes", {}).get("processingState")
     print(f"Seneste build: {build['attributes'].get('version')} "
           f"({build['attributes'].get('buildNumber')}) — {state}")
@@ -489,9 +513,11 @@ def submit(api, send=False):
         api.summary()
         return
 
+    # Build linkes via PATCH på selve versionen (relationships/build tillader kun GET)
     api.step("tilknyt build til versionen",
-             "POST", f"/appStoreVersions/{vid}/relationships/build",
-             {"data": {"type": "builds", "id": build["id"]}},
+             "PATCH", f"/appStoreVersions/{vid}",
+             {"data": {"type": "appStoreVersions", "id": vid,
+                        "relationships": {"build": {"data": {"type": "builds", "id": build["id"]}}}}},
              "Vælg bygget under 'Byg' i webbet.")
 
     # Review-submission
@@ -505,7 +531,7 @@ def submit(api, send=False):
                                "POST", "/reviewSubmissions",
                                {"data": {"type": "reviewSubmissions",
                                          "attributes": {"platform": "IOS"},
-                                         "relationships": {"app": {"type": "apps", "id": app_id}}}},
+                                         "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}}},
                                "Klik 'Tilføj til review' i webbet.")
         if ok:
             sub = payload.get("data")
@@ -516,13 +542,19 @@ def submit(api, send=False):
 
     # Tilknyt versionen
     items = get_one(api, f"/reviewSubmissions/{sid}/items") or []
-    if not any(i.get("attributes", {}).get("version") for i in items):
+
+    def has_version(i):
+        rel = (i.get("relationships") or {}).get("appStoreVersion") or {}
+        d = rel.get("data") or rel
+        return d.get("id") == vid or (i.get("attributes") or {}).get("version") == vid
+
+    if not any(has_version(i) for i in items):
         api.step("tilknyt versionen til submissionen",
                  "POST", "/reviewSubmissionItems",
                  {"data": {"type": "reviewSubmissionItems",
                             "relationships": {
-                                "reviewSubmission": {"type": "reviewSubmissions", "id": sid},
-                                "appStoreVersion": {"type": "appStoreVersions", "id": vid}}}},
+                                "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sid}},
+                                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}},
                  "Vælg versionen i 'Indsendelser' i webbet.")
 
     if send:
@@ -550,7 +582,7 @@ def check(api):
     print(f"  navn: {app.get('attributes', {}).get('name')}  bundleId: {api.cfg['bundleId']}")
     for path, label in (
         (f"/apps/{app_id}/appStoreVersions?filter[platform]=IOS", "versioner"),
-        (f"/apps/{app_id}/builds?sort=-uploadedDate", "builds"),
+        (f"/apps/{app_id}/builds", "builds"),
         (f"/apps/{app_id}/appAvailabilityV2", "tilgængelighed"),
         (f"/apps/{app_id}/reviewSubmissions?filter[platform]=IOS", "indsendelser"),
     ):

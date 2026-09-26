@@ -1,8 +1,9 @@
 # macOS
 .DS_Store
 
-# App Store Connect API-nøgle (hemmelig!)
-KontraktkontoretApp/asc/config.json
+# App Store Connect API-nøgle + config (hemmeligt!)
+KontraktkontoretApp/asc/*
+!KontraktkontoretApp/asc/config.example.json
 
 # Xcode
 xcuserdata/
