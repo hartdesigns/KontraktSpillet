@@ -88,6 +88,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					37AECD67EA3E1B05F815ECCB = {
+						DevelopmentTeam = 4DS8Y8T6JC;
 						ProvisioningStyle = automatic;
 					};
 				};
@@ -142,8 +143,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = automatic;
+				DEVELOPMENT_TEAM = 4DS8Y8T6JC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Kontraktkontoret/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -284,8 +287,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = automatic;
+				DEVELOPMENT_TEAM = 4DS8Y8T6JC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Kontraktkontoret/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -1,0 +1,12 @@
+{
+  "issuerId": "FILL_MIG_IN_10_cifre",
+  "keyId": "FILL_MIG_IN_10_bogstaver",
+  "privateKey": "PASTE_HER_indholdet_af_din_.p8-fil_inkluderende_-----BEGIN_PRIVATE_KEY-----",
+  "bundleId": "dk.hartdesigns.kontraktkontoret",
+  "version": "1.0",
+  "contactEmail": "din-mail@mail.dk",
+  "denmarkOnly": true,
+  "territoryDenmarkId": null,
+  "primaryCategoryId": null,
+  "secondaryCategoryId": null
+}

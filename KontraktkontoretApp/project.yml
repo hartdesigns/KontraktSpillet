@@ -31,3 +31,7 @@ targets:
         # Kun iPad. (Appen dukker alligevel op på iPhone som "Designed for iPad".)
         TARGETED_DEVICE_FAMILY: "2"
         CODE_SIGN_STYLE: automatic
+        DEVELOPMENT_TEAM: 4DS8Y8T6JC
+        # Fast minimum-version — Xcode 27 har en tendens til at skrive
+        # $(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET) over værdien.
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"

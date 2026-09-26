@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# App Store Connect API-nøgle (hemmelig!)
+KontraktkontoretApp/asc/config.json
+
 # Xcode
 xcuserdata/
 DerivedData/
