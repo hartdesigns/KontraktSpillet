@@ -396,7 +396,7 @@ button.slot.dragok{border-color:#0b7477;background:rgba(199,236,233,.92);color:#
 button.slot.dragbad{border-color:#c2185b;background:rgba(255,214,224,.85);animation:none}
 .dragging-src .pynt{opacity:.25}
 .drag-ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 10px rgba(29,43,58,.35))}
-.inv{font:inherit;color:#1d2b3a;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:3px solid #1d2b3a;border-radius:16px;background:#ffffff;box-shadow:4px 4px 0 #1d2b3a;cursor:pointer;text-align:center;transition:transform .12s cubic-bezier(.3,1.6,.5,1)}
+.inv{font:inherit;color:#1d2b3a;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:3px solid #1d2b3a;border-radius:16px;background:#ffffff;box-shadow:4px 4px 0 #1d2b3a;cursor:pointer;text-align:center;min-width:0;box-sizing:border-box;transition:transform .12s cubic-bezier(.3,1.6,.5,1)}
 .inv:hover{transform:translate(-1px,-3px) rotate(-1deg)}
 .inv.stored{background:#eefaf4;border-style:dashed}
 .inv.on{background:#fff4c2;border-color:#c2185b;box-shadow:4px 4px 0 #c2185b;transform:rotate(-2deg) scale(1.04)}
@@ -404,7 +404,7 @@ button.slot.dragbad{border-color:#c2185b;background:rgba(255,214,224,.85);animat
 @keyframes slotPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 .globeA{animation:globeA .7s ease-in-out}.globeB{animation:globeB .7s ease-in-out}
 .snowing .snow{animation:snowfall 1.8s ease-in-out}
-.shop-card{position:relative;box-sizing:border-box;padding:14px;border:3px solid #1d2b3a;border-radius:22px;background:#ffffff;box-shadow:5px 5px 0 #1d2b3a;display:flex;flex-direction:column;gap:6px;transition:transform .15s cubic-bezier(.3,1.6,.5,1)}
+.shop-card{position:relative;box-sizing:border-box;min-width:0;padding:14px;border:3px solid #1d2b3a;border-radius:22px;background:#ffffff;box-shadow:5px 5px 0 #1d2b3a;display:flex;flex-direction:column;gap:6px;transition:transform .15s cubic-bezier(.3,1.6,.5,1)}
 .shop-card:hover{transform:translateY(-4px) rotate(-.6deg)}
 .shop-card.owned{background:#d3f4f1}
 .justbought{animation:chipPop .5s cubic-bezier(.3,1.8,.5,1)}
@@ -538,7 +538,7 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 
 .deco-panel{padding:22px clamp(14px,3vw,24px);border-radius:22px;display:flex;flex-direction:column;gap:14px}
 .inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
-.inv-name{font-size:13px;line-height:16px;font-weight:600}
+.inv-name{font-size:13px;line-height:16px;font-weight:600;min-width:0;overflow-wrap:break-word}
 .inv-where{font-size:11px;line-height:14px;font-weight:800;color:#4d5f6e}
 .empty{padding:20px;border:3px dashed #b9d9ca;border-radius:18px;font-size:17px;font-weight:700;color:#4d5f6e}
 
@@ -571,8 +571,8 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 .shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;padding:4px 8px 8px 0}
 .shop-preview{position:relative;height:104px;border:3px solid #1d2b3a;border-radius:14px;background:#eefaf4;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
 .shop-preview .tag{position:absolute;left:6px;top:6px}
-.shop-name-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.shop-name{font-size:18px;line-height:21px;font-weight:600}
+.shop-name-row{display:flex;align-items:baseline;justify-content:space-between;gap:4px 8px;flex-wrap:wrap}
+.shop-name{font-size:17px;line-height:21px;font-weight:600;min-width:0;overflow-wrap:break-word}
 .shop-price{font-size:16px;font-weight:700;color:#0b7477;white-space:nowrap}
 .shop-desc{font-size:13px;line-height:17px;font-weight:700;color:#4d5f6e;flex-grow:1}
 
