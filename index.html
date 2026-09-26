@@ -1,0 +1,2135 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontraktkontoret</title>
+<meta name="description" content="Et sjovt kontorspil: udfyld kundernes kontrakter og få dem stemplet af den lidt tossede Chef Bo.">
+<meta name="theme-color" content="#c2185b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Ccircle cx='22' cy='22' r='19' fill='%23c2185b'/%3E%3Cpath d='M15 22.5l4.5 4.5l9 -9' fill='none' stroke='%23ffd84d' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&family=Patrick+Hand&family=Caveat:wght@600&family=Gochi+Hand&family=Special+Elite&family=Permanent+Marker&family=Courier+Prime:wght@700&family=Indie+Flower&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   KONTRAKTKONTORET — designsystem "Sød men skarp"
+   Farver, knapper, chips, talebobler og animationer
+   ============================================================ */
+:root{--paper:#eefaf4;--paper-dot:#cdebdc;--card:#ffffff;--line:#b9d9ca;--ink:#1d2b3a;--ink-muted:#4d5f6e;--berry:#c2185b;--berry-soft:#ffe0ec;--teal:#0b7477;--teal-soft:#d3f4f1;--butter:#ffd84d;--butter-soft:#fff4c2}
+body{margin:0;font-family:Nunito,ui-rounded,system-ui,sans-serif;color:#1d2b3a;background:#eefaf4}
+a{color:#c2185b}a:hover{color:#8e0f41}
+.disp{font-family:Fredoka,"Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif}
+.hand{font-family:"Patrick Hand","Comic Sans MS","Chalkboard SE",cursive}
+button{font:inherit;color:inherit}
+.btn{font-family:Fredoka,ui-rounded,system-ui,sans-serif;font-weight:600;font-size:20px;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 26px;border:3px solid #1d2b3a;border-radius:18px;box-shadow:4px 4px 0 #1d2b3a;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease;background:#ffffff;color:#1d2b3a}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #1d2b3a}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 #1d2b3a}
+.btn:focus-visible,.chip:focus-visible,.icon-btn:focus-visible,.name-input:focus-visible{outline:3px solid #c2185b;outline-offset:3px}
+.btn-go{background:#ffd84d;color:#1d2b3a}
+.btn-berry{background:#c2185b;color:#ffffff}
+.btn-teal{background:#0b7477;color:#ffffff}
+.btn-big{font-size:24px;min-height:68px;padding:0 34px;border-radius:22px}
+.btn[disabled]{background:#e3eee8;color:#4d5f6e;cursor:not-allowed;box-shadow:4px 4px 0 #9fb8ac;border-color:#9fb8ac;transform:none;animation:none}
+.btn-go.ready{animation:nudge 1.6s ease-in-out infinite}
+.icon-btn{width:48px;height:48px;border-radius:999px;border:3px solid #1d2b3a;background:#ffffff;box-shadow:3px 3px 0 #1d2b3a;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .08s}
+.icon-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #1d2b3a}
+.chip{font-family:Nunito,ui-rounded,system-ui,sans-serif;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:6px 10px;border:3px solid #1d2b3a;border-radius:14px;background:#ffffff;color:#1d2b3a;box-shadow:3px 3px 0 #1d2b3a;cursor:pointer;transition:transform .12s cubic-bezier(.3,1.6,.5,1),background .12s}
+.chip:hover{transform:translate(-1px,-2px) rotate(-1deg);background:#fff4c2}
+.chip.on{background:#0b7477;color:#ffffff;transform:rotate(-1.5deg) scale(1.04);animation:chipPop .35s cubic-bezier(.3,1.8,.5,1)}
+.chip svg{flex-shrink:0}
+.name-input{width:100%;box-sizing:border-box;height:54px;border:3px solid #1d2b3a;border-radius:12px;padding:0 16px;font-family:Fredoka,ui-rounded,system-ui,sans-serif;font-size:22px;font-weight:500;color:#1d2b3a;background:#ffffff;box-shadow:inset 0 -4px 0 #d3f4f1}
+.name-input::placeholder{color:#6f7f8c}
+.num{width:30px;height:30px;border-radius:999px;border:3px solid #1d2b3a;display:inline-flex;align-items:center;justify-content:center;font-family:Fredoka,system-ui,sans-serif;font-weight:700;font-size:15px;background:#ffffff;flex-shrink:0;transition:background .2s}
+.num.done{background:#0b7477;color:#ffffff;animation:chipPop .35s cubic-bezier(.3,1.8,.5,1)}
+.lbl{font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#4d5f6e}
+.bubble{position:relative;background:#ffffff;border:3px solid #1d2b3a;border-radius:18px;box-shadow:4px 4px 0 #1d2b3a;padding:12px 16px;font-family:Fredoka,ui-rounded,system-ui,sans-serif;font-size:18px;line-height:24px;font-weight:500}
+.bubble.alert{background:#fff4c2}
+.bubble.boss{background:#ffe0ec}
+.bubble.tail-l::after{content:"";position:absolute;left:-13px;top:22px;width:18px;height:18px;background:inherit;border-left:3px solid #1d2b3a;border-bottom:3px solid #1d2b3a;transform:rotate(45deg);border-radius:0 0 0 4px}
+.bubble.tail-b::after{content:"";position:absolute;left:48px;bottom:-13px;width:18px;height:18px;background:inherit;border-right:3px solid #1d2b3a;border-bottom:3px solid #1d2b3a;transform:rotate(45deg);border-radius:0 0 4px 0}
+.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
+.popB{animation:popB .5s cubic-bezier(.3,1.6,.5,1) both}
+.d1{animation-delay:.7s}.d2{animation-delay:1.3s}.d3{animation-delay:1.9s}
+.wiggle{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both,wiggle .5s ease-in-out .5s 3}
+.walkA{animation:walkA 1s cubic-bezier(.3,1.3,.5,1) both}
+.walkB{animation:walkB 1s cubic-bezier(.3,1.3,.5,1) both}
+.bob{animation:bob 1.8s ease-in-out infinite}
+.bob2{animation:bob 1.8s ease-in-out .3s infinite}
+.bob3{animation:bob 1.8s ease-in-out .6s infinite}
+.kajIn{animation:kajIn .7s cubic-bezier(.3,1.5,.5,1) both}
+.bo-in{animation:boIn .8s cubic-bezier(.3,1.4,.5,1) both}
+.bo-tilt{animation:boTilt 1.1s ease-in-out infinite}
+.bo-bounce{animation:boBounce .5s ease-in-out infinite}
+.bo-tremble{animation:tremble .09s linear infinite}
+.bo-still{}
+.bo-jump{animation:boJump .6s cubic-bezier(.3,1.5,.5,1) 3}
+.bo-spin{animation:boSpin .9s cubic-bezier(.4,1.4,.5,1) 1}
+.bo-peek{animation:boPeek 3s ease-in-out infinite}
+.hair{transform-origin:140px 100px}
+.mag{animation:magnify 2.6s ease-in-out infinite alternate}
+.hover-stamp{animation:hoverStamp .45s ease-in-out infinite alternate}
+.slam{animation:slam .45s cubic-bezier(.2,1.5,.5,1) both}
+.shake{animation:shake .45s linear .05s 1}
+.dim{animation:fadeIn .5s ease both}
+.floatup{animation:floatUp 1.8s ease-out .5s both}
+.dots::after{content:"";animation:dots 1.2s steps(4,end) infinite}
+.wobble{animation:wobble 3s ease-in-out infinite;display:inline-block;transform-origin:50% 80%}
+.tilt-note{transform:rotate(-1.5deg)}
+.np-yellow{background:#fff4c2}.np-pink{background:#ffe0ec}.np-mint{background:#d3f4f1}
+.np-lined{background:#ffffff repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 25px,#b9d9ca 25px 26px);background-position:0 30px}
+.np-grid{background:#ffffff linear-gradient(90deg,rgba(11,116,119,.12) 1px,rgba(0,0,0,0) 1px) 0 0/14px 14px,linear-gradient(180deg,rgba(11,116,119,.12) 1px,rgba(0,0,0,0) 1px) 0 0/14px 14px}
+.nf-hand{font-family:"Patrick Hand",cursive;font-size:20px;line-height:26px}
+.nf-caveat{font-family:Caveat,cursive;font-weight:600;font-size:24px;line-height:26px}
+.nf-gochi{font-family:"Gochi Hand",cursive;font-size:20px;line-height:26px}
+.nf-indie{font-family:"Indie Flower",cursive;font-size:19px;line-height:26px;font-weight:700}
+.nf-marker{font-family:"Permanent Marker",cursive;font-size:16px;line-height:26px}
+.nf-type{font-family:"Special Elite","Courier New",monospace;font-size:16px;line-height:26px}
+.nf-mono{font-family:"Courier Prime","Courier New",monospace;font-weight:700;font-size:16px;line-height:26px}
+.nf-print{font-family:Nunito,system-ui,sans-serif;font-weight:800;font-size:16px;line-height:26px}
+.swim{animation:swim 4s ease-in-out infinite}
+.pendulum{transform-box:view-box;transform-origin:50px 74px;animation:sway 1.6s ease-in-out infinite}
+.neon{animation:neon 3s steps(1,end) infinite}
+.tag{display:inline-block;padding:2px 8px;border:2px solid #1d2b3a;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.04em;background:#ffffff}
+.tag.haeng{background:#ffe0ec}.tag.staa{background:#d3f4f1}.tag.gave{background:#ffd84d}
+.award{padding:10px 14px;border:3px solid #1d2b3a;border-radius:16px;background:#ffd84d;box-shadow:4px 4px 0 #1d2b3a;font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:17px}
+@keyframes swim{0%,100%{transform:translateX(-14px)}50%{transform:translateX(12px)}}
+@keyframes neon{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.35}95%{opacity:1}97%{opacity:.5}}
+.slideIn{animation:slideIn .6s cubic-bezier(.3,1.3,.5,1) both}
+.star{color:#c8d8d0}
+.star.on{color:#ffd84d;animation:starPop .5s cubic-bezier(.3,1.8,.5,1) both}
+.star.on:nth-child(2){animation-delay:.15s}.star.on:nth-child(3){animation-delay:.3s}
+.seg{flex-grow:1;height:10px;border-radius:999px;border:2px solid #1d2b3a;background:#ffffff;transition:background .3s}
+.seg.on{background:#c2185b}
+.mark-ok{color:#0b7477}.mark-bad{color:#c2185b}
+.row-bad{background:#ffe0ec}
+.stamp{font-family:Fredoka,ui-rounded,system-ui,sans-serif;font-weight:700;font-size:58px;line-height:1;letter-spacing:.08em;padding:10px 20px;border:7px solid currentColor;border-radius:14px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 3px rgba(255,255,255,.9)}
+.stamp-ok{color:#0b7477}.stamp-no{color:#c2185b}
+.verdict{background:#ffffff}.verdict.ok{background:#d3f4f1}.verdict.no{background:#ffe0ec}
+.bubble.sm{font-size:16px;line-height:21px;padding:10px 14px}
+.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;top:-30px;width:12px;height:18px;border:2px solid #1d2b3a;border-radius:4px;animation:fall 2.6s cubic-bezier(.3,.6,.6,1) both}
+.confetti i:nth-child(3n){border-radius:999px;width:14px;height:14px}
+.confetti i:nth-child(1){left:4%;background:#ffd84d;animation-delay:.05s}
+.confetti i:nth-child(2){left:10%;background:#ef5b93;animation-delay:.3s}
+.confetti i:nth-child(3){left:16%;background:#34b8b5;animation-delay:.1s}
+.confetti i:nth-child(4){left:22%;background:#ffd84d;animation-delay:.45s}
+.confetti i:nth-child(5){left:28%;background:#ef5b93;animation-delay:.2s}
+.confetti i:nth-child(6){left:34%;background:#a9e8e3;animation-delay:.6s}
+.confetti i:nth-child(7){left:40%;background:#ffd84d;animation-delay:.15s}
+.confetti i:nth-child(8){left:46%;background:#34b8b5;animation-delay:.5s}
+.confetti i:nth-child(9){left:52%;background:#ef5b93;animation-delay:.25s}
+.confetti i:nth-child(10){left:58%;background:#ffd84d;animation-delay:.7s}
+.confetti i:nth-child(11){left:64%;background:#a9e8e3;animation-delay:.1s}
+.confetti i:nth-child(12){left:70%;background:#ef5b93;animation-delay:.4s}
+.confetti i:nth-child(13){left:76%;background:#34b8b5;animation-delay:.2s}
+.confetti i:nth-child(14){left:82%;background:#ffd84d;animation-delay:.55s}
+.confetti i:nth-child(15){left:88%;background:#ef5b93;animation-delay:.05s}
+.confetti i:nth-child(16){left:94%;background:#34b8b5;animation-delay:.35s}
+.confetti i:nth-child(17){left:13%;background:#ffc2d8;animation-delay:.9s}
+.confetti i:nth-child(18){left:37%;background:#ffd84d;animation-delay:1s}
+.confetti i:nth-child(19){left:61%;background:#34b8b5;animation-delay:.85s}
+.confetti i:nth-child(20){left:85%;background:#ef5b93;animation-delay:1.1s}
+@keyframes pop{0%{opacity:0;transform:scale(.3) rotate(-4deg)}70%{opacity:1;transform:scale(1.07) rotate(1deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes popB{0%{opacity:0;transform:scale(.3) rotate(4deg)}70%{opacity:1;transform:scale(1.07) rotate(-1deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes chipPop{0%{transform:scale(.85)}60%{transform:scale(1.12) rotate(-3deg)}100%{transform:rotate(-1.5deg) scale(1.04)}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+@keyframes walkA{0%{transform:translateX(-360px)}55%{transform:translateX(14px) translateY(0)}68%{transform:translateX(0) translateY(-22px)}82%{transform:translateY(0) scaleY(.92)}100%{transform:none}}
+@keyframes walkB{0%{transform:translateX(-360px)}55%{transform:translateX(14px) translateY(0)}68%{transform:translateX(0) translateY(-22px)}82%{transform:translateY(0) scaleY(.92)}100%{transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes kajIn{0%{transform:translateY(120%) rotate(-10deg)}70%{transform:translateY(-6%) rotate(4deg)}100%{transform:none}}
+@keyframes boIn{0%{transform:translateY(80px) scale(.9);opacity:0}100%{transform:none;opacity:1}}
+@keyframes boTilt{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg) translateY(-4px)}}
+@keyframes boBounce{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-12px) scaleY(1.03)}}
+@keyframes tremble{0%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,2px)}100%{transform:translate(0,0)}}
+@keyframes boJump{0%,100%{transform:translateY(0)}40%{transform:translateY(-46px) rotate(-6deg)}70%{transform:translateY(0) scaleY(.9)}}
+@keyframes boSpin{0%{transform:rotate(0)}80%{transform:rotate(380deg)}100%{transform:rotate(360deg)}}
+@keyframes boPeek{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+@keyframes magnify{0%{transform:translate(0,0) rotate(-8deg)}25%{transform:translate(330px,40px) rotate(6deg)}50%{transform:translate(60px,130px) rotate(-4deg)}75%{transform:translate(360px,200px) rotate(8deg)}100%{transform:translate(120px,270px) rotate(-6deg)}}
+@keyframes hoverStamp{0%{transform:translateY(-14px) rotate(-6deg)}100%{transform:translateY(4px) rotate(5deg)}}
+@keyframes slam{0%{opacity:0;transform:scale(3.2) rotate(-30deg)}55%{opacity:1;transform:scale(.88) rotate(-11deg)}75%{transform:scale(1.06) rotate(-13deg)}100%{opacity:1;transform:scale(1) rotate(-12deg)}}
+@keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-10px,6px)}40%{transform:translate(8px,-6px)}60%{transform:translate(-6px,4px)}80%{transform:translate(4px,-2px)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(20px) scale(.6)}20%{opacity:1;transform:translateY(0) scale(1.15)}70%{opacity:1;transform:translateY(-30px) scale(1)}100%{opacity:0;transform:translateY(-60px)}}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@keyframes wobble{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes slideIn{0%{opacity:0;transform:translateX(120px) rotate(8deg)}100%{opacity:1;transform:none}}
+@keyframes starPop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1)}}
+@keyframes nudge{0%,80%,100%{transform:none}85%{transform:rotate(-2deg) scale(1.03)}90%{transform:rotate(2deg) scale(1.03)}95%{transform:rotate(-1deg)}}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(900px) rotate(720deg)}}
+.lava1,.lava2,.lava3,.snow,.tw1,.tw2,.tw3,.zzz{transform-box:fill-box;transform-origin:center}
+.lava1{animation:lava 5s ease-in-out infinite}.lava2{animation:lava 6s ease-in-out 1s infinite reverse}.lava3{animation:lava 4s ease-in-out 2s infinite}
+.tw1{animation:tw 1.2s steps(2,end) infinite}.tw2{animation:tw 1.2s steps(2,end) .4s infinite}.tw3{animation:tw 1.2s steps(2,end) .8s infinite}
+.sway{transform-box:view-box;transform-origin:50px 0;animation:sway 3s ease-in-out infinite}
+.tail{transform-box:view-box;transform-origin:80px 82px;animation:tail 2s ease-in-out infinite}
+.zzz{animation:zzz 2.4s ease-in-out infinite}
+.yoyo-str{transform-box:view-box;transform-origin:50px 9px;animation:yoyoStr 2.6s ease-in-out infinite}.yoyo-disk{animation:yoyoDisk 2.6s ease-in-out infinite}@keyframes yoyoStr{0%,100%{transform:scaleY(1)}50%{transform:scaleY(2.2)}}@keyframes yoyoDisk{0%,100%{transform:translateY(0)}50%{transform:translateY(30px)}}
+
+.slot{padding:0;margin:0;border:3px solid transparent;background:transparent;border-radius:16px;cursor:default;display:flex;align-items:center;justify-content:center;color:#1d2b3a;box-sizing:border-box}
+.slot > div{align-self:flex-start}
+.slot.clickable{cursor:pointer}
+.slot.edit{cursor:pointer;border:3px dashed rgba(29,43,58,.45);background:rgba(255,255,255,.28)}
+.slot.edit:hover{background:rgba(255,255,255,.6)}
+.slot.target{border-color:#c2185b;background:rgba(255,255,255,.7);color:#c2185b;animation:slotPulse .9s ease-in-out infinite}
+.slot.picked{border:3px solid #c2185b;background:rgba(255,216,77,.55);animation:wiggle .6s ease-in-out infinite}
+.slot:focus-visible{outline:3px solid #c2185b;outline-offset:3px}
+.inv{font:inherit;color:#1d2b3a;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:3px solid #1d2b3a;border-radius:16px;background:#ffffff;box-shadow:4px 4px 0 #1d2b3a;cursor:pointer;text-align:center;transition:transform .12s cubic-bezier(.3,1.6,.5,1)}
+.inv:hover{transform:translate(-1px,-3px) rotate(-1deg)}
+.inv.stored{background:#eefaf4;border-style:dashed}
+.inv.on{background:#fff4c2;border-color:#c2185b;box-shadow:4px 4px 0 #c2185b;transform:rotate(-2deg) scale(1.04)}
+.inv:focus-visible{outline:3px solid #c2185b;outline-offset:3px}
+@keyframes slotPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.globeA{animation:globeA .7s ease-in-out}.globeB{animation:globeB .7s ease-in-out}
+.snowing .snow{animation:snowfall 1.8s ease-in-out}
+.shop-card{position:relative;box-sizing:border-box;padding:14px;border:3px solid #1d2b3a;border-radius:22px;background:#ffffff;box-shadow:5px 5px 0 #1d2b3a;display:flex;flex-direction:column;gap:6px;transition:transform .15s cubic-bezier(.3,1.6,.5,1)}
+.shop-card:hover{transform:translateY(-4px) rotate(-.6deg)}
+.shop-card.owned{background:#d3f4f1}
+.justbought{animation:chipPop .5s cubic-bezier(.3,1.8,.5,1)}
+@keyframes lava{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-26px) scale(1.2,.85)}}
+@keyframes tw{0%{opacity:1}50%{opacity:.3}}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@keyframes tail{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
+@keyframes zzz{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-8px);opacity:1}}
+@keyframes globeA{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg) translateY(-6px)}40%{transform:rotate(12deg)}60%{transform:rotate(-10deg) translateY(-4px)}80%{transform:rotate(6deg)}}
+@keyframes globeB{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg) translateY(-6px)}40%{transform:rotate(12deg)}60%{transform:rotate(-10deg) translateY(-4px)}80%{transform:rotate(6deg)}}
+@keyframes snowfall{0%{transform:translateY(-14px);opacity:.2}30%{transform:translateY(-18px) translateX(4px);opacity:1}100%{transform:translateY(0);opacity:1}}
+
+/* ============================================================
+   LAYOUT — responsivt: mobil (375), tablet (768), laptop (1024), bred (1440)
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22px 22px;min-height:100vh;overflow-x:hidden}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.small{font-size:14px;line-height:19px;color:#4d5f6e}
+.strong{font-weight:700}
+.muted-text{font-size:15px;line-height:21px;font-weight:700;color:#4d5f6e}
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.stack-tight{display:flex;flex-direction:column;gap:6px}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn-small{min-height:44px;font-size:16px;padding:0 14px}
+.card{border:3px solid #1d2b3a;border-radius:28px;background:#fff;box-shadow:8px 8px 0 #1d2b3a}
+.h-big{margin:0;font-size:clamp(32px,6vw,46px);line-height:1.05;font-weight:700}
+.h-mid{margin:0;font-size:clamp(26px,4vw,34px);line-height:1.1;font-weight:700}
+.h3{font-size:18px;font-weight:600}
+.num.static{animation:none}
+
+/* Topbar */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px 16px;background:#fff;border-bottom:3px solid #1d2b3a;position:relative;z-index:5}
+.brand{display:flex;align-items:center;gap:8px}
+.brand-name{font-size:24px;font-weight:700;color:#c2185b;letter-spacing:-.01em}
+.daybox{display:flex;flex-direction:column;gap:1px;min-width:0}
+.daybox b{font-size:17px;font-weight:600}
+.daybox span{font-size:13px;font-weight:700;color:#4d5f6e}
+.controls{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.count{display:flex;align-items:center;gap:6px;height:44px;padding:0 14px 0 8px;border:3px solid #1d2b3a;border-radius:999px;box-shadow:3px 3px 0 #1d2b3a;font-size:18px;font-weight:600;white-space:nowrap}
+.count-star{background:#fff4c2}.count-money{background:#d3f4f1}
+@media (max-width:640px){
+  .brand-name{font-size:20px}
+  .daybox{order:3;width:100%}
+  .controls{order:2}
+  .count{height:40px;font-size:16px;padding:0 10px 0 6px}
+  .count svg{width:22px;height:22px}
+  .icon-btn{width:42px;height:42px}
+}
+@media (max-width:400px){ .brand-name{display:none} .controls{margin-left:0;justify-content:flex-start;width:100%} }
+
+.screen{flex:1;width:100%;max-width:1440px;margin:0 auto;padding:16px 16px 28px;position:relative}
+@media (min-width:900px){ .screen{padding:22px 24px 32px} }
+.center-screen{display:flex;align-items:flex-start;justify-content:center}
+@media (min-height:760px) and (min-width:900px){ .center-screen{align-items:center} }
+
+/* Tegnede scener, der skaleres til bredden */
+.stage{position:relative;width:100%;overflow:hidden}
+.stage-in{position:absolute;left:0;top:0;transform-origin:0 0}
+.card-stage{border:3px solid #1d2b3a;border-radius:24px;box-shadow:8px 8px 0 #1d2b3a;background:#fff}
+
+/* Forside */
+.title-grid{display:grid;gap:28px;align-items:center}
+@media (min-width:1000px){ .title-grid{grid-template-columns:minmax(0,1fr) minmax(0,540px)} }
+.title-text{display:flex;flex-direction:column;gap:20px;min-width:0}
+.kicker{align-self:flex-start;padding:8px 16px;border:3px solid #1d2b3a;border-radius:999px;background:#ffd84d;box-shadow:3px 3px 0 #1d2b3a;font-size:17px;font-weight:600;transform:rotate(-2deg)}
+.title-h1{margin:0;font-size:clamp(54px,11vw,92px);line-height:.92;font-weight:700;letter-spacing:-.02em}
+.title-h1 .wobble{color:#c2185b}
+.lead{margin:0;font-size:clamp(17px,2.4vw,20px);line-height:1.5;font-weight:700;max-width:560px}
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.howto-card{padding:14px;border:3px solid #1d2b3a;border-radius:18px;background:#fff;box-shadow:4px 4px 0 #1d2b3a;display:flex;flex-direction:column;gap:6px}
+.title-stage{max-width:560px;margin:0 auto}
+
+/* Dagens intro + dagens resultat */
+.intro-card{width:100%;max-width:880px;padding:clamp(20px,4vw,36px);display:grid;gap:24px;align-items:center}
+@media (min-width:760px){ .intro-card{grid-template-columns:240px 1fr} }
+.bo-box{width:100%;max-width:240px;margin:0 auto}
+@media (max-width:759px){ .intro-card .bo-box{max-width:170px} }
+.value-box{display:flex;gap:12px;align-items:center;padding:10px 14px;border:3px dashed #1d2b3a;border-radius:14px;background:#eefaf4;font-size:15px;line-height:20px;font-weight:700}
+.value-letter{width:44px;height:44px;flex-shrink:0;border-radius:12px;background:#1d2b3a;color:#ffd84d;font-size:28px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.done-card{width:100%;max-width:1040px;padding:clamp(20px,4vw,34px);display:grid;gap:26px;align-items:center}
+@media (min-width:860px){ .done-card{grid-template-columns:280px 1fr} }
+.done-bo{display:flex;flex-direction:column;align-items:center;gap:12px}
+@media (max-width:859px){ .done-bo .bo-box{max-width:170px} }
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{padding:12px 14px;border:3px solid #1d2b3a;border-radius:18px}
+.stat-num{font-size:28px;font-weight:700}
+.result-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 12px;border:2px solid #b9d9ca;border-radius:12px;background:#fff}
+
+/* Kontoret: rum + kontrakt */
+.office{display:grid;gap:22px;max-width:680px;margin:0 auto;align-items:start}
+@media (min-width:900px){ .office{grid-template-columns:minmax(0,1fr) minmax(0,520px);max-width:none} .sidecol{position:sticky;top:12px} }
+@media (min-width:1260px){ .office{grid-template-columns:minmax(0,1fr) 640px} }
+.roomwrap{position:relative;min-width:0}
+.talk{display:flex;flex-direction:column;gap:12px;margin-top:18px;padding-left:14px}
+.note{position:relative;margin:26px auto 4px;max-width:340px;padding:14px 18px 12px;border:3px solid #1d2b3a;border-radius:8px;box-shadow:6px 6px 0 #1d2b3a;transform:rotate(-2.5deg)}
+.note .tape{position:absolute;left:50%;top:-13px;width:90px;height:24px;margin-left:-45px;background:#a9e8e3;border:2px solid #1d2b3a;transform:rotate(3deg);opacity:.9}
+@media (min-width:1260px){
+  .talk{position:absolute;left:55.2%;right:2.5%;top:2%;margin:0;padding:0;z-index:3}
+  .talk .bubble.sm{font-size:15px;line-height:20px}
+  .roomwrap .note{position:absolute;left:3.4%;top:74.3%;width:45.5%;max-width:none;margin:0;z-index:3;transform:rotate(-3deg)}
+}
+.name-pill{position:absolute;left:24px;top:478px;padding:4px 12px;border:3px solid #1d2b3a;border-radius:999px;background:#fff;font-size:15px;font-weight:800}
+.deco-sticky{position:absolute;left:22px;top:596px;width:270px;padding:14px 18px;border:3px solid #1d2b3a;border-radius:8px;box-shadow:6px 6px 0 #1d2b3a;transform:rotate(-3deg)}
+.slot .pynt{position:absolute;left:0;top:0}
+
+.contract{position:relative;padding:26px clamp(14px,3vw,24px) 18px;border-radius:22px;display:flex;flex-direction:column;gap:12px}
+.clip{position:absolute;left:50%;top:-14px;width:150px;height:28px;margin-left:-75px;border:3px solid #1d2b3a;border-radius:10px;background:#c2185b;box-shadow:3px 3px 0 #1d2b3a}
+.contract-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:3px dashed #b9d9ca;flex-wrap:wrap}
+.contract-title{font-size:26px;line-height:28px;font-weight:700;letter-spacing:.04em}
+.retry-note{font-size:14px;line-height:19px;padding:8px 12px;max-width:100%}
+.stamp-spot{width:64px;height:64px;border:3px dashed #b9d9ca;border-radius:999px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;line-height:13px;font-weight:800;color:#4d5f6e}
+.field{display:flex;flex-direction:column;gap:7px}
+.field-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hint{font-size:13px;font-weight:700;color:#4d5f6e;margin-left:auto}
+.chips{display:grid;gap:8px}
+.g-svc{grid-template-columns:repeat(auto-fill,minmax(168px,1fr))}
+.g-dur{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
+.g-small{grid-template-columns:repeat(auto-fill,minmax(86px,1fr))}
+@media (max-width:420px){ .g-svc{grid-template-columns:1fr 1fr} .g-svc .chip{font-size:14px;gap:5px;padding:6px} .g-dur{grid-template-columns:1fr 1fr} }
+.contract-foot{margin-top:6px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sign{display:flex;flex-direction:column;gap:2px}
+.sign-line{width:180px;border-top:2px solid #1d2b3a}
+.contract-foot .btn{flex-grow:1;max-width:340px;margin-left:auto}
+
+.kaj-toast{position:fixed;left:12px;right:12px;bottom:12px;max-width:470px;display:flex;align-items:flex-end;gap:6px;z-index:40;pointer-events:none}
+.kaj-fig{flex-shrink:0;width:110px}
+.kaj-bubble{pointer-events:auto;font-size:16px;line-height:21px;padding:10px 14px;margin-bottom:40px}
+@media (max-width:420px){ .kaj-fig{width:80px} .kaj-fig svg{width:80px;height:96px} }
+
+.deco-panel{padding:22px clamp(14px,3vw,24px);border-radius:22px;display:flex;flex-direction:column;gap:14px}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.inv-name{font-size:13px;line-height:16px;font-weight:600}
+.inv-where{font-size:11px;line-height:14px;font-weight:800;color:#4d5f6e}
+.empty{padding:20px;border:3px dashed #b9d9ca;border-radius:18px;font-size:17px;font-weight:700;color:#4d5f6e}
+
+/* Chef Bos gennemsyn */
+.review{display:grid;gap:22px;max-width:680px;margin:0 auto;align-items:start}
+@media (min-width:900px){ .review{grid-template-columns:minmax(0,480px) minmax(0,1fr);max-width:1240px} }
+.review-right{display:flex;flex-direction:column;gap:20px;min-width:0}
+.paper{position:relative;padding:20px clamp(14px,3vw,28px);border:3px solid #1d2b3a;border-radius:12px;background:#fff;box-shadow:8px 8px 0 #1d2b3a;overflow:hidden}
+.paper-head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:10px;border-bottom:3px dashed #b9d9ca;margin-bottom:8px}
+.paper-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 10px;border-bottom:2px solid #d3f4f1;border-radius:8px}
+.paper-lbl{width:110px;flex-shrink:0}
+.paper-val{flex-grow:1;font-size:clamp(18px,2.6vw,22px);font-weight:500;min-width:0;overflow-wrap:anywhere}
+.mag2{position:absolute;pointer-events:none;animation:magP 2.6s ease-in-out infinite alternate}
+.hover-pos{position:absolute;left:50%;top:24%;margin-left:-65px;pointer-events:none}
+.stamp-pos{position:absolute;right:6%;top:34%;pointer-events:none}
+.stamp{font-size:clamp(34px,6vw,58px)}
+.verdict{position:relative;padding:20px 22px;border:3px solid #1d2b3a;border-radius:28px;box-shadow:8px 8px 0 #1d2b3a;display:flex;flex-direction:column;gap:12px;min-height:220px}
+.verdict-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.remark{font-size:clamp(17px,2.4vw,20px);line-height:1.35;font-weight:500}
+.coin-pop{position:absolute;right:24px;bottom:24px;padding:8px 16px;border:3px solid #1d2b3a;border-radius:999px;background:#ffd84d;box-shadow:3px 3px 0 #1d2b3a;font-size:24px;font-weight:700;pointer-events:none}
+.spotlight{position:fixed;inset:0;pointer-events:none;z-index:30;background:radial-gradient(circle at 60% 45%,rgba(29,43,58,0) 0,rgba(29,43,58,0) 28vmin,rgba(29,43,58,.55) 60vmin)}
+.confetti{position:fixed;inset:0;z-index:60}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
+@keyframes magP{0%{left:2%;top:4%;transform:rotate(-8deg)}25%{left:62%;top:12%;transform:rotate(6deg)}50%{left:10%;top:36%;transform:rotate(-4deg)}75%{left:64%;top:56%;transform:rotate(8deg)}100%{left:22%;top:68%;transform:rotate(-6deg)}}
+
+/* Butik */
+.shop-head{display:flex;flex-wrap:wrap;align-items:center;gap:16px 20px;margin-bottom:20px}
+.shop-title{flex:1 1 320px;display:flex;flex-direction:column;gap:6px}
+.shop-quote{flex:1 1 260px;max-width:360px;font-size:16px;line-height:21px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;padding:4px 8px 8px 0}
+.shop-preview{position:relative;height:104px;border:3px solid #1d2b3a;border-radius:14px;background:#eefaf4;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.shop-preview .tag{position:absolute;left:6px;top:6px}
+.shop-name-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.shop-name{font-size:18px;line-height:21px;font-weight:600}
+.shop-price{font-size:16px;font-weight:700;color:#0b7477;white-space:nowrap}
+.shop-desc{font-size:13px;line-height:17px;font-weight:700;color:#4d5f6e;flex-grow:1}
+
+/* Ur, kalender, underskrift, pynt-klik, begivenheder */
+.count-clock{background:#fff;gap:8px}
+.count-clock .clockbar{width:52px;height:10px;border:2px solid #1d2b3a;border-radius:999px;overflow:hidden;background:#eefaf4;display:block}
+.count-clock .clockbar i{display:block;height:100%;background:#0b7477}
+.count-clock.late{background:#ffe0ec;animation:latePulse 1s ease-in-out infinite}
+.count-clock.late .clockbar i{background:#c2185b}
+@keyframes latePulse{0%,100%{transform:none}50%{transform:scale(1.06)}}
+@media (max-width:640px){ .count-clock .clockbar{display:none} }
+.wall-cal{position:absolute;left:20px;top:14px;width:74px;border:3px solid #1d2b3a;border-radius:8px;background:#fff;box-shadow:3px 3px 0 #1d2b3a;text-align:center;overflow:hidden;transform:rotate(-3deg)}
+.wall-cal-top{background:#c2185b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:3px 0}
+.wall-cal-num{font-size:34px;line-height:36px;font-weight:700}
+.wall-cal-wd{font-size:11px;font-weight:800;padding-bottom:4px;color:#1d2b3a}
+.wall-clock{position:absolute;left:280px;top:10px;filter:drop-shadow(3px 3px 0 #1d2b3a)}
+.wall-clock.late{animation:wiggle .5s ease-in-out infinite}
+.sign{min-width:220px;flex:1 1 240px;max-width:320px}
+.sign-box{min-height:56px;display:flex;align-items:flex-end}
+.sign-empty{font-size:13px;font-weight:700;color:#6f7f8c;padding-bottom:6px}
+.sign-line{width:100%}
+.sig-draw{animation:sigDraw 1.4s steps(16,end) both}
+@keyframes sigDraw{from{clip-path:inset(-20% 100% -20% 0)}to{clip-path:inset(-20% -5% -20% 0)}}
+.paper-sig{display:flex;align-items:center;gap:12px;padding:6px 10px 0;flex-wrap:wrap}
+.paper-sig svg{max-width:240px}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:#c2185b;text-decoration:underline;cursor:pointer}
+.slot.any.edit{border-color:rgba(194,24,91,.45)}
+.pokeA{animation:pokeA .6s cubic-bezier(.3,1.6,.5,1)}.pokeB{animation:pokeB .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pokeA{0%,100%{transform:none}30%{transform:translateY(-14px) rotate(-8deg) scale(1.08)}60%{transform:translateY(0) rotate(6deg)}}
+@keyframes pokeB{0%,100%{transform:none}30%{transform:translateY(-14px) rotate(8deg) scale(1.08)}60%{transform:translateY(0) rotate(-6deg)}}
+.poke-pop{position:absolute;z-index:6;transform:translateX(-50%);white-space:nowrap;padding:4px 12px;border:3px solid #1d2b3a;border-radius:14px;background:#fff;box-shadow:3px 3px 0 #1d2b3a;font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:18px;pointer-events:none;animation:pokePop 1.4s ease-out both}
+@keyframes pokePop{0%{opacity:0;margin-top:14px}15%{opacity:1;margin-top:0}75%{opacity:1}100%{opacity:0;margin-top:-18px}}
+.disco-lights{position:absolute;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 20% 30%,rgba(239,91,147,.5) 0 70px,rgba(0,0,0,0) 72px),radial-gradient(circle at 75% 25%,rgba(255,216,77,.55) 0 60px,rgba(0,0,0,0) 62px),radial-gradient(circle at 50% 70%,rgba(52,184,181,.5) 0 80px,rgba(0,0,0,0) 82px),rgba(29,43,58,.28);animation:disco .5s steps(2,end) infinite}
+@keyframes disco{50%{background-position:140px 60px,-120px 80px,80px -100px,0 0}}
+.timeup-note{padding:10px 14px;border:3px solid #1d2b3a;border-radius:14px;background:#ffe0ec;font-weight:800;font-size:15px}
+.bonus-note{padding:10px 14px;border:3px solid #1d2b3a;border-radius:14px;background:#d3f4f1;font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:17px}
+.new-items{padding:12px 14px;border:3px solid #1d2b3a;border-radius:16px;background:#fff4c2;box-shadow:4px 4px 0 #1d2b3a;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.new-title{font-size:20px;font-weight:700}
+.new-row{display:flex;flex-wrap:wrap;gap:10px}
+.new-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:800;max-width:90px;text-align:center}
+.shop-card.locked{background:#eef1f0;border-style:dashed;box-shadow:4px 4px 0 #9fb8ac}
+.shop-card.locked .shop-preview{filter:grayscale(1);opacity:.45}
+.shop-card.locked .shop-name,.shop-card.locked .shop-price{color:#6f7f8c}
+.tag.locked{background:#e3eee8}
+.event-art{display:flex;flex-direction:column;align-items:center;gap:6px}
+.event-art .bo-box{max-width:220px}
+.food{margin-top:-40px}
+.meeting-card{width:100%;max-width:880px;padding:clamp(18px,3vw,30px);display:flex;flex-direction:column;gap:20px}
+.whiteboard{border:4px solid #1d2b3a;border-radius:16px;background:#fff;padding:18px 22px;min-height:190px;box-shadow:inset 0 0 0 6px #eefaf4}
+.board-title{font-size:clamp(24px,4vw,34px);font-weight:700;color:#0b7477;line-height:1.1}
+.board-sub{font-family:'Caveat',cursive;font-size:24px;color:#c2185b;margin-top:6px}
+.meeting-bottom{display:grid;gap:18px;align-items:end}
+@media (min-width:640px){ .meeting-bottom{grid-template-columns:170px 1fr} }
+.small-bo{max-width:170px}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+
+</style>
+</head>
+<body>
+<div id="app" class="app"></div>
+<noscript><p style="padding:24px;font:700 18px Nunito,system-ui,sans-serif">Kontraktkontoret kræver JavaScript. Slå det til i din browser for at spille.</p></noscript>
+<script>
+/* Et lille grundlag, så spillets logik kan køre uden rammeværk */
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(patch) {
+    Object.assign(this.state, typeof patch === 'function' ? patch(this.state) : patch);
+    scheduleRender();
+  }
+}
+
+/* ============================================================
+   SPILLETS DATA OG LOGIK (kunder, replikker, butik, Chef Bo)
+   ============================================================ */
+const SERVICES = [
+  { id: 'Hundeluftning', d: 'M8.5 14.5c0-2 1.6-3.5 3.5-3.5s3.5 1.5 3.5 3.5c0 1.8-1.6 3-3.5 3s-3.5-1.2-3.5-3zM4 10a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0zM8 6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0zM12.4 6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0zM16.4 10a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0z' },
+  { id: 'Kagebagning', d: 'M4 20h16M5 20v-7h14v7M5 16c2.3 1.5 4.7 1.5 7 0s4.7-1.5 7 0M12 13v-3M12 7.5c-1.2-1-.4-2.6 0-3.5.4.9 1.2 2.5 0 3.5z' },
+  { id: 'Cykelreparation', d: 'M2.5 16a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0zM14.5 16a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0zM6 16l3.5-7h6l2.5 7M9.5 9l3 7M8 6h3' },
+  { id: 'Havearbejde', d: 'M5 19c0-8 5-13 14-14 0 9-5 14-14 14zM5 19l8-8' },
+  { id: 'Lektiehjælp', d: 'M4 5c3-1 5.5-.7 8 1.2v13c-2.5-1.9-5-2.2-8-1.2zM20 5c-3-1-5.5-.7-8 1.2v13c2.5-1.9 5-2.2 8-1.2z' },
+  { id: 'Ansigtsmaling', d: 'M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 1.6-1.9-.5-1.1.2-2.1 1.4-2.1H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10zM7.5 12h.01M9.5 7.5h.01M14.5 7.5h.01' }
+];
+const DURATIONS = ['1 uge', '2 uger', '3 uger', '1 måned', '3 måneder'];
+const WEEKS = { '1 uge': 1, '2 uger': 2, '3 uger': 3 };
+const DAY_MIN = 480; /* arbejdsdagen: 08:00–16:00 = 480 spil-minutter */
+const TICK_MS = 500; /* ét spil-minut varer et halvt sekund */
+const DATES = ['2. juni', '5. juni', '9. juni', '12. juni', '16. juni', '20. juni'];
+const PRICES = [50, 100, 150, 200, 250, 300];
+const FIELDS = ['name', 'service', 'duration', 'date', 'price'];
+const LABELS = { name: 'Navn', service: 'Ydelse', duration: 'Varighed', date: 'Startdato', price: 'Pris' };
+
+const FIRST = ['Maja', 'Oskar', 'Sofie', 'Ahmed', 'Freja', 'Viggo', 'Ella', 'Noah', 'Liva', 'Bent', 'Alma', 'Emil', 'Ida', 'Karl', 'Laura', 'Malthe', 'Nora', 'Otto', 'Clara', 'Aksel', 'Asta', 'Magnus', 'Olivia', 'William', 'Lærke', 'Frida', 'Johan', 'Esther', 'Anton', 'Selma', 'Yasmin', 'Mikkel', 'Sara', 'Tobias', 'Agnes', 'Rasmus', 'Karla', 'Victor', 'Mathilde', 'Ali', 'Ronja', 'Gudrun', 'Poul', 'Birthe', 'Aya', 'Luna', 'Felix', 'Signe', 'Theo', 'Mille', 'Kasper', 'Josefine', 'Hassan', 'Cecilie', 'Arne', 'Vilma', 'Bjørn', 'Molly', 'Carl', 'Philip'];
+const LAST = ['Møller', 'Holm', 'Lund', 'Bakri', 'Dahl', 'Krag', 'Berg', 'Friis', 'Skov', 'Bøg', 'Jensen', 'Nielsen', 'Hansen', 'Pedersen', 'Andersen', 'Larsen', 'Sørensen', 'Rasmussen', 'Kjær', 'Madsen', 'Kristensen', 'Olsen', 'Thomsen', 'Poulsen', 'Frost', 'Vinther', 'Mikkelsen', 'Østergaard', 'Bjerre', 'Lykke', 'Koch', 'Nørgaard', 'Hald', 'Yilmaz', 'Nguyen', 'Kowalski', 'Ibsen', 'Storm', 'Svendsen', 'Mortensen', 'Brix', 'Juhl', 'Skytte', 'Kirk', 'Ravn'];
+const SHAPES = ['cirkel', 'firkant', 'trekant', 'sekskant', 'kapsel'];
+const BODIES = ['#ef5b93', '#34b8b5', '#ffd84d', '#ffc2d8', '#a9e8e3', '#fff4c2', '#7fd6a8'];
+const ACCS = ['sloejfe', 'briller', 'blomst', 'ingen'];
+
+const HELLO = {
+  'Hundeluftning': [
+    'Min hund Pølse har spist mine sokker igen. Han SKAL ud at gå!',
+    'Min puddel hedder Hr. Fluffy, og han hader regn. Og sne. Og vind.',
+    'Jeg har en hund, der tror, den er en kat. Den skal lære at gå tur.',
+    'Min gravhund er så lang, at den skal luftes i to omgange.',
+    'Hunden har gravet et hul i stuen. Vi har brug for hjælp. NU.',
+    'Min hund Bølle gør ad postbuddet. Og ad sin egen hale.',
+    'Jeg har arvet tre hunde fra min moster. Og en papegøje, men den kan selv flyve.',
+    'Min hund er bange for duer. Og blade. Og sin egen skygge.'
+  ],
+  'Kagebagning': [
+    'Min mormor fylder 90! Hun vil have en kage, der er højere end hende.',
+    'Jeg vil lære at bage muffins, der ikke eksploderer. Igen.',
+    'Vi har kagekonkurrence på vejen. Jeg SKAL slå nabo nr. 14.',
+    'Min kat har fødselsdag. Hun ønsker sig en kage formet som en fisk.',
+    'Jeg bagte en kage, der smagte af sokker. Jeg har brug for en professionel.',
+    'Skolen holder kagedag, og jeg har lovet 40 cupcakes. Jeg har nul.',
+    'Jeg drømte om en regnbuekage med syv lag. Nu skal den laves i virkeligheden.'
+  ],
+  'Cykelreparation': [
+    'Min cykel siger klonk-klonk-piiiv. Det er vist ikke normalt.',
+    'Jeg er 83 år og har lige købt min første BMX. Den skal have turbo.',
+    'Min kæde falder af, hver gang jeg synger. Og jeg synger MEGET.',
+    'Min ringeklokke spiller kun Lille Peter Edderkop. Baglæns.',
+    'Jeg er punkteret seks gange i denne uge. Det må være en rekord.',
+    'Min cykel har kun ét hjul nu. Det andet stak af.',
+    'Mine bremser hviner som en sur måge. Hjælp!'
+  ],
+  'Havearbejde': [
+    'Min have er en jungle. I går så jeg en snegl med solbriller.',
+    'Mælkebøtterne har taget over. De har lavet deres egen regering.',
+    'Mit græs er så højt, at jeg har mistet min lillebror derude.',
+    'Min have skal dufte af jordbær. Lige nu dufter den af gamle gummistøvler.',
+    'Mine tomater er blå. Er det normalt? Nej vel.',
+    'Der bor et pindsvin i min hæk. Det fortjener et pænere hjem.',
+    'Min nabo siger, min hæk ligner en sur kanin. Den skal klippes.'
+  ],
+  'Lektiehjælp': [
+    'Jeg har brug for hjælp til brøker. Brøker er ikke mine venner.',
+    'Hvad hedder kanelsnegl på engelsk? Det er vigtigt. Meget vigtigt.',
+    'Jeg skal holde oplæg om regnorme. Jeg ved kun, at de er lange.',
+    'Min matematikbog og jeg er uvenner. Vi taler ikke sammen.',
+    'Jeg skal lære alle Danmarks øer udenad. Der er over 400!',
+    'Tysk-lektier! Jeg kan kun sige Kartoffel. Det er ikke nok.',
+    'Jeg skal skrive stil om min drøm. Jeg drømte om en tromle. Det var det.'
+  ],
+  'Ansigtsmaling': [
+    'Jeg holder tigerfest! Alle gæster skal males som tigre. Også min far.',
+    'Til fastelavn vil jeg være en regnbuedrage med glimmer.',
+    'Min lillesøster vil være sommerfugl. Eller dinosaur. Begge dele.',
+    'Vi skal til fodboldkamp, og hele klassen skal være gul og grøn.',
+    'Jeg vil ligne en kat. Men en SEJ kat. Med lyn.',
+    'Min bedstefar vil være pirat til sin fødselsdag. Med guldtand.',
+    'Vi har karneval på skolen, og jeg vil være en jordbær med ansigt.'
+  ]
+};
+const CLOSERS = [
+  'Her er min seddel. Tak for hjælpen!',
+  'Alt står på sedlen. Jeg har skrevet med min pæneste skrift!',
+  'Sedlen har det hele. Jeg venter her og vipper med tæerne.',
+  'Her er min bestilling. Jeg har kun spildt lidt kakao på den.',
+  'Tak! Jeg har skrevet det hele ned. Tror jeg.',
+  'Kig på sedlen — den er lidt krøllet, men den er rigtig.',
+  'Min mor hjalp mig med sedlen. Hun er meget grundig.',
+  'Sedlen er klar! Jeg har tegnet et hjerte på bagsiden.'
+];
+const TYPO_LINES = [
+  'PS: Min lillebror skrev sedlen. Mit navn staves {navn} — {spell}!',
+  'Ups, der er en stavefejl på sedlen! Jeg hedder {navn}. Det staves {spell}.',
+  'Min hund har tygget i sedlen. Mit navn er {navn}: {spell}!',
+  'Min printer er lidt skør. Det rigtige navn er {navn} — {spell}.',
+  'Kan du stave til {navn}? Det er {spell}. Sedlen tager fejl!',
+  'Hov, jeg skrev mit eget navn forkert. Det er {navn}, altså {spell}.',
+  'Min farfar skrev sedlen uden briller. Jeg hedder {navn}: {spell}!'
+];
+const CHANGE_LINES = {
+  duration: ['Åh, vent! Jeg har skiftet mening — skriv {v} i stedet!', 'Hmm, min mor siger, det skal være {v}. Kan du rette det?', 'Nej, vent! {V}. Det er bedre. Helt sikkert. Næsten.', 'Ups, jeg læste min kalender på hovedet. Det skal være {v}!'],
+  date: ['Ups! Jeg skal til tandlæge den dag. Kan vi starte {v} i stedet?', 'Åh nej, min kusine har bryllup! Kan vi sige {v}?', 'Vent — min hamster har fødselsdag den dag. Start {v} i stedet!', 'Hov, den dag er jeg på lejrskole. {V} er bedre!'],
+  price: ['Hov, jeg fandt flere penge i lommen! Skriv {v} i stedet.', 'Min sparegris var tykkere, end jeg troede. Gør det til {v}!', 'Ups, jeg har kun {v}. Kan det lade sig gøre?', 'Min bedstemor gav mig lommepenge! Skriv {v}.'],
+  service: ['Hmm… ved nærmere eftertanke vil jeg hellere have {v}!', 'Vent! Jeg har skiftet mening. Jeg vil have {v} i stedet.', 'Ups, jeg sagde forkert. Det var {v}, jeg mente!', 'Min ven siger, at {v} er meget sjovere. Lad os tage det!']
+};
+const KAJ_LINES = [
+  'Psst! Jeg er HELT sikker på, at kunden sagde {v}. Tror jeg. Måske.',
+  'Hej! Jeg hørte det godt nok: {v}. Jeg har meget store ører.',
+  'Skriv {v}! Det sagde kunden. Eller også var det radioen.',
+  'Kaj her! Min mavefornemmelse siger {v}. Min mave tager næsten aldrig fejl.',
+  'Jeg lurede lidt … det var vist {v}? Jeg har ikke mine briller på.',
+  'Tip fra en pro: {v}. Stol på mig, jeg har været her i to uger.'
+];
+
+const DAYS = [
+  { title: 'Første arbejdsdag', tip: 'Velkommen! Læs kundens seddel og skriv det hele ind i kontrakten. Og hold øje med uret: vi møder kl. 8 og har fri kl. 16!' },
+  { title: 'Stavefejl-tirsdag', tip: 'Pas på! Nogle kunder har fået lillebror til at skrive sedlen. Læs, hvordan de SELV staver deres navn.' },
+  { title: 'Skifte-mening-onsdag', tip: 'I dag skifter kunderne mening midt i det hele. Vent til kunden er færdig med at snakke, før du sender!' },
+  { title: 'Kollega-Kaj-torsdag', tip: 'Kollega Kaj vil så gerne hjælpe. Men Kaj hører ikke så godt. Stol på kunden — ikke på Kaj.' },
+  { title: 'Fredags-kaos', tip: 'Fredag! Stavefejl, skift af mening OG Kaj. Alt på én gang. Jeg har taget mine lykkesokker på.' },
+  { title: 'Regne-mandag', tip: 'Nyt i dag: Nogle kunder siger, hvad de betaler PR. UGE. Så skal du selv regne prisen ud. 50 kr om ugen i 3 uger = 150 kr!' }
+];
+const OVERTIME = [
+  { title: 'Overtid!', tip: 'Overtid! Nu går det stærkt. Flere kunder, flere tricks.' },
+  { title: 'Lilla stempel-dag', tip: 'Jeg har fået en ny stempelpude. Den er lilla. Lad os bruge den på MANGE kontrakter!' },
+  { title: 'Kaffe-Kaj-dag', tip: 'Kaj har drukket tre kopper kaffe. Pas godt på, hvad han siger!' },
+  { title: 'Kø-kaos', tip: 'Kunderne står i kø helt ned ad gaden. Jeg har bestilt kanelsnegle til alle.' },
+  { title: 'Fuldmåne-dag', tip: 'Der er fuldmåne. Kunderne skifter mening dobbelt så meget. Hold ørerne stive!' },
+  { title: 'Regnvejrsdag', tip: 'Det regner, så ALLE vil have noget lavet. Læs grundigt — også det med småt.' },
+  { title: 'Gunnars fødselsdag', tip: 'Gunnar fylder 3! Vi fejrer det med perfekte kontrakter. Og fiskefoder.' }
+];
+
+const MATH_LINES = [
+  'Jeg betaler {r} om ugen. Så må du selv regne ud, hvad det bliver i alt!',
+  'Prisen er {r} pr. uge. Matematik er ikke min stærke side — er det din?',
+  'Jeg giver {r} for hver uge. Hvor meget bliver det så? Du er eksperten!',
+  'Det koster {r} om ugen, ikke? Husk at gange med antal uger!',
+  'Min mor siger: {r} om ugen, og ikke en krone mere. Hvad bliver det i alt?'
+];
+const NO_MATH = ['Prisen passer ikke! Husk: pris pr. uge gange antal uger.', 'Regnefejl! Min lommeregner siger noget andet. Gang ugeprisen med antal uger.', 'Hov! {V} er ikke den samlede pris. Tæl ugerne!'];
+const WEEKDAYS = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag'];
+const MONTHS = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december'];
+function dayDate(day) {
+  const i = day - 1, d = new Date(2026, 5, 1 + Math.floor(i / 5) * 7 + (i % 5));
+  return { weekday: WEEKDAYS[i % 5], date: d.getDate(), month: MONTHS[d.getMonth()] };
+}
+function clockText(m) { const t = 8 * 60 + Math.min(m, DAY_MIN); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+
+const SIG_FONTS = ["'Caveat', cursive", "'Permanent Marker', cursive", "'Gochi Hand', cursive", "'Indie Flower', cursive", "'Patrick Hand', cursive"];
+const SIG_COLORS = ['#1d2b3a', '#0b7477', '#c2185b'];
+const SIG_FLOURISH = [
+  'M4 52 Q80 66 150 48 T292 44',
+  'M10 54 C60 78 90 18 120 48 S180 78 200 44 S260 28 290 52',
+  'M8 56 L40 44 L70 58 L100 42 L130 58 L160 42 L190 58 L220 42 L250 58 L286 46',
+  'M262 26 a10 10 0 1 1 -1 0 a6 6 0 1 0 1 -1 M10 56 H246',
+  'M268 20 c-6 -10 -20 -2 -12 8 l12 12 l12 -12 c8 -10 -6 -18 -12 -8 M10 56 Q140 66 250 50',
+  'M262 12 l5 11 l12 1 l-9 8 l3 12 l-11 -6 l-11 6 l3 -12 l-9 -8 l12 -1 z M8 58 H250',
+  'M10 54 H282 M34 62 H258',
+  'M8 50 q20 -30 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0'
+];
+function rnd(a, b) { return a + Math.random() * (b - a); }
+function r1(n) { return Math.round(n * 10) / 10; }
+/* Krusedulle-byggeklodser til underskrifter (viewBox 300 × 72, må gerne gå ud over kanten) */
+const SIG_PARTS = {
+  loops(x0, x1, y) {
+    let d = 'M' + r1(x0) + ' ' + r1(y), x = x0;
+    while (x < x1) { const w = rnd(22, 38), h = rnd(26, 48); d += ' c' + r1(w) + ' ' + r1(-h) + ' ' + r1(-w * 0.95) + ' ' + r1(-h) + ' ' + r1(w * 0.55) + ' 0'; x += w * 0.55; }
+    return d;
+  },
+  spiral(cx, cy) {
+    const turns = rnd(2.2, 3.4), pts = [];
+    for (let t = 0; t <= turns * Math.PI * 2; t += 0.35) { const r = 2 + t * rnd(1.9, 2.3); pts.push(r1(cx + Math.cos(t) * r) + ' ' + r1(cy + Math.sin(t) * r * 0.8)); }
+    return 'M' + pts.join(' L');
+  },
+  swoosh() {
+    const y = rnd(54, 66);
+    return 'M' + r1(rnd(0, 20)) + ' ' + r1(y) + ' C' + r1(rnd(90, 140)) + ' ' + r1(y + rnd(14, 26)) + ' ' + r1(rnd(220, 260)) + ' ' + r1(rnd(10, 30)) + ' ' + r1(rnd(285, 305)) + ' ' + r1(rnd(34, 48)) +
+      ' C' + r1(rnd(320, 340)) + ' ' + r1(rnd(56, 66)) + ' ' + r1(rnd(240, 270)) + ' ' + r1(rnd(80, 92)) + ' ' + r1(rnd(140, 180)) + ' ' + r1(rnd(66, 74)) +
+      ' C' + r1(rnd(60, 90)) + ' ' + r1(rnd(56, 64)) + ' ' + r1(rnd(20, 40)) + ' ' + r1(rnd(76, 86)) + ' ' + r1(rnd(70, 100)) + ' ' + r1(rnd(80, 88));
+  },
+  zigzag() {
+    let d = 'M' + r1(rnd(6, 20)) + ' ' + r1(rnd(34, 46)), x = 20;
+    const amp = rnd(14, 26);
+    d += ' Q' + r1(x + 10) + ' ' + r1(40 - amp) + ' ' + r1(x + 20) + ' 40';
+    for (x += 20; x < 280; x += rnd(16, 26)) d += ' T' + r1(x) + ' ' + r1(40 + rnd(-6, 6));
+    return d;
+  },
+  capital() {
+    const x = rnd(8, 30);
+    return 'M' + r1(x + 20) + ' ' + r1(rnd(62, 70)) + ' C' + r1(x - 40) + ' ' + r1(rnd(40, 55)) + ' ' + r1(x - 10) + ' ' + r1(rnd(-30, -14)) + ' ' + r1(x + 26) + ' ' + r1(rnd(0, 8)) +
+      ' C' + r1(x + 56) + ' ' + r1(rnd(14, 24)) + ' ' + r1(x + 10) + ' ' + r1(rnd(50, 60)) + ' ' + r1(x - 14) + ' ' + r1(rnd(40, 48));
+  },
+  underloop() {
+    const y = rnd(58, 66);
+    return 'M' + r1(rnd(10, 30)) + ' ' + r1(y) + ' L' + r1(rnd(150, 190)) + ' ' + r1(y + rnd(-3, 3)) + ' c' + r1(rnd(24, 34)) + ' ' + r1(rnd(-4, 2)) + ' ' + r1(rnd(26, 36)) + ' ' + r1(rnd(24, 32)) + ' ' + r1(rnd(4, 10)) + ' ' + r1(rnd(24, 30)) +
+      ' s' + r1(rnd(-20, -10)) + ' ' + r1(rnd(-30, -22)) + ' ' + r1(rnd(10, 20)) + ' ' + r1(rnd(-34, -26)) + ' L' + r1(rnd(290, 310)) + ' ' + r1(y - rnd(6, 14));
+  },
+  heart(x, y) { return 'M' + r1(x) + ' ' + r1(y) + ' c-7 -12 -24 -2 -14 10 l14 14 l14 -14 c10 -12 -7 -22 -14 -10'; },
+  star(x, y) { return 'M' + r1(x) + ' ' + r1(y) + ' l5 11 l12 1 l-9 8 l3 12 l-11 -6 l-11 6 l3 -12 l-9 -8 l12 -1 z'; },
+  dot(x, y) { return 'M' + r1(x - 4) + ' ' + r1(y) + ' a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0 M' + r1(x - 8) + ' ' + r1(y - 8) + ' a9 9 0 1 0 17 0 a9 9 0 1 0 -17 0'; },
+  bang(x, y) { return 'M' + r1(x) + ' ' + r1(y - 28) + ' l-3 22 M' + r1(x - 4) + ' ' + r1(y + 4) + ' a2.5 2.5 0 1 0 5 0 a2.5 2.5 0 1 0 -5 0 M' + r1(x + 12) + ' ' + r1(y - 24) + ' l-3 22 M' + r1(x + 8) + ' ' + r1(y + 6) + ' a2.5 2.5 0 1 0 5 0 a2.5 2.5 0 1 0 -5 0'; }
+};
+function makeSigPath() {
+  const P = SIG_PARTS, parts = [];
+  const pool = ['loops', 'spiral', 'swoosh', 'zigzag', 'capital', 'underloop'].sort(() => Math.random() - 0.5);
+  const n = 2 + Math.floor(Math.random() * 2);
+  pool.slice(0, n).forEach(k => {
+    if (k === 'loops') parts.push(P.loops(rnd(10, 120), rnd(190, 290), rnd(52, 66)));
+    else if (k === 'spiral') parts.push(P.spiral(rnd(230, 280), rnd(22, 40)));
+    else parts.push(P[k]());
+  });
+  const orn = pick(['heart', 'star', 'dot', 'bang', 'heart', 'none']);
+  if (orn !== 'none') parts.push(P[orn](rnd(270, 300), rnd(8, 22)));
+  return parts.join(' ');
+}
+const SIG_TILTS = [[-10, -20], [-4, -12], [3, -24], [-8, 4], [6, -8], [-14, -18]];
+function makeSig(navn) {
+  const parts = navn.split(' '), first = parts[0], last = parts[parts.length - 1];
+  const text = pick([navn, first + ' ' + last[0] + '.', first[0] + '. ' + last[0] + '.', first.toUpperCase(), navn.toLowerCase(), first + '!!', first[0] + '~' + last, first]);
+  const fi = Math.floor(Math.random() * SIG_FONTS.length), ci = Math.floor(Math.random() * SIG_COLORS.length), ti = Math.floor(Math.random() * SIG_TILTS.length);
+  const si = text.length <= 4 ? 3 : text.length <= 8 ? 2 : text.length <= 12 ? 1 : 0;
+  const tilt = SIG_TILTS[ti][0], skew = SIG_TILTS[ti][1];
+  return {
+    text, font: SIG_FONTS[fi], color: SIG_COLORS[ci], tilt, skew, fl: makeSigPath(),
+    size: [34, 40, 46, 52][si],
+    tr: 'rotate(' + tilt + ' 150 36) skewX(' + skew + ')',
+    cls: 'sgname sgf-' + fi + ' sgc-' + ci + ' sgs-' + si + ' sgt-' + ti
+  };
+}
+
+const GIFTS = {
+  Mandag: { id: 'morgenmad', name: 'Morgenmad', line: 'Godmorgen! Jeg har købt rundstykker og ost til ALLE. Vil du med i kantinen? Det tager lidt tid…' },
+  Tirsdag: { id: 'kakao', name: 'Varm kakao', line: 'Tirsdags-kakao med flødeskum! Skal vi lige drikke en kop sammen?' },
+  Onsdag: { id: 'snegl', name: 'Onsdagssnegl', line: 'Det er onsdag! Og onsdag betyder… ONSDAGSSNEGL! Den er på størrelse med et cykelhjul.' },
+  Torsdag: { id: 'is', name: 'Is fra fryseren', line: 'Jeg fandt is i fryseren! Den er kun lidt gammel. Vil du have en?' },
+  Fredag: { id: 'kage', name: 'Fredagskage', line: 'FREDAGSKAGE! Jeg har selv bagt den. Den er kun lidt brændt på den ene side.' }
+};
+const GIFT_COST = 40;
+const GIFT_YES = ['Mums! Det var hyggeligt. Nu tilbage til skranken — kunderne venter!', 'Nam nam! Du får en bonusstjerne for godt humør.', 'Hyggeligt! Gunnar fik krummerne.'];
+const GIFT_NO = ['Nåh… så spiser jeg den selv. Alle sammen.', 'Okay! Gunnar får din.', 'Travlt? Det kalder jeg PROAKTIVITET! Det er P’et i P.A.P.I.R.!'];
+const AGENDA = [
+  ['Vores værdigrundlag P.A.P.I.R.', 'Vi skal lige gennemgå P. Igen. P står for Passion. Eller Papir. Måske begge dele!'],
+  ['Kaffemaskinens navn', 'Skal kaffemaskinen hedde Karsten eller Kirsten? Det er en MEGET vigtig beslutning.'],
+  ['Synergi', 'Synergi er, når 1 + 1 bliver 3. Eller 11. Jeg er ikke helt sikker.'],
+  ['Kvartalets vigtigste tal', 'Vi har spist 147 kanelsnegle i dette kvartal. Det er ny rekord!'],
+  ['Ny stempelpolitik', 'Fra i dag skal alle stempler stemples MED STIL. Sådan her: BAM!'],
+  ['Gunnars trivsel', 'Gunnar har svømmet 400 runder i dag. Han virker glad. Tror jeg.'],
+  ['Kajs feriebilleder', 'Kaj viser sine 47 feriebilleder. Alle sammen af den samme sten.'],
+  ['Strategi 2030', 'Planen: Flere stempler. Færre tirsdage. Og en rutsjebane i kantinen.'],
+  ['Den forsvundne hæftemaskine', 'Hvem har taget den gule hæftemaskine? Ingen? …Nå, den sidder på mit slips.'],
+  ['Innovation', 'Kan papir være rundt? Jeg har bestilt et forsøg. Det ankommer i en firkantet kasse.'],
+  ['Møde om møder', 'Vi skal planlægge næste møde. Det handler om det her møde.'],
+  ['Fredags-slips', 'Afstemning: Stribet eller prikket slips på fredag? Jeg stemmer på begge dele.'],
+  ['Kundetilfredshed', 'En kunde sagde “fint nok”. Det skal trykkes på en plakat!'],
+  ['Brainstorm', 'Hvad rimer på kontrakt? Jeg har kun fundet “kontrakt-or”. Det er en maskine.'],
+  ['Mission og vision', 'Vores vision er at have en mission. Vores mission er at have en vision. Enkelt!']
+];
+const REPLIES = ['Nik klogt', 'Sig: “Spændende!”', 'Skriv noter', 'Kig diskret på uret', 'Sig: “Helt enig!”', 'Rynk panden tænksomt', 'Klap høfligt'];
+const MEETING_START = 10, MEETING_POINT = 15;
+const TIMEUP_NO = ['Klokken blev fire! Selv Gunnar er gået hjem. Prøv dagen igen!', 'Fyraften! Resten af kunderne kommer igen en anden dag. Måske.', 'Uret ringede! Næste gang: lidt mindre kage og lidt flere kontrakter.'];
+const FOOD = {
+  snegl: '<circle cx="50" cy="56" r="34" fill="#e0a45a" stroke="#1d2b3a" stroke-width="3"/><path d="M50 56m-4 0a4 4 0 1 1 8 0a10 10 0 1 1 -18 0a16 16 0 1 1 30 0a22 22 0 1 1 -42 0" fill="none" stroke="#a0612a" stroke-width="4" stroke-linecap="round"/><path d="M26 44q10 -8 18 2t18 -4t16 6" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>',
+  morgenmad: '<ellipse cx="50" cy="80" rx="44" ry="10" fill="#fff" stroke="#1d2b3a" stroke-width="3"/><path d="M14 70q0 -34 36 -34t36 34z" fill="#e0a45a" stroke="#1d2b3a" stroke-width="3"/><path d="M32 52l3 -2M46 46l3 -1M60 50l3 1M40 60l3 -1M56 60l3 0" stroke="#fff4c2" stroke-width="3" stroke-linecap="round"/><path d="M62 74l22 -8v10z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="2"/>',
+  kakao: '<path d="M22 34h48v44a10 10 0 0 1 -10 10h-28a10 10 0 0 1 -10 -10z" fill="#c2185b" stroke="#1d2b3a" stroke-width="3"/><path d="M70 44h6a10 10 0 0 1 0 20h-6" fill="none" stroke="#1d2b3a" stroke-width="5"/><ellipse cx="46" cy="34" rx="24" ry="6" fill="#8a4b2a" stroke="#1d2b3a" stroke-width="3"/><circle cx="40" cy="30" r="7" fill="#fff" stroke="#1d2b3a" stroke-width="2"/><circle cx="52" cy="29" r="6" fill="#fff" stroke="#1d2b3a" stroke-width="2"/><path d="M38 18q-4 -6 0 -12M52 16q-4 -6 0 -12" fill="none" stroke="#1d2b3a" stroke-width="2.5" stroke-linecap="round"/>',
+  is: '<path d="M34 50l16 44l16 -44z" fill="#e0a45a" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/><path d="M40 60l18 12M38 52l24 16" stroke="#a0612a" stroke-width="2"/><circle cx="50" cy="40" r="17" fill="#ffc2d8" stroke="#1d2b3a" stroke-width="3"/><circle cx="50" cy="22" r="13" fill="#a9e8e3" stroke="#1d2b3a" stroke-width="3"/><circle cx="50" cy="8" r="5" fill="#c2185b" stroke="#1d2b3a" stroke-width="2"/>',
+  kage: '<ellipse cx="50" cy="88" rx="44" ry="7" fill="#fff" stroke="#1d2b3a" stroke-width="3"/><path d="M12 80v-14l42 -30l36 16v28z" fill="#fff4c2" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/><path d="M12 66l42 -30l36 16" fill="none" stroke="#c2185b" stroke-width="6" stroke-linecap="round"/><path d="M12 72h78" stroke="#ffc2d8" stroke-width="5"/><circle cx="56" cy="28" r="7" fill="#c2185b" stroke="#1d2b3a" stroke-width="2.5"/><path d="M56 21q4 -8 10 -10" fill="none" stroke="#0b7477" stroke-width="2.5"/>'
+};
+const STEP_LINES = [
+  ['Lad os se… lad os se…', 'Så er det kontrakt-tid!', 'Brillerne på… og så læser vi!', 'Aha, en ny kontrakt! Min yndlingsting.', 'Stille, alle sammen. Chefen læser.', 'Uh, den er stadig varm fra printeren!'],
+  ['Hmmm… hmmmmm…', 'Mmmm-hmmm…', 'Øhm… ja… øhmmm…', 'Hmm-hmm-hmmmm…', 'Interessant… meget interessant…', 'Aha… aha… AHA… nej, bare aha.'],
+  null,
+  ['Hmmmmmmmmmmmm…!', 'Nu kommer det… nu kommer det…!', 'Jeg kan mærke det i overskægget…!', 'Trommehvirvel, tak…!', 'Uuuh, spændende… spændende…!', 'Mine tæer krøller af spænding…!'],
+  ['…', '… … …', '*tager stemplet*', '*holder vejret*', '*kigger på dig*', '*sveder lidt*']
+];
+const ASIDES = [
+  'Husk vores værdigrundlag: P.A.P.I.R. Passion, Ansvar, Pingviner… nej, vent.',
+  'Den her kontrakt er meget P.A.P.I.R.-agtig. Især I’et.',
+  'Er den her kontrakt synergi-optimeret? Jeg ved faktisk ikke, hvad det betyder.',
+  'Jeg holder lige et kort strategimøde med mig selv. …Færdig.',
+  'Lad os lige tage den offline. …Nu er den online igen.',
+  'Er det her en kageplet? …Nej, det er mit eget fingeraftryk.',
+  'Et øjeblik. Mine briller sidder på hovedet.',
+  'Gunnar, hvad siger du? …Blub. Tak, Gunnar.',
+  'Jeg snuser lige til papiret. Det dufter af… kontrakt.',
+  'Jeg læser lige med mit gode øje. Det venstre. Nej, det højre.',
+  'Vent, jeg skal lige nyse. …Nej. Den gik over.',
+  'Har nogen set min kanelsnegl? Jeg lagde den her i tirsdags.',
+  'Jeg læser altid kontrakter baglæns. Det er mere spændende.',
+  'Mit overskæg kilder. Det betyder enten regn eller en god kontrakt.',
+  'Uha, flot håndskrift! Eller er det mit eget krusedulleri?',
+  'Jeg holder den lige op mod lyset. For en sikkerheds skyld.',
+  'Min kaffe er kold. Men kontrakten er varm!',
+  'Vidste du, at jeg engang stemplede en banan? Den blev godkendt.',
+  'Jeg tæller lige bogstaverne. Et, to, mange.',
+  'Hmm, papiret er lidt krøllet. Ligesom mit hår.',
+  'Et sekund — jeg skal lige vinke til Gunnar. Hej, Gunnar!'
+];
+const BO_YES = ['GODKENDT! Hihihi!', 'STEMPEL! Bum-bum!', 'JAAA! GODKENDT!', 'Hurra-hej-hop!', 'Bingo-bango-GODKENDT!'];
+const BO_NO = ['Bææh! RETUR!', 'Øv-bøv! RETUR!', 'Hov-hov! RETUR!', 'Nix pille! RETUR!', 'Uh-oh! RETUR!'];
+const YES = [
+  'FANTASTISK! Jeg giver dig en high-five med begge fødder!',
+  'Perfekt! Min guldfisk Gunnar nikker også. Tror jeg.',
+  'STEMPEL-TID! Den bedste kontrakt siden tirsdag!',
+  'Wow. Jeg er så glad, at mit overskæg krøller helt af sig selv.',
+  'Godkendt! Det fejrer jeg med kanelsnegl nummer fjorten.',
+  'Hurra! Jeg danser en lille chef-dans. Kig ikke.',
+  'Godkendt med stort G! Og stort O. Og alle de andre bogstaver.',
+  'Den her rammer jeg ind og hænger op på væggen!',
+  'Min stempelpude græder af glæde!',
+  'Perfekt! Du får en guldstjerne. Den er af chokolade.',
+  'Så god, at jeg må synge. Laaaa! Okay, færdig.',
+  'Ja ja JA! Jeg laver en kolbøtte. …Av. Men godkendt!',
+  'Gunnar laver saltomortaler i akvariet. Det betyder GODKENDT.',
+  'Fejlfri! Du er ansat. Igen. Du var allerede ansat. Men igen!'
+];
+const NO = {
+  name: ['Øhh… hvem er “{v}”? Tjek lige stavningen af navnet!', 'Navnet er stavet som et nys! Tjek bogstaverne.', '“{v}”? Det lyder som en kage, ikke som kunden!', 'Hov, navnet driller! Læs, hvad kunden selv sagde.'],
+  service: ['Ville kunden virkelig have {v}? Selv min kaffekop ved bedre.', '{V}?! Så kunne jeg lige så godt stemple en dinosaur.', 'Ydelsen er forkert! Kunden ville ikke have {v}.', 'Mit overskæg rynker. Det var vist ikke {v}, kunden ville have.'],
+  duration: ['Varigheden er skæv som mit slips! Hvor længe var det nu?', '{V}? Mit ur løb baglæns af skræk!', 'Hov, varigheden passer ikke. Læs sedlen igen!', 'Det er enten for kort eller for langt. Mest forkert.'],
+  date: ['Den dato passer ikke! Min kalender begyndte at græde.', '{V}? Den dag holder jeg fri med Gunnar!', 'Datoen er forkert! Tjek sedlen — og hvad kunden sagde.', 'Min kalender siger nej. Den siger sjældent nej.'],
+  price: ['Prisen er forkert! Min lommeregner begyndte at synge opera.', '{V}? Så bliver min sparegris sur!', 'Hov, prisen driller! Hvad skulle kunden betale?', 'Pengene passer ikke! Min tegnebog fik hikke.']
+};
+const KAJ_NO = [
+  'Har du lyttet til Kaj igen? Kaj tror også, at pingviner kan flyve.',
+  'Aha, Kaj-fælden! Kaj hører kun halvdelen. Den forkerte halvdel.',
+  'Kaj har været på spil! Han tror også, at jeg er 25.',
+  'Kaj mener det godt. Men Kaj tager fejl. Hver gang.'
+];
+const DONE_YES = [
+  'Du får min guld-kaffekop. Den er ikke til låns. Jo, den er.',
+  'Sikke en dag! Der er kage. Den er lidt mast, men kage er kage.',
+  'Du er månedens medarbejder! Undskyld, Gunnar.',
+  'Så mange stempler! Min arm er helt træt. På den gode måde.',
+  'Jeg er så stolt, at mit overskæg står helt op!'
+];
+const DONE_NO = [
+  'Det gør ikke noget! Selv jeg stemplede engang min egen næse. Prøv igen!',
+  'Næsten! Selv Gunnar svømmer ind i glasset en gang imellem.',
+  'Tag en kanelsnegl og prøv igen. Det gør jeg altid.',
+  'Rom blev ikke bygget på én dag. Kontrakter heller ikke!'
+];
+
+function nextOf(list, v, step) { const i = list.indexOf(v); return list[(i + (step || 1) + list.length * 4) % list.length]; }
+function norm(s) { return String(s || '').trim().replace(/\s+/g, ' ').toLowerCase(); }
+function fmtKr(n) { return Number(n).toLocaleString('da-DK') + ' kr'; }
+function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+function cap(s) { s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
+function fill(t, v) { return t.replace(/\{v\}/g, v).replace(/\{V\}/g, cap(v)); }
+function valText(field, v) { if (v === null || v === undefined || v === '') return '—'; if (field === 'price') return v + ' kr'; if (field === 'service') return String(v).toLowerCase(); return String(v); }
+function otherThan(list, v) { return pick(list.filter(x => x !== v)); }
+
+function misspell(name) {
+  const rules = [
+    s => s.replace(/([a-zæøå])\1/i, '$1'),
+    s => s.replace(/\bK(?=[aeiouå])/, 'C'),
+    s => s.replace(/\bC/, 'K'),
+    s => s.replace(/aa/, 'å'),
+    s => s.replace(/ø/, 'ö'),
+    s => s.replace(/i(?=[a-zæøå])/, 'y'),
+    s => s.replace(/y/, 'i'),
+    s => s.replace(/e(?=n\b|r\b)/, 'æ'),
+    s => s.replace(/sen\b/, 'son'),
+    s => s.replace(/([aeiouyæøå])([lnrst])(?=[aeiouyæøå])/, '$1$2$2'),
+    s => s.replace(/h\b/, ''),
+    s => s.replace(/d\b/, 'dt'),
+    s => s.replace(/ph/i, 'f'),
+    s => s.replace(/v/, 'w')
+  ];
+  const order = rules.slice().sort(() => Math.random() - 0.5);
+  for (const r of order) { const t = r(name); if (t !== name && t.length > 2) return t; }
+  return name.replace(/(.)$/, '$1$1');
+}
+function spellDiff(navn, typo) {
+  const a = navn.split(' '), b = typo.split(' ');
+  let w = a[a.length - 1];
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) { w = a[i]; break; }
+  return w.toUpperCase().split('').join('-');
+}
+
+function twistsFor(day, i) {
+  if (day === 1) return [];
+  if (day === 2) return i === 0 ? [] : ['typo'];
+  if (day === 3) return i === 0 ? ['typo'] : ['change'];
+  if (day === 4) return i === 0 ? ['change'] : ['kaj'];
+  if (day === 5) return [['typo'], ['change'], ['kaj'], ['typo', 'kaj']][i] || ['change'];
+  if (day === 6) return i < 2 ? ['math'] : ['math', pick(['typo', 'kaj'])];
+  const all = ['typo', 'change', 'kaj', 'math'];
+  const first = pick(all);
+  const out = [first];
+  if (Math.random() < 0.55) out.push(pick(all.filter(t => t !== first)));
+  if (day >= 9 && Math.random() < 0.3) all.forEach(t => { if (!out.includes(t)) out.push(t); });
+  return out;
+}
+
+function buildDay(day, recent) {
+  const n = day <= 4 ? 3 : day === 5 ? 4 : Math.min(6, 4 + Math.floor((day - 5) / 2));
+  const used = new Set(recent || []);
+  const list = [];
+  const svcIds = SERVICES.map(s => s.id);
+  let lastService = null;
+  for (let i = 0; i < n; i++) {
+    let navn = '', guard = 0;
+    do { navn = pick(FIRST) + ' ' + pick(LAST); guard++; } while ((used.has(navn) || used.has(navn.split(' ')[0])) && guard < 60);
+    used.add(navn); used.add(navn.split(' ')[0]);
+    const service = otherThan(svcIds, lastService);
+    lastService = service;
+    const base = {
+      navn, shape: pick(SHAPES), body: pick(BODIES), acc: pick(ACCS),
+      service, duration: pick(DURATIONS), date: pick(DATES), price: pick(PRICES),
+      hello: pick(HELLO[service]), closer: pick(CLOSERS), noteFont: pick(NOTE_FONTS), notePaper: pick(NOTE_PAPERS), sig: makeSig(navn)
+    };
+    const tw = twistsFor(day, i);
+    const t = { typo: tw.includes('typo'), change: tw.includes('change'), kaj: tw.includes('kaj'), math: tw.includes('math') };
+    if (t.math) {
+      base.duration = pick(['1 uge', '2 uger', '3 uger']);
+      const w = WEEKS[base.duration];
+      base.rate = pick([50, 100, 150].filter(r => r * w <= 300));
+      base.price = base.rate * w;
+      base.mathLine = MATH_LINES[Math.floor(Math.random() * MATH_LINES.length)].replace('{r}', base.rate + ' kr');
+    }
+    const correct = { name: navn, service: base.service, duration: base.duration, date: base.date, price: base.price };
+    const c = Object.assign({}, base, { t, correct, noteName: navn });
+    if (t.typo) {
+      c.noteName = misspell(navn);
+      c.typoLine = pick(TYPO_LINES).replace('{navn}', navn).replace('{spell}', spellDiff(navn, c.noteName));
+    }
+    if (t.change) {
+      const f = pick(t.math ? ['duration', 'date', 'service'] : ['duration', 'date', 'price', 'service']);
+      const lists = { duration: t.math ? ['1 uge', '2 uger', '3 uger'].filter(d => base.rate * WEEKS[d] <= 300) : DURATIONS, date: DATES, price: PRICES, service: svcIds };
+      const v = otherThan(lists[f], base[f]);
+      correct[f] = v;
+      if (t.math && f === 'duration') correct.price = base.rate * WEEKS[v];
+      c.changeField = f;
+      c.changeLine = fill(pick(CHANGE_LINES[f]), valText(f, v));
+    }
+    if (t.kaj) {
+      const f = pick(['price', 'date', 'duration'].filter(x => x !== c.changeField));
+      const lists = { duration: DURATIONS, date: DATES, price: PRICES };
+      const v = otherThan(lists[f], correct[f]);
+      c.kajField = f; c.kajVal = v;
+      c.kajLine = fill(pick(KAJ_LINES), valText(f, v));
+    }
+    list.push(c);
+  }
+  return list;
+}
+
+const SLOT_TYPE = { H1: 'haeng', H4: 'haeng', H5: 'haeng', H2: 'haeng', S1: 'staa', S2: 'staa', S3: 'staa', S4: 'staa', D1: 'staa', D2: 'staa', D3: 'staa', D4: 'staa', D5: 'staa', D6: 'staa', B1: 'alle', B2: 'alle', B3: 'alle', H3: 'alle', B4: 'alle', B5: 'alle' };
+const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
+SLOT_NAME.H3 = 'Det røde bånd 4';
+const ITEM_TYPE = { kaktus: 'staa', plante: 'staa', kugle: 'staa', lava: 'staa', kat: 'staa', kop: 'staa', globus: 'staa', tyggegummi: 'staa', guldabe: 'staa', akvarie: 'staa', stork: 'staa', plakat: 'haeng', lys: 'haeng', disko: 'haeng', vaerdier: 'haeng', fladfisk: 'haeng', kukur: 'haeng', neon: 'haeng', medarbejder: 'haeng', radio: 'staa', bamse: 'staa', yoyo: 'haeng', trofae: 'staa', palme: 'staa', dino: 'staa', vimpel: 'haeng' };
+function fits(id, k) { return SLOT_TYPE[k] === 'alle' || SLOT_TYPE[k] === ITEM_TYPE[id]; }
+function slotOf(place, id) { return Object.keys(place).find(k => place[k] === id) || null; }
+function autoPlace(place, id) {
+  const p = Object.assign({}, place);
+  if (slotOf(p, id)) return p;
+  const keys = Object.keys(SLOT_TYPE);
+  const free = keys.find(k => SLOT_TYPE[k] === ITEM_TYPE[id] && !p[k]) || keys.find(k => fits(id, k) && !p[k]);
+  if (free) p[free] = id;
+  return p;
+}
+
+const SHOP = [
+  { id: 'medarbejder', name: 'Månedens medarbejder', price: 0, gift: true, desc: 'Kan ikke købes! Chef Bo giver skiltet, når du har en perfekt dag.' },
+  { id: 'kaktus', name: 'Kaktus Kurt', price: 100, desc: 'Han stikker lidt, men han mener det ikke.' },
+  { id: 'kop', name: 'Kollega-kop', price: 120, desc: 'Der står “Verdens bedste kollega”. Kaj har også én. Han købte den selv.' },
+  { id: 'plakat', name: 'Hæng i-plakat', price: 150, desc: 'En kat, der hænger i. Meget motiverende.' },
+  { id: 'plante', name: 'Potteplante', price: 200, desc: 'Grøn, frodig og god til at lytte.' },
+  { id: 'vaerdier', name: 'Værdigrundlag', price: 250, desc: 'P.A.P.I.R.! Chef Bo brugte tre måneder på at finde på det.' },
+  { id: 'kugle', name: 'Rystekugle', price: 250, desc: 'Tryk på den på skranken — så sner det!' },
+  { id: 'globus', name: 'Globus', price: 300, desc: 'Så kan du se, hvor kunderne kommer fra. Mest herfra.' },
+  { id: 'lys', name: 'Lyskæde', price: 350, desc: 'Blinker hyggeligt. Hænger fint på væggen.' },
+  { id: 'fladfisk', name: 'Lakeret fladfisk', price: 350, desc: 'Til væggen. Begge øjne på samme side — meget moderne.' },
+  { id: 'kukur', name: 'Kukur', price: 400, desc: 'Kukkuk! Den siger det hver time. Og nogle gange bare for sjov.' },
+  { id: 'lava', name: 'Lavalampe', price: 450, desc: 'Bobler i slowmotion. Meget retro.' },
+  { id: 'tyggegummi', name: 'Tyggegummiautomat', price: 600, desc: 'Én kugle for hver godkendt kontrakt. Eller to.' },
+  { id: 'neon', name: 'Neonskilt', price: 700, desc: 'Et lyserødt skilt, der siger STEMPEL! Det summer hyggeligt.' },
+  { id: 'disko', name: 'Diskokugle', price: 800, desc: 'Til de helt store stempel-fester.' },
+  { id: 'guldabe', name: 'Siddende guldabe', price: 900, desc: 'Ingen ved, hvorfor den er der. Alle vil have en.' },
+  { id: 'akvarie', name: 'Akvarie', price: 1000, desc: 'Med Gunnars kusine Gerda. Hun er lidt fornem.' },
+  { id: 'kat', name: 'Kontorkatten Muffin', price: 1200, desc: 'Sover 23 timer i døgnet. Den sidste time spiser hun.' },
+  { id: 'stork', name: 'Udstoppet stork', price: 1500, desc: 'Den hedder Storkeline og holder øje med alt.' },
+  { id: 'radio', name: 'Radio', price: 500, desc: 'Tryk på den — så spiller den kontor-hits.' },
+  { id: 'yoyo', name: 'Yoyo', price: 150, desc: 'Den hopper op og ned hele dagen. Tryk på den for et trick!' },
+  { id: 'bamse', name: 'Ninus', price: 400, desc: 'En blød, grå kanin. Han lytter til alle kundens problemer og siger aldrig noget forkert.' },
+  { id: 'vimpel', name: 'Hurra-vimpler', price: 300, desc: 'Det er altid fest et eller andet sted.' },
+  { id: 'trofae', name: 'Pokal', price: 1100, desc: '“Verdens bedste kontraktskriver”. Du har fortjent den!' },
+  { id: 'palme', name: 'Palme', price: 700, desc: 'Lidt ferie på skranken. Aloha!' },
+  { id: 'dino', name: 'Plastik-dino', price: 1300, desc: 'Den brøler, når man trykker på den. RAAWR!' }
+];
+const UNLOCK = { medarbejder: 1, kaktus: 1, kop: 1, plakat: 1, plante: 1, kugle: 1, vaerdier: 2, globus: 2, lys: 2, fladfisk: 3, kukur: 3, lava: 3, tyggegummi: 4, neon: 4, radio: 4, disko: 5, guldabe: 5, bamse: 1, yoyo: 1, akvarie: 6, kat: 6, vimpel: 6, stork: 7, trofae: 7, palme: 8, dino: 8 };
+const POKE = {
+  kaktus: ['Pik! Undskyld!', 'pop'], plante: ['Rasle-rasle', 'pop'], kop: ['Slurp!', 'pop'], globus: ['Snurre-snurr!', 'ding'],
+  lava: ['Blub-blub!', 'pop'], kat: ['Mjav?', 'meow'], tyggegummi: ['Klonk! Et tyggegummi!', 'coin'], guldabe: ['Uh-uh-ah-ah!', 'kuk'],
+  akvarie: ['Blub!', 'pop'], stork: ['Klap-klap-klap!', 'klap'], plakat: ['Hæng i!', 'blip'], lys: ['Blink-blink!', 'ding'],
+  disko: ['DISKO!', 'jingle'], vaerdier: ['P.A.P.I.R.!', 'blip'], fladfisk: ['Flap!', 'boing'], kukur: ['Kukkuk! Kukkuk!', 'kuk'],
+  neon: ['Bzzzzt!', 'buzz'], medarbejder: ['Det er dig!', 'coin'], radio: ['♪ Dum-di-dum ♪', 'jingle'], bamse: ['Ninus vil have et kram!', 'pop'], yoyo: ['Yo-yo-yo!', 'yoyo'],
+  trofae: ['Bling!', 'coin'], vimpel: ['Hurra!', 'ding'], palme: ['Aloha!', 'ding'], dino: ['RAAAWR!', 'roar'], kugle: ['Sne!', 'ding']
+};
+const SHOP_QUOTES = [
+  'Jeg har selv købt en rystekugle med en rystekugle indeni. Den ryster dobbelt!',
+  'Husk: en potteplante lytter bedre end Kaj.',
+  'Kontorkatten Muffin? Hun sov på mit stempel i en hel uge.',
+  'Diskokuglen er IKKE kun til fredag. Den er også til torsdag.',
+  'Guldaben? Jeg har også én derhjemme. Den hedder Chef Bo 2.',
+  'Storken kigger på mig. Jeg kigger tilbage. Det er en konkurrence.',
+  'Husk: P.A.P.I.R. står for Passion, Ansvar, Proaktivitet, Innovation og… Resultater!'
+];
+const NOTICE = {
+  lava: ['Flot lavalampe! Den bobler ligesom min mave.', 'Uh, en lavalampe! Min onkel har én fra 1970.'],
+  kat: ['Åh, en kontorkat! Må jeg ae den? …Den sover.', 'Hej, mis! Hun ligner min tante.'],
+  stork: ['Er det … en udstoppet stork? Den kigger på mig.', 'Wow, en stork! Kommer den med babyer eller kontrakter?'],
+  guldabe: ['Er den abe af RIGTIGT guld?!', 'Sikke en fin guldabe. Den sidder bedre end mig.'],
+  tyggegummi: ['Må jeg få et tyggegummi? Bare et lille ét?', 'En tyggegummiautomat! Det her er byens bedste kontor.'],
+  fladfisk: ['Hvorfor hænger der en fisk på væggen? …Jeg kan godt lide den.', 'Flot fladfisk! Den har begge øjne på samme side.'],
+  kop: ['“Verdens bedste kollega”? Det tror jeg gerne!', 'Fin kop! Er der kakao i?'],
+  vaerdier: ['P.A.P.I.R.? Hvad står P for? …Passion? Nå.', 'Jeg har læst jeres værdier. Jeg forstod ikke ét ord.'],
+  neon: ['STEMPEL! Hvor er det neonskilt sejt!', 'Det skilt summer. Summer det altid?'],
+  disko: ['Er der diskofest her? Jeg har mine dansesko på!', 'Uh, en diskokugle! Skal vi danse bagefter?'],
+  akvarie: ['Hej fisk! Hvad hedder den?', 'Et akvarie! Fisken ser lidt fornem ud.'],
+  kugle: ['Må jeg ryste rystekuglen? Bare én gang?', 'Sikke en fin rystekugle!'],
+  lys: ['Hvor hyggeligt med lyskæde!', 'Blinker lyskæden altid? Det er ligesom jul.'],
+  plante: ['Flot plante! Snakker du med den? Det gør jeg med min.', 'Det dufter af skov herinde!'],
+  kaktus: ['Din kaktus smiler til mig!', 'Sikke en sød kaktus. Stikker han?'],
+  plakat: ['Hæng i! Det skal jeg nok.', 'Den plakat er så motiverende. Jeg hænger i!'],
+  globus: ['En globus! Kan du finde mit hus på den?', 'Flot globus. Jeg har været i Sverige.'],
+  kukur: ['Siger uret kukkuk? Jeg venter …', 'Et kukur! Min oldemor havde sådan ét.'],
+  medarbejder: ['Månedens medarbejder? Så er jeg heldig i dag!', 'Wow, du er månedens medarbejder! Tillykke!'],
+  radio: ['Spiller radioen noget godt?', 'En radio! Kan den spille diskomusik?'],
+  yoyo: ['En yoyo! Må jeg prøve? Jeg kan lave “gå tur med hunden”!', 'Wow, en yoyo! Min farmor kan lave tricks med sådan én.'],
+  bamse: ['Åh, en grå kanin! Hvad hedder han? …Ninus? Sikke et flot navn!', 'Hej Ninus! Må jeg kramme ham? Bare lidt?', 'Ninus ser klog ud. Er det ham, der bestemmer?'],
+  vimpel: ['Er det fest i dag? Hurra!', 'Flotte vimpler! Har nogen fødselsdag?'],
+  trofae: ['Wow, en pokal! Hvad har du vundet?', 'Verdens bedste kontraktskriver? Så er jeg kommet det rigtige sted hen!'],
+  palme: ['En palme! Er vi på ferie?', 'Aloha! Jeg tog mine solbriller med.'],
+  dino: ['Er det … en dinosaur? Den ser sulten ud.', 'Min lillebror ville ELSKE din dino!']
+};
+const VALUES = [
+  ['P', 'Passion — vi elsker papir. Især det med stempler på.'],
+  ['A', 'Ansvar — hvis Kaj taber noget, tager vi ansvar. Og samler op.'],
+  ['P', 'Proaktivitet — vi stempler, FØR vi bliver bedt om det. Næsten.'],
+  ['I', 'Innovation — vi tænker ud af kassen. Kassen står i kælderen.'],
+  ['R', 'Resultater — flere stjerner, flere stempler, flere kanelsnegle.']
+];
+const NOTE_FONTS = ['nf-hand', 'nf-caveat', 'nf-gochi', 'nf-indie', 'nf-marker', 'nf-type', 'nf-mono', 'nf-print'];
+const NOTE_PAPERS = ['np-yellow', 'np-pink', 'np-mint', 'np-lined', 'np-grid'];
+function loadSave() {
+  try {
+    const raw = window.localStorage.getItem('kontraktkontoret-save'); const v = raw ? JSON.parse(raw) : null;
+    if (v && typeof v.money === 'number') {
+      const owned = Array.isArray(v.owned) ? v.owned.filter(id => ITEM_TYPE[id]) : [];
+      let place = {};
+      if (v.place && typeof v.place === 'object') Object.keys(v.place).forEach(k => { if (SLOT_TYPE[k] && owned.includes(v.place[k]) && fits(v.place[k], k)) place[k] = v.place[k]; });
+      else owned.forEach(id => { place = autoPlace(place, id); });
+      return { money: v.money, earned: v.earned || 0, owned, place, day: v.day || 1, cleared: v.cleared || 0 };
+    }
+  } catch (e) { }
+  return { money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 };
+}
+function wipeSave() {
+  try { window.localStorage.removeItem('kontraktkontoret-save'); window.localStorage.removeItem('kontraktkontoret-best'); } catch (e) { }
+}
+function saveSave(v) {
+  try { window.localStorage.setItem('kontraktkontoret-save', JSON.stringify(v)); } catch (e) { }
+}
+
+function loadBest() {
+  try { const raw = window.localStorage.getItem('kontraktkontoret-best'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+}
+function saveBest(b) {
+  try { window.localStorage.setItem('kontraktkontoret-best', JSON.stringify(b)); } catch (e) { }
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.timers = [];
+    const save = loadSave();
+    this.state = {
+      screen: 'title', day: 1, idx: 0, customers: [], form: this.emptyForm(),
+      tries: 0, talking: false, changed: false, kaj: false, kajGone: false,
+      revStep: 0, verdict: null, retryNote: '',
+      money: save.money, earned: save.earned, owned: save.owned, place: save.place, saveDay: save.day, cleared: save.cleared,
+      clock: 0, timeUp: false, warned: false, signed: false, signing: false, signN: 0, poke: null, disco: false,
+      event: null, giftDone: false, meetingDone: false, bonus: 0, newItems: [], decoSel: null, decoMsg: '', recent: [], steps: ['', '', '', '', ''], boLine: '', doneQuote: '', introTip: '', introTitle: '', shopFrom: 'title', justBought: null, globe: 0, snowing: false,
+      dayMoney: 0, dayStars: 0, results: [], muted: false, best: loadBest()
+    };
+    this.tickT = setInterval(() => this.tick(), TICK_MS);
+  }
+  tick() {
+    const s = this.state;
+    if ((s.screen !== 'office' && s.screen !== 'review') || s.clock >= DAY_MIN) return;
+    const clock = s.clock + 1;
+    const upd = { clock };
+    if (clock >= DAY_MIN - 30 && !s.warned) { upd.warned = true; this.sfx('kuk'); }
+    this.setState(upd);
+    if (clock >= DAY_MIN && s.screen === 'office') this.timeUp();
+  }
+  timeUp() {
+    this.clearTimers();
+    const s = this.state;
+    const missed = s.customers.slice(s.results.length).map(c => ({ navn: c.navn, stars: 0, ok: false, tries: 0, missed: true }));
+    this.setState({ results: s.results.concat(missed), timeUp: true, clock: DAY_MIN, event: null });
+    this.finishDay();
+  }
+  advanceClock(min) { this.setState({ clock: Math.min(DAY_MIN, this.state.clock + min) }); }
+  componentWillUnmount() { this.clearTimers(); clearTimeout(this.snowT); }
+  emptyForm() { return { name: '', service: null, duration: null, date: null, price: null }; }
+  clearTimers() { this.timers.forEach(t => clearTimeout(t)); this.timers = []; }
+  later(ms, fn) { this.timers.push(setTimeout(fn, ms)); }
+
+  sfx(name) {
+    if (this.state.muted) return;
+    try {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return;
+      if (!this.ac) this.ac = new C();
+      const ac = this.ac;
+      if (ac.state === 'suspended') ac.resume();
+      const t = ac.currentTime;
+      const tone = (f, d, type, at, vol, f2) => {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = type || 'sine';
+        o.frequency.setValueAtTime(f, t + at);
+        if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + at + d);
+        g.gain.setValueAtTime(0.0001, t + at);
+        g.gain.exponentialRampToValueAtTime(vol || 0.12, t + at + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + at + d);
+        o.connect(g); g.connect(ac.destination);
+        o.start(t + at); o.stop(t + at + d + 0.03);
+      };
+      if (name === 'blip') tone(700, 0.07, 'square', 0, 0.05);
+      if (name === 'walk') { tone(520, 0.06, 'square', 0, 0.05); tone(640, 0.06, 'square', 0.14, 0.05); tone(560, 0.06, 'square', 0.28, 0.05); }
+      if (name === 'ding') { tone(988, 0.15, 'sine', 0, 0.14); tone(1319, 0.3, 'sine', 0.1, 0.12); }
+      if (name === 'send') tone(260, 0.4, 'sine', 0, 0.12, 980);
+      if (name === 'hmm') tone(200, 0.35, 'triangle', 0, 0.12, 150);
+      if (name === 'drum') { for (let i = 0; i < 16; i++) tone(i % 2 ? 118 : 110, 0.05, 'triangle', i * 0.065, 0.1 + i * 0.006); }
+      if (name === 'stamp') { tone(95, 0.28, 'square', 0, 0.2, 40); tone(60, 0.2, 'sine', 0, 0.25, 30); }
+      if (name === 'fanfare') [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, i === 5 ? 0.4 : 0.14, 'triangle', 0.3 + i * 0.1, 0.12));
+      if (name === 'boing') tone(460, 0.6, 'sine', 0.25, 0.16, 110);
+      if (name === 'yoyo') { tone(320, 0.28, 'sine', 0, 0.13, 760); tone(760, 0.3, 'sine', 0.3, 0.13, 300); }
+      if (name === 'pop') tone(420, 0.12, 'sine', 0, 0.14, 900);
+      if (name === 'meow') { tone(620, 0.18, 'sine', 0, 0.12, 900); tone(900, 0.25, 'sine', 0.18, 0.1, 520); }
+      if (name === 'kuk') { tone(780, 0.16, 'sine', 0, 0.14); tone(620, 0.22, 'sine', 0.2, 0.14); tone(780, 0.16, 'sine', 0.55, 0.12); tone(620, 0.22, 'sine', 0.75, 0.12); }
+      if (name === 'roar') tone(160, 0.6, 'sawtooth', 0, 0.12, 60);
+      if (name === 'buzz') tone(110, 0.45, 'sawtooth', 0, 0.06, 118);
+      if (name === 'jingle') [523, 659, 784, 659, 880, 784, 1047].forEach((f, i) => tone(f, 0.12, 'triangle', i * 0.12, 0.1));
+      if (name === 'klap') { for (let i = 0; i < 6; i++) tone(900 + (i % 2) * 200, 0.04, 'square', i * 0.08, 0.05); }
+      if (name === 'scribble') { for (let i = 0; i < 10; i++) tone(300 + Math.random() * 600, 0.05, 'sawtooth', i * 0.12, 0.025); }
+      if (name === 'coin') { tone(1250, 0.08, 'square', 0, 0.05); tone(1650, 0.18, 'square', 0.08, 0.05); }
+    } catch (e) { }
+  }
+
+  startGame() { this.sfx('blip'); this.startDay(1, this.state.money); }
+  continueGame() { this.sfx('blip'); this.startDay(this.state.saveDay || 1, this.state.money); }
+  newGame() {
+    if (!window.confirm('Vil du slette alt det gemte (penge, pynt og dage) og starte helt forfra?')) return;
+    wipeSave();
+    this.clearTimers();
+    this.setState({ screen: 'title', money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, best: null, day: 1 });
+  }
+  persist(patch) {
+    const s = Object.assign({}, this.state, patch);
+    saveSave({ money: s.money, earned: s.earned, owned: s.owned, place: s.place, day: s.saveDay, cleared: s.cleared });
+    this.setState(patch);
+  }
+  fromScreen() { const sc = this.state.screen; return (sc === 'shop' || sc === 'decorate') ? this.state.shopFrom : sc; }
+  openShop() { this.clearTimers(); this.sfx('blip'); this.setState({ shopFrom: this.fromScreen(), screen: 'shop', justBought: null }); }
+  openDecorate() { this.clearTimers(); this.sfx('blip'); this.setState({ shopFrom: this.fromScreen(), screen: 'decorate', decoSel: null, decoMsg: '' }); }
+  closeDecorate() { this.sfx('blip'); this.setState({ screen: this.state.shopFrom || 'title', decoSel: null, decoMsg: '' }); }
+  pickItem(id) {
+    this.sfx('blip');
+    const sel = this.state.decoSel === id ? null : id;
+    this.setState({ decoSel: sel, decoMsg: sel ? 'Tryk på en blinkende plads i rummet.' : '' });
+  }
+  clickSlot(k) {
+    const s = this.state;
+    if (s.screen !== 'decorate') { this.poke(k); return; }
+    if (s.decoSel) {
+      if (!fits(s.decoSel, k)) { this.sfx('boing'); this.setState({ decoMsg: ITEM_TYPE[s.decoSel] === 'haeng' ? 'Den skal hænge — vælg væggen, loftet eller det røde bånd.' : 'Den skal stå — vælg skranken, skrivebordet eller det røde bånd.' }); return; }
+      const p = Object.assign({}, s.place);
+      const from = slotOf(p, s.decoSel);
+      const occupant = p[k];
+      if (from) delete p[from];
+      const swap = occupant && occupant !== s.decoSel && from && fits(occupant, from);
+      if (swap) p[from] = occupant;
+      p[k] = s.decoSel;
+      this.sfx('coin');
+      this.persist({ place: p, decoSel: null, decoMsg: occupant && occupant !== s.decoSel ? (swap ? 'Byttet om!' : 'Sat på plads — den gamle ting røg på lageret.') : 'Sat på plads!' });
+      return;
+    }
+    if (s.place[k]) { this.sfx('blip'); this.setState({ decoSel: s.place[k], decoMsg: 'Tryk på en ny plads — eller læg den på lager.' }); }
+    else this.setState({ decoMsg: 'Vælg først en ting til højre.' });
+  }
+  storeSel() {
+    const s = this.state; if (!s.decoSel) return;
+    const p = Object.assign({}, s.place); const from = slotOf(p, s.decoSel); if (from) delete p[from];
+    this.sfx('blip');
+    this.persist({ place: p, decoSel: null, decoMsg: 'Lagt på lager.' });
+  }
+  closeShop() { this.sfx('blip'); this.setState({ screen: this.state.shopFrom || 'title', justBought: null }); }
+  buy(id) {
+    const s = this.state, item = SHOP.find(x => x.id === id);
+    if (!item || item.gift || s.owned.includes(id) || s.money < item.price) return;
+    this.persist({ money: s.money - item.price, owned: s.owned.concat([id]), place: autoPlace(s.place, id), justBought: id });
+    this.sfx('coin'); this.sfx('fanfare');
+  }
+  poke(k) {
+    const s = this.state, kind = s.place[k];
+    if (!kind) return;
+    if (kind === 'kugle') this.shakeGlobe();
+    const pk = POKE[kind] || ['!', 'pop'];
+    this.sfx(pk[1]);
+    const n = (s.poke ? s.poke.n : 0) + 1;
+    this.setState({ poke: { k, kind, n, text: pk[0] }, disco: kind === 'disko' ? true : s.disco });
+    clearTimeout(this.pokeT); this.pokeT = setTimeout(() => this.setState({ poke: null }), 1400);
+    if (kind === 'disko') { clearTimeout(this.discoT); this.discoT = setTimeout(() => this.setState({ disco: false }), 3800); }
+  }
+  shakeGlobe() {
+    this.setState({ globe: this.state.globe + 1, snowing: true });
+    clearTimeout(this.snowT);
+    this.snowT = setTimeout(() => this.setState({ snowing: false }), 1900);
+  }
+  startDay(day, money) {
+    this.clearTimers();
+    const customers = buildDay(day, this.state.recent);
+    const recent = this.state.recent.concat(customers.map(c => c.navn.split(' ')[0])).slice(-30);
+    const info = DAYS[day - 1] || pick(OVERTIME);
+    this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false,
+      saveDay: day, clock: 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false });
+  }
+  openDesk() { this.startCustomer(0); }
+  startCustomer(idx) {
+    this.clearTimers();
+    const c = this.state.customers[idx];
+    const placed = Object.keys(this.state.place).map(k => this.state.place[k]).filter(id => NOTICE[id]);
+    const notice = placed.length && Math.random() < 0.45 && !(c.t.typo && c.t.change) ? pick(NOTICE[pick(placed)]) : '';
+    this.setState({ screen: 'office', idx, notice, form: this.emptyForm(), tries: 0, talking: true, changed: false, kaj: false, kajGone: false, verdict: null, retryNote: '', revStep: 0, signed: false, signing: false });
+    this.sfx('walk');
+    let done = 1600;
+    if (c.t.kaj) { this.later(2600, () => { this.setState({ kaj: true }); this.sfx('ding'); }); done = Math.max(done, 3000); }
+    if (c.t.change) { this.later(4300, () => { this.setState({ changed: true }); this.sfx('ding'); }); done = Math.max(done, 4700); }
+    this.later(done, () => this.setState({ talking: false }));
+  }
+  setField(f, v) { this.sfx('blip'); this.setState({ form: Object.assign({}, this.state.form, { [f]: v }), signed: this.state.signing ? true : false }); }
+  sign() {
+    const s = this.state;
+    if (s.talking || this.missing() > 0 || s.signed) return;
+    this.sfx('scribble');
+    this.setState({ signed: true, signing: true, signN: s.signN + 1 });
+    this.later(1500, () => this.setState({ signing: false }));
+  }
+
+  missing() { const f = this.state.form; return FIELDS.filter(k => k === 'name' ? norm(f.name) === '' : f[k] === null).length; }
+
+  send() {
+    const s = this.state;
+    if (s.talking || this.missing() > 0 || !s.signed || s.signing) return;
+    this.clearTimers();
+    const c = s.customers[s.idx];
+    const tries = s.tries + 1;
+    const wrong = FIELDS.filter(k => k === 'name' ? norm(s.form.name) !== norm(c.correct.name) : s.form[k] !== c.correct[k]);
+    const ok = wrong.length === 0;
+    let remark;
+    if (ok) remark = pick(YES);
+    else if (c.t.kaj && wrong.includes(c.kajField) && s.form[c.kajField] === c.kajVal) remark = pick(KAJ_NO);
+    else {
+      const f = pick(wrong);
+      if (f === 'price' && c.t.math) remark = fill(pick(NO_MATH), valText('price', s.form.price));
+      else remark = fill(pick(NO[f]), f === 'name' ? s.form.name.trim() : valText(f, s.form[f]));
+    }
+    const stars = ok ? (tries === 1 ? 3 : 1) : 0;
+    const final = ok || tries >= 2;
+    const steps = STEP_LINES.map(l => pick(l || ASIDES));
+    this.setState({ screen: 'review', tries, revStep: 0, steps, boLine: pick(ok ? BO_YES : BO_NO), verdict: { ok, wrong, remark, stars, final } });
+    this.sfx('send');
+    this.later(1100, () => { this.setState({ revStep: 1 }); this.sfx('hmm'); });
+    this.later(2400, () => { this.setState({ revStep: 2 }); this.sfx('hmm'); });
+    this.later(3800, () => { this.setState({ revStep: 3 }); this.sfx('drum'); });
+    this.later(5000, () => { this.setState({ revStep: 4 }); });
+    this.later(6100, () => this.reveal());
+  }
+  reveal() {
+    const s = this.state, v = s.verdict, c = s.customers[s.idx];
+    const upd = { revStep: 5 };
+    if (v.final) {
+      upd.results = s.results.concat([{ navn: c.navn, stars: v.stars, ok: v.ok, tries: s.tries }]);
+      upd.dayStars = s.dayStars + v.stars;
+      if (v.ok) { upd.money = s.money + c.correct.price; upd.earned = s.earned + c.correct.price; upd.dayMoney = s.dayMoney + c.correct.price; }
+    }
+    this.persist(upd);
+    this.sfx('stamp');
+    if (v.ok) { this.sfx('fanfare'); this.later(900, () => this.sfx('coin')); } else this.sfx('boing');
+  }
+  retry() {
+    this.clearTimers();
+    this.sfx('blip');
+    if (this.state.clock >= DAY_MIN) return this.timeUp();
+    this.setState({ screen: 'office', talking: false, changed: true, kaj: false, kajGone: true, retryNote: 'Chef Bo: ' + this.state.verdict.remark, revStep: 0, signed: false, signing: false });
+  }
+  next() {
+    this.sfx('blip');
+    const s = this.state;
+    if (s.clock >= DAY_MIN) return this.timeUp();
+    if (s.idx + 1 >= s.customers.length) return this.finishDay();
+    const ev = this.maybeEvent();
+    if (ev) { this.clearTimers(); this.setState({ screen: 'event', event: ev, giftDone: s.giftDone || ev.kind === 'gift', meetingDone: s.meetingDone || ev.kind === 'meeting' }); this.sfx(ev.kind === 'gift' ? 'ding' : 'kuk'); return; }
+    this.startCustomer(s.idx + 1);
+  }
+  maybeEvent() {
+    const s = this.state, d = s.day;
+    if (d >= 2 && !s.giftDone && Math.random() < 0.4) return { kind: 'gift', phase: 'offer', gift: GIFTS[dayDate(d).weekday] };
+    if (d >= 3 && !s.meetingDone && Math.random() < 0.4) {
+      const pts = AGENDA.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+      return { kind: 'meeting', phase: 'start', points: pts, i: 0, reply: pick(REPLIES) };
+    }
+    return null;
+  }
+  giftAnswer(yes) {
+    const ev = this.state.event;
+    if (yes) { this.advanceClock(GIFT_COST); this.setState({ dayStars: this.state.dayStars + 1, event: Object.assign({}, ev, { phase: 'yes', line: pick(GIFT_YES) }) }); this.sfx('fanfare'); }
+    else { this.setState({ event: Object.assign({}, ev, { phase: 'no', line: pick(GIFT_NO) }) }); this.sfx('boing'); }
+  }
+  meetingNext() {
+    const ev = this.state.event;
+    if (ev.phase === 'start') { this.advanceClock(MEETING_START); this.setState({ event: Object.assign({}, ev, { phase: 'point', i: 0, reply: pick(REPLIES) }) }); this.sfx('hmm'); return; }
+    this.advanceClock(MEETING_POINT);
+    if (ev.i + 1 < ev.points.length) { this.setState({ event: Object.assign({}, ev, { i: ev.i + 1, reply: pick(REPLIES) }) }); this.sfx('hmm'); }
+    else { this.setState({ event: Object.assign({}, ev, { phase: 'end' }) }); this.sfx('ding'); }
+  }
+  eventDone() {
+    this.sfx('blip');
+    const s = this.state;
+    if (s.clock >= DAY_MIN) return this.timeUp();
+    this.setState({ event: null });
+    this.startCustomer(s.idx + 1);
+  }
+  finishDay() {
+    this.clearTimers();
+    const s = this.state;
+    const goal = s.customers.length * 2;
+    const passed = s.dayStars >= goal;
+    const early = !s.timeUp && s.clock < DAY_MIN ? Math.floor((DAY_MIN - s.clock) / 30) * 10 : 0;
+    let best = s.best;
+    if (passed) {
+      const b = best || { day: 0, money: 0 };
+      best = { day: Math.max(b.day, s.day), money: Math.max(b.money, s.money) };
+      saveBest(best);
+    }
+    const cleared = passed ? Math.max(s.cleared, s.day) : s.cleared;
+    const newItems = cleared > s.cleared ? SHOP.filter(it => UNLOCK[it.id] === cleared + 1).map(it => ({ kind: it.id, name: it.name })) : [];
+    const upd = {
+      screen: 'done', best, cleared, newItems, bonus: early, saveDay: passed ? s.day + 1 : s.day,
+      money: s.money + early, earned: s.earned + early, dayMoney: s.dayMoney + early, award: false
+    };
+    const perfect = !s.timeUp && s.results.length > 0 && s.results.every(r => r.stars === 3);
+    if (perfect && !s.owned.includes('medarbejder')) {
+      Object.assign(upd, { owned: s.owned.concat(['medarbejder']), place: autoPlace(s.place, 'medarbejder'), award: true, doneQuote: 'En PERFEKT dag! Du er Månedens medarbejder. Jeg har selv hængt skiltet op. Lidt skævt.' });
+    } else {
+      upd.doneQuote = perfect ? 'Perfekt dag! Igen! Jeg er nødt til at lave et skilt til skiltet.' : (s.timeUp && !passed ? pick(TIMEUP_NO) : pick(passed ? DONE_YES : DONE_NO));
+    }
+    this.persist(upd);
+    if (passed) this.sfx('fanfare'); else this.sfx('boing');
+  }
+  goHome() { this.clearTimers(); this.sfx('blip'); this.setState({ screen: 'title' }); }
+
+  renderVals() {
+    const s = this.state;
+    const c = s.customers[s.idx] || { navn: '', t: {}, correct: { price: 0 }, service: '', duration: '', date: '', price: 0, shape: 'cirkel', body: '#ef5b93', acc: 'ingen', hello: '', closer: '' };
+    const n = s.customers.length || 3;
+    const goal = n * 2;
+    const inGame = s.screen !== 'title' && s.screen !== 'shop' && s.screen !== 'decorate';
+    const dayInfo = { title: s.introTitle || 'Første arbejdsdag', tip: s.introTip };
+    const dd = dayDate(s.day);
+    const f = s.form;
+    const missing = this.missing();
+
+    const mkChips = (field, list, labelFn) => list.map(v => ({
+      label: labelFn ? labelFn(v) : v,
+      cls: f[field] === v ? 'chip on' : 'chip',
+      on: f[field] === v ? 'true' : 'false',
+      pick: () => this.setField(field, v)
+    }));
+
+    const bubbles = [{ text: c.hello, cls: 'bubble sm tail-l pop d1' }];
+    if (s.notice) bubbles.push({ text: s.notice, cls: 'bubble sm tail-l pop d2' });
+    if (c.t && c.t.typo) bubbles.push({ text: c.typoLine, cls: 'bubble sm tail-l pop d2' });
+    if (s.changed && c.changeLine) bubbles.push({ text: c.changeLine, cls: 'bubble sm alert tail-l wiggle' });
+    if (c.t && c.t.math) bubbles.push({ text: c.mathLine, cls: 'bubble sm tail-l pop d2' });
+    if (!c.t || (!c.t.typo && !c.t.change)) bubbles.push({ text: c.closer, cls: 'bubble sm tail-l pop d3' });
+
+    const numCls = {};
+    FIELDS.forEach(k => { const filled = k === 'name' ? norm(f.name) !== '' : f[k] !== null; numCls[k] = filled ? 'num done' : 'num'; });
+
+    const v = s.verdict || { ok: false, wrong: [], remark: '', stars: 0, final: false };
+    const step = s.revStep;
+    const revealed = step >= 5;
+    const boMoods = ['laeser', 'hmm', 'glad', 'sved', 'hmm'];
+    const boClasses = ['bo-in', 'bo-tilt', 'bo-bounce', 'bo-tremble', 'bo-still'];
+    const statusTexts = ['Chef Bo tager læsebrillerne på', 'Chef Bo læser din kontrakt', 'Chef Bo læser meget grundigt', 'Chef Bo tænker så det knager', 'Stemplet løftes'];
+    const rows = FIELDS.map(k => {
+      const bad = revealed && v.wrong.includes(k);
+      return { label: LABELS[k], value: k === 'name' ? (f.name.trim() || '—') : valText(k, f[k]).replace(/^./, m => m.toUpperCase()), ok: revealed && !bad, bad, cls: bad ? 'row-bad' : '' };
+    });
+    const earned = [0, 1, 2].map(i => ({ cls: i < v.stars ? 'star on' : 'star' }));
+    const isLast = s.idx + 1 >= n;
+
+    let verdictSub;
+    if (v.ok) verdictSub = v.stars === 3 ? 'Rigtigt i første forsøg: 3 stjerner og ' + fmtKr(c.correct.price) + ' i kassen!' : 'Rettet og godkendt: 1 stjerne og ' + fmtKr(c.correct.price) + ' i kassen.';
+    else if (!v.final) verdictSub = 'Du har én gratis genindsendelse. Ret fejlen og send igen!';
+    else verdictSub = c.navn + ' går hjem og tænker over det. Ingen stjerner denne gang — næste kunde venter!';
+
+    const passed = s.dayStars >= goal;
+    const best = s.best;
+    const bestText = best ? 'Din rekord: dag ' + best.day + ' klaret · ' + fmtKr(s.earned) + ' tjent i alt' : 'Ingen rekord endnu — bliv den første!';
+    const owns = (id) => s.owned.includes(id);
+    const editing = s.screen === 'decorate';
+    const sl = {};
+    Object.keys(SLOT_TYPE).forEach(k => {
+      const kind = s.place[k] || null;
+      const item = SHOP.find(x => x.id === kind);
+      const target = editing && !!s.decoSel && fits(s.decoSel, k) && kind !== s.decoSel;
+      const picked = editing && !!s.decoSel && kind === s.decoSel;
+      const globe = !editing && kind === 'kugle';
+      const poked = !editing && s.poke && s.poke.k === k;
+      sl[k] = {
+        show: !!kind || editing, has: !!kind, plus: editing && !kind, kind: kind || 'kugle',
+        cls: 'slot' + (editing ? ' edit' : '') + (SLOT_TYPE[k] === 'alle' && editing ? ' any' : '') + (target ? ' target' : '') + (picked ? ' picked' : '') + (!editing && kind ? ' clickable' : '') + (globe ? ' ' + (s.globe % 2 ? 'globeA' : (s.globe ? 'globeB' : '')) : '') + (poked && !globe ? (s.poke.n % 2 ? ' pokeA' : ' pokeB') : '') + (kind === 'kugle' && s.snowing ? ' snowing' : ''),
+        tab: (editing || kind) ? 0 : -1,
+        label: editing ? SLOT_NAME[k] + ': ' + (item ? item.name : 'tom plads') : (item ? 'Tryk på ' + item.name : ''),
+        click: () => this.clickSlot(k)
+      };
+    });
+    const level = (s.cleared || 0) + 1;
+    const shopSorted = SHOP.slice().sort((a, b) => (a.gift ? -1 : 0) - (b.gift ? -1 : 0) || (UNLOCK[a.id] || 1) - (UNLOCK[b.id] || 1) || a.price - b.price);
+    const shopItems = shopSorted.map(it => {
+      const own = owns(it.id), short = it.gift ? 1 : it.price - s.money;
+      const lockDay = UNLOCK[it.id] || 1, locked = !own && lockDay > level;
+      if (locked) return {
+        kind: it.id, name: it.name, desc: 'Kommer i butikken, når du har klaret dag ' + (lockDay - 1) + '.', priceText: fmtKr(it.price),
+        tag: 'LÅST', tagCls: 'tag locked', cls: 'shop-card locked', btnCls: 'btn', btnText: 'Kommer på dag ' + lockDay, disabled: true, buy: () => { }
+      };
+      return {
+        kind: it.id, name: it.name, desc: it.desc, priceText: it.gift ? 'Gave' : fmtKr(it.price),
+        tag: it.gift ? 'GAVE' : (ITEM_TYPE[it.id] === 'haeng' ? 'HÆNGER' : 'STÅR'),
+        tagCls: 'tag ' + (it.gift ? 'gave' : ITEM_TYPE[it.id]),
+        cls: 'shop-card' + (own ? ' owned' : '') + (s.justBought === it.id ? ' justbought' : ''),
+        btnCls: own ? 'btn btn-teal' : (short > 0 ? 'btn' : 'btn btn-go'),
+        btnText: own ? (slotOf(s.place, it.id) ? 'Står på kontoret' : 'På lageret') : (it.gift ? 'Optjenes: perfekt dag' : (short > 0 ? 'Mangler ' + fmtKr(short) : 'Køb')),
+        disabled: own || short > 0,
+        buy: () => this.buy(it.id)
+      };
+    });
+
+    return {
+      inGame, muted: s.muted, soundOn: !s.muted, muteLabel: s.muted ? 'Slå lyd til' : 'Slå lyd fra',
+      toggleMute: () => this.setState({ muted: !s.muted }),
+      goHome: () => this.goHome(),
+      dayLabel: 'Dag ' + s.day + ' · ' + dd.weekday + ' ' + dd.date + '. ' + dd.month,
+      clockText: clockText(s.clock), clockPct: Math.round(Math.min(s.clock, DAY_MIN) / DAY_MIN * 100), late: s.clock >= DAY_MIN - 60,
+      hourAng: Math.round(((8 * 60 + s.clock) % 720) / 720 * 360), minAng: (s.clock % 60) * 6,
+      cal: dd, showNamePill: s.day === 1,
+      signed: s.signed, signing: s.signing, sigKey: 'sig-' + s.signN,
+      poke: !editing && s.poke ? s.poke : null, disco: s.disco && s.screen === 'office',
+      canContinue: (s.saveDay || 1) > 1, continueLabel: 'Fortsæt: Dag ' + (s.saveDay || 1) + ' · ' + dayDate(s.saveDay || 1).weekday,
+      continueGame: () => this.continueGame(), newGame: () => this.newGame(),
+      hasSave: (s.saveDay || 1) > 1 || s.owned.length > 0 || s.money > 0,
+      bonusText: s.bonus ? 'Tidlig fyraften kl. ' + clockText(s.clock) + ': +' + fmtKr(s.bonus) + ' i bonus!' : '',
+      timeUpText: s.timeUp ? 'Klokken blev 16:00 — fyraften! Kunder, der ikke nåede at blive betjent, gik hjem.' : '',
+      newItems: s.newItems || [], showNew: !!(s.newItems && s.newItems.length),
+      isEvent: s.screen === 'event', ev: s.event,
+      giftYes: () => this.giftAnswer(true), giftNo: () => this.giftAnswer(false), meetingNext: () => this.meetingNext(), eventDone: () => this.eventDone(),
+      custLabel: s.screen === 'done' || s.screen === 'intro' ? n + ' kunder i dag' : 'Kunde ' + (s.idx + 1) + ' af ' + n,
+      starsLabel: s.dayStars + ' / ' + goal,
+      moneyLabel: fmtKr(s.money),
+      isShop: s.screen === 'shop',
+      canShop: s.screen === 'title' || s.screen === 'intro' || s.screen === 'done' || s.screen === 'decorate',
+      openShop: () => this.openShop(),
+      closeShop: () => this.closeShop(),
+      shopItems,
+      shopQuote: s.justBought ? 'Uuuh, flot køb! Tryk på Indret kontoret for at bestemme, hvor den skal stå.' : SHOP_QUOTES[s.owned.length % SHOP_QUOTES.length],
+      showBuyConfetti: !!s.justBought,
+      sl,
+      showRoom: s.screen === 'office' || s.screen === 'decorate',
+      isDecorate: s.screen === 'decorate',
+      openDecorate: () => this.openDecorate(),
+      closeDecorate: () => this.closeDecorate(),
+      storeSel: () => this.storeSel(),
+      canStore: !!s.decoSel && !!slotOf(s.place, s.decoSel),
+      decoMsg: s.decoMsg || (s.owned.length ? 'Vælg en ting herunder — eller tryk på en ting i rummet for at flytte den.' : 'Her kan du stille dine ting, når du har købt noget.'),
+      decoMsgCls: 'bubble boss sm ' + (s.decoMsg ? 'popB' : ''),
+      ownedCount: s.owned.length,
+      hasOwned: s.owned.length > 0, noOwned: s.owned.length === 0,
+      inventory: SHOP.filter(it => owns(it.id)).map(it => {
+        const at = slotOf(s.place, it.id), on = s.decoSel === it.id;
+        return { kind: it.id, name: it.name, where: at ? SLOT_NAME[at] : 'På lageret', on: on ? 'true' : 'false', cls: 'inv' + (on ? ' on' : '') + (at ? '' : ' stored'), pick: () => this.pickItem(it.id) };
+      }),
+      shakeGlobe: () => this.shakeGlobe(),
+      isTitle: s.screen === 'title', isIntro: s.screen === 'intro', isOffice: s.screen === 'office', isReview: s.screen === 'review', isDone: s.screen === 'done',
+      startGame: () => this.startGame(),
+      bestText,
+      introKicker: 'Dag ' + s.day + ' · ' + dd.weekday + ' ' + dd.date + '. ' + dd.month + ' · ' + n + ' kunder',
+      introTitle: dayInfo.title,
+      introTip: dayInfo.tip,
+      introValue: { letter: (s.introValue || VALUES[0])[0], text: (s.introValue || VALUES[0])[1] },
+      showAward: !!s.award,
+      noteCls: 'tilt-note ' + (c.notePaper || 'np-yellow'),
+      noteFontCls: c.noteFont || 'nf-hand',
+      introGoal: 'Dagens mål: ' + goal + ' stjerner. Rigtigt i første forsøg giver 3 stjerner — rettet giver 1. Mødetid 08:00, fyraften 16:00 — bliver du færdig før tid, får du bonus!',
+      introMood: s.day >= 5 ? 'tosset' : 'glad',
+      openDesk: () => this.openDesk(),
+
+      cust: c,
+      custMood: s.talking ? 'snak' : 'glad',
+      walkCls: s.retryNote ? '' : (s.idx % 2 ? 'walkB' : 'walkA'),
+      bubbles,
+      note: { name: c.noteName, service: String(c.service).toLowerCase(), duration: c.duration, date: c.date, price: c.t && c.t.math ? c.rate + ' kr pr. uge' : c.price + ' kr' },
+      showKaj: s.kaj && !s.kajGone,
+      kajLine: c.kajLine || '',
+      dismissKaj: () => { this.sfx('blip'); this.setState({ kajGone: true }); },
+      form: f,
+      onName: (e) => this.setState({ form: Object.assign({}, this.state.form, { name: e.target.value }), signed: false }),
+      onSend: () => (this.state.signed ? this.send() : this.sign()),
+      onNameKey: (e) => { if (e && e.key === 'Enter') { e.preventDefault(); if (this.state.signed) this.send(); else this.sign(); } },
+      numCls,
+      services: SERVICES.map(sv => ({ label: sv.id, d: sv.d, cls: f.service === sv.id ? 'chip on' : 'chip', on: f.service === sv.id ? 'true' : 'false', pick: () => this.setField('service', sv.id) })),
+      durations: mkChips('duration', DURATIONS),
+      dates: mkChips('date', DATES),
+      prices: mkChips('price', PRICES, p => p + ' kr'),
+      contractNo: 'Nr. ' + String(40 + s.day * 10 + s.idx).padStart(4, '0'),
+      showRetry: !!s.retryNote, noRetry: !s.retryNote, retryNote: s.retryNote,
+      sendDisabled: s.talking || missing > 0 || s.signing,
+      sendCls: (s.talking || missing > 0 || s.signing) ? 'btn btn-go' : (s.signed ? 'btn btn-go ready' : 'btn btn-berry ready'),
+      sendLabel: s.talking ? 'Kunden snakker stadig…' : missing > 0 ? 'Mangler ' + missing + (missing === 1 ? ' felt' : ' felter') : s.signing ? 'Kunden skriver under…' : !s.signed ? 'Få kundens underskrift' : (s.tries > 0 ? 'Send igen til Chef Bo' : 'Send til Chef Bo'),
+      sendIcon: s.signed && !s.signing ? 'send' : 'pen',
+
+      reviewCls: revealed ? 'shake' : '',
+      boMood: revealed ? (v.ok ? 'jubel' : 'tosset') : boMoods[step],
+      boCls: revealed ? (v.ok ? 'bo-jump' : 'bo-spin') : boClasses[step],
+      bubbleText: revealed ? s.boLine : s.steps[step],
+      bubbleCls: 'bubble boss tail-b ' + (step % 2 ? 'popB' : 'pop'),
+      statusText: revealed ? (v.ok ? 'Stemplet: GODKENDT' : 'Stemplet: RETUR') : statusTexts[step],
+      statusCls: revealed ? '' : 'dots',
+      segs: [0, 1, 2, 3, 4].map(i => ({ cls: i <= step ? 'seg on' : 'seg' })),
+      rows,
+      showMag: step >= 1 && step <= 3,
+      showHover: step === 4,
+      showStamp: revealed,
+      stampText: v.ok ? 'GODKENDT' : 'RETUR',
+      stampCls: v.ok ? 'stamp stamp-ok' : 'stamp stamp-no',
+      showDim: step === 4,
+      showConfetti: revealed && v.ok,
+      showVerdict: revealed,
+      verdictCls: 'verdict pop d1 ' + (v.ok ? 'ok' : 'no'),
+      verdictTitle: v.ok ? 'Godkendt!' : (v.final ? 'Retur — kunden går' : 'Retur til dig!'),
+      starsAria: v.stars + ' stjerner',
+      earned,
+      remark: v.remark,
+      verdictSub,
+      canRetry: revealed && !v.final,
+      canNext: revealed && v.final,
+      nextLabel: isLast ? 'Afslut dagen' : 'Næste kunde',
+      retry: () => this.retry(),
+      next: () => this.next(),
+      showCoin: revealed && v.ok,
+      coinText: '+' + fmtKr(c.correct ? c.correct.price : 0),
+
+      doneTitle: passed ? (s.timeUp ? 'Fyraften — og dagen er klaret!' : 'Dagen er klaret!') : (s.timeUp ? 'Fyraften! Tiden løb ud' : 'Næsten! Prøv igen'),
+      doneQuote: s.doneQuote,
+      doneMood: passed ? 'jubel' : 'glad',
+      doneBoCls: passed ? 'bo-jump' : 'bo-tilt',
+      doneStars: s.dayStars + ' ★',
+      doneGoal: goal + ' ★',
+      doneMoney: fmtKr(s.dayMoney),
+      resultRows: s.results.map(r => ({ navn: r.navn, text: r.missed ? 'Nåede ikke — fyraften!' : r.ok ? (r.tries === 1 ? 'Godkendt i første forsøg' : 'Godkendt efter rettelse') : 'Sendt hjem', stars: r.stars ? '★'.repeat(r.stars) : '–' })),
+      donePassed: passed,
+      nextDayLabel: s.day >= 5 ? 'Tag på overarbejde' : 'Næste dag',
+      nextDay: () => { this.sfx('blip'); this.startDay(s.day + 1, s.money); },
+      retryDay: () => { this.sfx('blip'); const m = Math.max(0, s.money - s.dayMoney); this.persist({ money: m, earned: Math.max(0, s.earned - s.dayMoney) }); this.startDay(s.day, m); },
+      retryDayCls: passed ? 'btn' : 'btn btn-go btn-big ready'
+    };
+  }
+}
+
+/* ============================================================
+   FIGURER — alle karakterer og ikoner er inline SVG
+   ============================================================ */
+const INK = '#1d2b3a';
+
+function kundeSVG(o, size) {
+  const shape = o.shape || 'cirkel', body = o.body || '#ef5b93', acc = o.acc || 'ingen', mood = o.mood || 'glad';
+  const BODY = {
+    cirkel: 'M28 120a72 72 0 1 0 144 0a72 72 0 1 0 -144 0z',
+    firkant: 'M60 50h80a28 28 0 0 1 28 28v80a28 28 0 0 1 -28 28h-80a28 28 0 0 1 -28 -28v-80a28 28 0 0 1 28 -28z',
+    trekant: 'M92 40q8 -12 16 0l66 140q6 16 -12 16h-124q-18 0 -12 -16z',
+    sekskant: 'M100 40l68 38v84l-68 38l-68 -38v-84z',
+    kapsel: 'M100 36a56 56 0 0 1 56 56v56a56 56 0 0 1 -112 0v-56a56 56 0 0 1 56 -56z'
+  };
+  const TOP = { cirkel: 48, firkant: 50, trekant: 32, sekskant: 40, kapsel: 36 };
+  const EDGE = { cirkel: 30, firkant: 34, trekant: 58, sekskant: 34, kapsel: 46 };
+  const e = EDGE[shape] || 30;
+  const up = mood === 'jubel';
+  const armL = up ? 'M' + e + ' 128q-22 -8 -18 -40' : 'M' + e + ' 132q-22 6 -20 32';
+  const armR = up ? 'M' + (200 - e) + ' 128q22 -8 18 -40' : 'M' + (200 - e) + ' 132q22 6 20 32';
+  const MOUTH = {
+    glad: ['M86 132q14 14 28 0', 'none'],
+    snak: ['M92 132q8 -5 16 0q-1 13 -8 13q-7 0 -8 -13z', INK],
+    jubel: ['M82 128h36q-2 22 -18 22q-16 0 -18 -22z', INK],
+    trist: ['M88 142q12 -10 24 0', 'none']
+  };
+  const m = MOUTH[mood] || MOUTH.glad;
+  const top = TOP[shape] || 44;
+  const accT = 'translate(' + (acc === 'blomst' ? 36 : 0) + ' ' + (top - 44) + ')';
+  const accFill = (body.toLowerCase() === '#ef5b93' || body.toLowerCase() === '#ffc2d8') ? '#ffd84d' : '#c2185b';
+  const d = BODY[shape] || BODY.cirkel;
+  const eyes = up
+    ? '<path d="M75 110q7 -9 14 0M111 110q7 -9 14 0" fill="none" stroke="' + INK + '" stroke-width="5" stroke-linecap="round"/>'
+    : '<path d="M75 108a7 7 0 1 0 14 0a7 7 0 1 0 -14 0zM111 108a7 7 0 1 0 14 0a7 7 0 1 0 -14 0z" fill="' + INK + '"/><circle cx="85" cy="105" r="2.5" fill="#fff"/><circle cx="121" cy="105" r="2.5" fill="#fff"/>';
+  const w = size || 200, h = Math.round(w * 1.2);
+  return `<svg viewBox="0 0 200 240" width="${w}" height="${h}" style="display:block;overflow:visible" aria-hidden="true">
+<ellipse cx="100" cy="228" rx="62" ry="8" fill="${INK}" opacity="0.14"/>
+<path d="${armL}" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>
+<path d="${armR}" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>
+<path d="M80 180h14v34a7 7 0 0 1 -14 0z" fill="${INK}"/><path d="M106 180h14v34a7 7 0 0 1 -14 0z" fill="${INK}"/>
+<ellipse cx="84" cy="220" rx="12" ry="7" fill="${INK}"/><ellipse cx="116" cy="220" rx="12" ry="7" fill="${INK}"/>
+<path d="${d}" fill="${INK}" transform="translate(6 6)"/>
+<path d="${d}" fill="${body}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+<ellipse cx="70" cy="130" rx="10" ry="6" fill="#ff7aa8" opacity="0.55"/><ellipse cx="130" cy="130" rx="10" ry="6" fill="#ff7aa8" opacity="0.55"/>
+${eyes}
+<path d="${m[0]}" fill="${m[1]}" stroke="${INK}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+${acc === 'briller' ? `<path d="M68 108a14 14 0 1 0 28 0a14 14 0 1 0 -28 0zM104 108a14 14 0 1 0 28 0a14 14 0 1 0 -28 0z" fill="#fff" fill-opacity="0.35" stroke="${INK}" stroke-width="4"/><path d="M96 106q4 -4 8 0" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>` : ''}
+${acc === 'sloejfe' ? `<g transform="${accT}"><path d="M100 44l-22 -14q-7 -3 -6 5l3 20q1 6 7 3zM100 44l22 -14q7 -3 6 5l-3 20q-1 6 -7 3z" fill="${accFill}" stroke="${INK}" stroke-width="3.5" stroke-linejoin="round"/><circle cx="100" cy="44" r="7" fill="${accFill}" stroke="${INK}" stroke-width="3.5"/></g>` : ''}
+${acc === 'blomst' ? `<g transform="${accT}"><path d="M92 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0zM103.4 34.3a8 8 0 1 0 16 0a8 8 0 1 0 -16 0zM99 47.7a8 8 0 1 0 16 0a8 8 0 1 0 -16 0zM85 47.7a8 8 0 1 0 16 0a8 8 0 1 0 -16 0zM80.6 34.3a8 8 0 1 0 16 0a8 8 0 1 0 -16 0z" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="100" cy="38" r="6.5" fill="#ffd84d" stroke="${INK}" stroke-width="3"/></g>` : ''}
+</svg>`;
+}
+
+function boSVG(mood, size) {
+  const dots = 'M106 116a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM162 116a6 6 0 1 0 12 0a6 6 0 1 0 -12 0z';
+  const EYES = {
+    glad: [dots, INK, 0],
+    laeser: ['M103 118h18M159 118h18', 'none', 5],
+    hmm: ['M106 118a6 6 0 1 0 12 0a6 6 0 1 0 -12 0zM159 114a9 9 0 1 0 18 0a9 9 0 1 0 -18 0z', INK, 0],
+    sved: ['M103 116a9 9 0 1 0 18 0a9 9 0 1 0 -18 0zM159 116a9 9 0 1 0 18 0a9 9 0 1 0 -18 0z', INK, 0],
+    jubel: ['M102 120q10 -14 20 0M158 120q10 -14 20 0', 'none', 5],
+    tosset: ['M103 116a9 9 0 1 0 18 0a9 9 0 1 0 -18 0zM165 116a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0z', INK, 0]
+  };
+  const BROWS = {
+    glad: ['M96 82q16 -10 32 0', 'M152 82q16 -10 32 0'],
+    laeser: ['M96 86q16 -4 32 2', 'M152 88q16 -6 32 -2'],
+    hmm: ['M96 86q16 -2 32 4', 'M150 66q18 -18 36 -6'],
+    sved: ['M96 78q16 8 32 -2', 'M152 76q16 -10 32 2'],
+    jubel: ['M94 74q18 -16 34 -4', 'M152 70q16 -12 34 4'],
+    tosset: ['M96 72q16 -12 32 4', 'M152 90q16 -8 32 4']
+  };
+  const MOUTH = {
+    glad: ['M120 172q20 16 40 0', 'none'],
+    laeser: ['M130 174h20', 'none'],
+    hmm: ['M122 174q9 -6 18 0t18 0', 'none'],
+    sved: ['M124 178q16 -10 32 0', 'none'],
+    jubel: ['M116 166h48q-4 28 -24 28q-20 0 -24 -28z', INK],
+    tosset: ['M122 170q18 10 36 0', 'none']
+  };
+  const ey = EYES[mood] || EYES.glad, br = BROWS[mood] || BROWS.glad, mo = MOUTH[mood] || MOUTH.glad;
+  const cheeks = (mood === 'jubel' || mood === 'glad') ? 0.6 : 0;
+  const sizeAttr = size ? `width="${size}" height="${Math.round(size * 320 / 280)}"` : 'width="100%"';
+  return `<svg viewBox="0 0 280 320" ${sizeAttr} style="display:block;overflow:visible;height:auto" role="img" aria-label="Chef Bo">
+${mood === 'jubel' ? `<path d="M34 54l5 12l12 5l-12 5l-5 12l-5 -12l-12 -5l12 -5z" fill="#ffd84d" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M244 30l4 9l9 4l-9 4l-4 9l-4 -9l-9 -4l9 -4z" fill="#34b8b5" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M252 150l3 7l7 3l-7 3l-3 7l-3 -7l-7 -3l7 -3z" fill="#ef5b93" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>` : ''}
+<path d="M40 330v-66q0 -62 100 -62q100 0 100 62v66z" fill="${INK}"/>
+<path d="M108 204l32 46l32 -46z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+<path d="M130 212h20l-4 12l13 66l-19 20l-19 -20l13 -66z" fill="#34b8b5" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="140" cy="244" r="3.5" fill="#ffd84d"/><circle cx="134" cy="266" r="3.5" fill="#ffd84d"/><circle cx="146" cy="282" r="3.5" fill="#ffd84d"/>
+<circle cx="64" cy="118" r="15" fill="#ffd84d" stroke="${INK}" stroke-width="4"/><circle cx="216" cy="118" r="15" fill="#ffd84d" stroke="${INK}" stroke-width="4"/>
+<circle cx="146" cy="118" r="76" fill="${INK}"/>
+<circle cx="140" cy="112" r="76" fill="#ffd84d" stroke="${INK}" stroke-width="4"/>
+<path d="M66 98L54 44L92 70L94 14L122 56L140 0L158 56L186 14L188 70L226 44L214 98Q140 58 66 98z" fill="#ef5b93" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+<path d="${br[0]}" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>
+<path d="${br[1]}" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>
+<path d="${ey[0]}" fill="${ey[1]}" stroke="${INK}" stroke-width="${ey[2]}" stroke-linecap="round"/>
+<path d="M90 114a22 22 0 1 0 44 0a22 22 0 1 0 -44 0zM146 114a22 22 0 1 0 44 0a22 22 0 1 0 -44 0z" fill="#fff" fill-opacity="0.3" stroke="${INK}" stroke-width="5"/>
+<path d="M134 112q6 -6 12 0M90 110l-24 2M190 110l24 2" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+<ellipse cx="96" cy="150" rx="12" ry="7" fill="#ff7aa8" opacity="${cheeks}"/><ellipse cx="184" cy="150" rx="12" ry="7" fill="#ff7aa8" opacity="${cheeks}"/>
+<ellipse cx="140" cy="138" rx="11" ry="9" fill="#ffc2d8" stroke="${INK}" stroke-width="3"/>
+<path d="${mo[0]}" fill="${mo[1]}" stroke="${INK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+${mood === 'tosset' ? `<path d="M136 172q0 18 9 18q9 0 9 -16" fill="#ef5b93" stroke="${INK}" stroke-width="3"/>` : ''}
+<path d="M140 150q-14 -12 -30 -4q-14 8 -26 -2q2 20 26 20q20 0 30 -10q10 10 30 10q24 0 26 -20q-12 10 -26 2q-16 -8 -30 4z" fill="${INK}"/>
+${mood === 'sved' ? `<path d="M226 64q-11 17 -11 24a11 11 0 0 0 22 0q0 -7 -11 -24z" fill="#a9e8e3" stroke="${INK}" stroke-width="3"/><path d="M44 84q-8 12 -8 17a8 8 0 0 0 16 0q0 -5 -8 -17z" fill="#a9e8e3" stroke="${INK}" stroke-width="3"/>` : ''}
+</svg>`;
+}
+
+/* Pynt: én tegning pr. ting, alle i et 100×100-felt */
+const PYNT = {
+ "kaktus": "<path d=\"M50 60V34\" stroke=\"#1d2b3a\" stroke-width=\"22\" stroke-linecap=\"round\"/><path d=\"M50 60V34\" stroke=\"#34b8b5\" stroke-width=\"15\" stroke-linecap=\"round\"/><path d=\"M40 54h-6v-12M60 48h6v-10\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"12\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M40 54h-6v-12M60 48h6v-10\" fill=\"none\" stroke=\"#34b8b5\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"46\" cy=\"40\" r=\"2\" fill=\"#1d2b3a\"/><circle cx=\"54\" cy=\"40\" r=\"2\" fill=\"#1d2b3a\"/><path d=\"M46 46q4 4 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"20\" r=\"5\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path d=\"M30 62h40v8h-40z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M33 70h34l-4 26h-26z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/>",
+ "plante": "<path d=\"M50 66C40 50 22 48 14 30c16 0 30 10 36 36z\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M50 66C60 48 78 46 88 28c-18 0 -32 12 -38 38z\" fill=\"#2a9c99\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M50 66C44 44 46 22 56 6c8 18 4 40 -6 60z\" fill=\"#7fd6a8\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M50 66C38 58 26 62 18 54c10 -6 24 -4 32 12z\" fill=\"#7fd6a8\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M28 64h44l-6 32h-32z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M32 74h36\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/>",
+ "kugle": "<circle cx=\"50\" cy=\"48\" r=\"32\" fill=\"#d3f4f1\" stroke=\"#1d2b3a\" stroke-width=\"4\"/><circle cx=\"50\" cy=\"62\" r=\"10\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><circle cx=\"50\" cy=\"47\" r=\"7\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path d=\"M46 40h8l-2 -8h-4z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><g class=\"snow\"><circle cx=\"34\" cy=\"34\" r=\"2.2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"0.8\"/><circle cx=\"62\" cy=\"30\" r=\"2.2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"0.8\"/><circle cx=\"68\" cy=\"50\" r=\"2.2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"0.8\"/><circle cx=\"30\" cy=\"54\" r=\"2.2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"0.8\"/><circle cx=\"42\" cy=\"24\" r=\"2.2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"0.8\"/><circle cx=\"58\" cy=\"40\" r=\"2.2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"0.8\"/></g><path d=\"M30 36q6 -12 18 -16\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M22 78h56l-6 18h-44z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/>",
+ "lava": "<path d=\"M40 8h20l3 12h-26z\" fill=\"#1d2b3a\"/><path d=\"M37 20h26l10 56h-46z\" fill=\"#ffc2d8\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><ellipse class=\"lava1\" cx=\"50\" cy=\"60\" rx=\"9\" ry=\"8\" fill=\"#ef5b93\"/><ellipse class=\"lava2\" cx=\"46\" cy=\"40\" rx=\"6\" ry=\"5\" fill=\"#ef5b93\"/><ellipse class=\"lava3\" cx=\"56\" cy=\"30\" rx=\"4\" ry=\"4\" fill=\"#ef5b93\"/><path d=\"M27 76h46l-8 20h-30z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/>",
+ "plakat": "<rect x=\"12\" y=\"8\" width=\"76\" height=\"86\" rx=\"4\" fill=\"#fff4c2\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M30 14h40\" stroke=\"#34b8b5\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M50 14v14\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path d=\"M42 28h16\" stroke=\"#1d2b3a\" stroke-width=\"5\" stroke-linecap=\"round\"/><path d=\"M36 44l2 -12l8 8M64 44l-2 -12l-8 8\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"16\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"44\" cy=\"48\" r=\"2.2\" fill=\"#1d2b3a\"/><circle cx=\"56\" cy=\"48\" r=\"2.2\" fill=\"#1d2b3a\"/><path d=\"M46 55q4 3 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><text x=\"50\" y=\"84\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#c2185b\">HÆNG I!</text><circle cx=\"50\" cy=\"8\" r=\"4\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
+ "lys": "<path d=\"M0 22Q25 44 50 22T100 22\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><ellipse class=\"tw1\" cx=\"12\" cy=\"32\" rx=\"5\" ry=\"7\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw2\" cx=\"30\" cy=\"36\" rx=\"5\" ry=\"7\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw3\" cx=\"50\" cy=\"28\" rx=\"5\" ry=\"7\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw1\" cx=\"70\" cy=\"16\" rx=\"5\" ry=\"7\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw2\" cx=\"88\" cy=\"16\" rx=\"5\" ry=\"7\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
+ "disko": "<path d=\"M50 0v22\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><g class=\"sway\"><circle cx=\"50\" cy=\"50\" r=\"28\" fill=\"#cfe3ea\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><path d=\"M24 40h52M22 52h56M26 64h48M40 24v52M52 22v56M64 26v48\" stroke=\"#1d2b3a\" stroke-width=\"1.5\" opacity=\"0.5\"/><rect class=\"tw1\" x=\"41\" y=\"41\" width=\"10\" height=\"10\" fill=\"#ffffff\"/><rect class=\"tw2\" x=\"53\" y=\"53\" width=\"10\" height=\"10\" fill=\"#ef5b93\"/><rect class=\"tw3\" x=\"29\" y=\"53\" width=\"10\" height=\"10\" fill=\"#ffd84d\"/></g><path class=\"tw2\" d=\"M14 70l3 7l7 3l-7 3l-3 7l-3 -7l-7 -3l7 -3z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path class=\"tw3\" d=\"M86 20l3 6l6 3l-6 3l-3 6l-3 -6l-6 -3l6 -3z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
+ "kat": "<path class=\"tail\" d=\"M80 82q16 0 14 -18q-1 -8 -8 -8\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"10\" stroke-linecap=\"round\"/><path class=\"tail\" d=\"M80 82q16 0 14 -18q-1 -8 -8 -8\" fill=\"none\" stroke=\"#ffb347\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"56\" cy=\"80\" rx=\"30\" ry=\"16\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M50 70q6 -4 12 0M58 68q6 -4 12 0\" fill=\"none\" stroke=\"#c2185b\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M14 62l2 -16l10 10M38 62l-2 -16l-10 10\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"26\" cy=\"72\" r=\"15\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M18 72q3 3 6 0M28 72q3 3 6 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><ellipse cx=\"18\" cy=\"78\" rx=\"4\" ry=\"2.5\" fill=\"#ff7aa8\" opacity=\"0.6\"/><ellipse cx=\"34\" cy=\"78\" rx=\"4\" ry=\"2.5\" fill=\"#ff7aa8\" opacity=\"0.6\"/><text class=\"zzz\" x=\"40\" y=\"44\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"14\" fill=\"#0b7477\">z Z</text>",
+ "guldabe": "<path d=\"M22 86h56v10h-56z\" fill=\"#0b7477\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M68 80q18 2 16 -16q-1 -8 -8 -6\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M68 80q18 2 16 -16q-1 -8 -8 -6\" fill=\"none\" stroke=\"#f2c230\" stroke-width=\"4\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"68\" rx=\"21\" ry=\"18\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"72\" rx=\"11\" ry=\"10\" fill=\"#ffe58a\"/><ellipse cx=\"36\" cy=\"84\" rx=\"11\" ry=\"6\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"64\" cy=\"84\" rx=\"11\" ry=\"6\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M32 60q-4 14 8 20M68 60q4 14 -8 20\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"34\" cy=\"34\" r=\"8\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"66\" cy=\"34\" r=\"8\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"36\" r=\"16\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"42\" rx=\"10\" ry=\"7\" fill=\"#ffe58a\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"44\" cy=\"32\" r=\"2.2\" fill=\"#1d2b3a\"/><circle cx=\"56\" cy=\"32\" r=\"2.2\" fill=\"#1d2b3a\"/><path d=\"M45 44q5 4 10 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><path class=\"tw1\" d=\"M80 14l2.5 6l6 2.5l-6 2.5l-2.5 6l-2.5 -6l-6 -2.5l6 -2.5z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><path d=\"M40 26q4 -6 10 -6\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/>",
+ "fladfisk": "<path d=\"M50 20l-12 -12M50 20l12 -12\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"50\" cy=\"7\" r=\"3\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><rect x=\"6\" y=\"20\" width=\"88\" height=\"62\" rx=\"14\" fill=\"#c98a4b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M14 51q22 -26 54 -8l18 -12l-2 38l-16 -10q-32 18 -54 -8z\" fill=\"#e8c07a\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"44\" cy=\"54\" r=\"2.5\" fill=\"#c2185b\"/><circle cx=\"54\" cy=\"46\" r=\"2\" fill=\"#c2185b\"/><circle cx=\"58\" cy=\"57\" r=\"2.5\" fill=\"#c2185b\"/><circle cx=\"26\" cy=\"46\" r=\"3.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"26\" cy=\"46\" r=\"1.5\" fill=\"#1d2b3a\"/><circle cx=\"33\" cy=\"42\" r=\"3.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"33\" cy=\"42\" r=\"1.5\" fill=\"#1d2b3a\"/><path d=\"M20 56q4 2 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M30 36q16 -8 30 -2\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\" opacity=\"0.8\"/>",
+ "kop": "<path class=\"tw2\" d=\"M40 22q-4 -6 0 -12M52 22q-4 -6 0 -12\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M72 44h6a10 10 0 0 1 0 20h-6\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"6\"/><path d=\"M22 28h52v56a10 10 0 0 1 -10 10h-32a10 10 0 0 1 -10 -10z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><text x=\"48\" y=\"50\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"7.5\" fill=\"#1d2b3a\">VERDENS</text><text x=\"48\" y=\"60\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"7.5\" fill=\"#1d2b3a\">BEDSTE</text><text x=\"48\" y=\"74\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"11\" fill=\"#c2185b\">KOLLEGA</text><path d=\"M44 82l2 3h3l-2.5 2l1 3l-3.5 -2l-3.5 2l1 -3l-2.5 -2h3z\" fill=\"#ffd84d\"/>",
+ "stork": "<ellipse cx=\"54\" cy=\"94\" rx=\"24\" ry=\"5\" fill=\"#1d2b3a\"/><path d=\"M50 60v32M58 60v32\" stroke=\"#c2185b\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M44 92h8M54 92h8\" stroke=\"#c2185b\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M36 50q0 -16 20 -16q20 0 30 14q-14 2 -14 8q-8 8 -20 6q-16 -2 -16 -12z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M58 40q14 0 28 8q-12 4 -16 10q-8 -8 -12 -18z\" fill=\"#1d2b3a\"/><path d=\"M42 42q-6 -14 -2 -28\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"10\" stroke-linecap=\"round\"/><path d=\"M42 42q-6 -14 -2 -28\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"5\" stroke-linecap=\"round\"/><circle cx=\"40\" cy=\"12\" r=\"8\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M33 12l-26 6l26 -1z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"40\" cy=\"10\" r=\"2\" fill=\"#1d2b3a\"/><circle cx=\"40.8\" cy=\"9.3\" r=\"0.7\" fill=\"#ffffff\"/>",
+ "tyggegummi": "<path d=\"M42 10h16v8h-16z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"40\" r=\"25\" fill=\"#eefaf4\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><circle cx=\"40\" cy=\"44\" r=\"5\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"51\" cy=\"48\" r=\"5\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"62\" cy=\"44\" r=\"5\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"45\" cy=\"55\" r=\"5\" fill=\"#a9e8e3\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"57\" cy=\"56\" r=\"5\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"46\" cy=\"34\" r=\"5\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"57\" cy=\"36\" r=\"5\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><path d=\"M36 28q4 -8 12 -10\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M30 64h40l6 32h-52z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><rect x=\"44\" y=\"70\" width=\"12\" height=\"8\" rx=\"2\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path d=\"M44 84h12v8h-12z\" fill=\"#1d2b3a\"/>",
+ "vaerdier": "<circle cx=\"50\" cy=\"6\" r=\"3.5\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><rect x=\"14\" y=\"6\" width=\"72\" height=\"90\" rx=\"4\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><rect x=\"14\" y=\"6\" width=\"72\" height=\"16\" rx=\"4\" fill=\"#1d2b3a\"/><text x=\"50\" y=\"17.5\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"8\" fill=\"#ffd84d\">VORES VÆRDIER</text><text x=\"22\" y=\"34\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#c2185b\">P</text><text x=\"33\" y=\"33\" font-family=\"Nunito, system-ui, sans-serif\" font-weight=\"800\" font-size=\"7.5\" fill=\"#1d2b3a\">assion</text><text x=\"22\" y=\"49\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#0b7477\">A</text><text x=\"33\" y=\"48\" font-family=\"Nunito, system-ui, sans-serif\" font-weight=\"800\" font-size=\"7.5\" fill=\"#1d2b3a\">nsvar</text><text x=\"22\" y=\"64\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#c2185b\">P</text><text x=\"33\" y=\"63\" font-family=\"Nunito, system-ui, sans-serif\" font-weight=\"800\" font-size=\"7.5\" fill=\"#1d2b3a\">roaktivitet</text><text x=\"22\" y=\"79\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#0b7477\">I</text><text x=\"33\" y=\"78\" font-family=\"Nunito, system-ui, sans-serif\" font-weight=\"800\" font-size=\"7.5\" fill=\"#1d2b3a\">nnovation</text><text x=\"22\" y=\"93\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#c2185b\">R</text><text x=\"33\" y=\"92\" font-family=\"Nunito, system-ui, sans-serif\" font-weight=\"800\" font-size=\"7.5\" fill=\"#1d2b3a\">esultater</text>",
+ "neon": "<path d=\"M28 26l-8 -18M72 26l8 -18\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><rect x=\"4\" y=\"26\" width=\"92\" height=\"46\" rx=\"12\" fill=\"#1d2b3a\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><text class=\"neon\" x=\"50\" y=\"56\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"18\" fill=\"#ffc2d8\" stroke=\"#ef5b93\" stroke-width=\"1.2\">STEMPEL!</text><path class=\"neon\" d=\"M14 64h72\" stroke=\"#34b8b5\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>",
+ "globus": "<path d=\"M36 90h28l-4 -8h-20z\" fill=\"#1d2b3a\"/><path d=\"M50 82v-8\" stroke=\"#1d2b3a\" stroke-width=\"4\"/><path d=\"M22 44a30 30 0 0 0 52 22\" fill=\"none\" stroke=\"#ffd84d\" stroke-width=\"5\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"44\" r=\"26\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M36 30q10 -4 14 4q-2 8 -10 8q-6 6 -10 0q-2 -8 6 -12zM56 48q10 -4 14 4q0 10 -10 12q-8 -2 -4 -16zM52 22q6 -2 10 2q-4 4 -10 -2z\" fill=\"#7fd6a8\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M36 26q-6 6 -6 14\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\" opacity=\"0.7\"/>",
+ "akvarie": "<rect x=\"8\" y=\"26\" width=\"84\" height=\"62\" rx=\"8\" fill=\"#a9e8e3\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><path d=\"M11 36h78\" stroke=\"#ffffff\" stroke-width=\"2\" opacity=\"0.8\"/><path d=\"M11 78q20 -6 40 0t38 0v7h-78z\" fill=\"#fff4c2\"/><path d=\"M22 80q-4 -14 2 -26M28 80q2 -12 -2 -20\" fill=\"none\" stroke=\"#0b7477\" stroke-width=\"3\" stroke-linecap=\"round\"/><g class=\"swim\"><path d=\"M40 54q10 -10 22 0q-12 10 -22 0zM62 54l8 -6v12z\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"46\" cy=\"52\" r=\"1.6\" fill=\"#1d2b3a\"/><path d=\"M44 46l2 -4l3 3\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"1\"/></g><circle class=\"tw1\" cx=\"72\" cy=\"42\" r=\"2.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1\"/><circle class=\"tw2\" cx=\"76\" cy=\"34\" r=\"2\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1\"/><rect x=\"4\" y=\"88\" width=\"92\" height=\"8\" rx=\"2\" fill=\"#1d2b3a\"/>",
+ "kukur": "<path d=\"M50 4l40 28h-80z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><rect x=\"18\" y=\"30\" width=\"64\" height=\"44\" rx=\"4\" fill=\"#c98a4b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><rect x=\"43\" y=\"12\" width=\"14\" height=\"12\" rx=\"2\" fill=\"#1d2b3a\"/><circle cx=\"50\" cy=\"18\" r=\"3\" fill=\"#ffd84d\"/><circle cx=\"50\" cy=\"52\" r=\"15\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M50 52v-9M50 52l7 4\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><g class=\"pendulum\"><path d=\"M42 74v14M58 74v10M50 74v18\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse cx=\"42\" cy=\"90\" rx=\"3.5\" ry=\"5\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><ellipse cx=\"58\" cy=\"86\" rx=\"3.5\" ry=\"5\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"50\" cy=\"94\" r=\"4\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/></g>",
+ "radio": "<rect x=\"12\" y=\"36\" width=\"76\" height=\"52\" rx=\"10\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M24 36l40 -26\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"64\" cy=\"10\" r=\"3.5\" fill=\"#c2185b\"/><circle cx=\"36\" cy=\"62\" r=\"15\" fill=\"#fff4c2\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"36\" cy=\"62\" r=\"6\" fill=\"#1d2b3a\"/><rect x=\"58\" y=\"48\" width=\"22\" height=\"10\" rx=\"3\" fill=\"#fff\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"63\" cy=\"72\" r=\"4\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"75\" cy=\"72\" r=\"4\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path class=\"tw2\" d=\"M88 12v14a4 4 0 1 1 -3 -3v-11z\" fill=\"#1d2b3a\"/>",
+ "yoyo": "<circle cx=\"50\" cy=\"5\" r=\"4.5\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path class=\"yoyo-str\" d=\"M50 9V34\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><g class=\"yoyo-disk\"><circle cx=\"50\" cy=\"52\" r=\"18\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"52\" r=\"11\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path d=\"M50 43v18M41 52h18\" stroke=\"#c2185b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"52\" r=\"3.5\" fill=\"#1d2b3a\"/><path d=\"M38 44q4 -6 11 -8\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"2.5\" stroke-linecap=\"round\"/></g>",
+ "bamse": "<path d=\"M58 38 C58 14 70 2 80 8 C90 14 80 30 66 42 Z\" fill=\"#b8c2c8\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M63 34 C64 18 71 10 77 13 C82 17 76 27 67 36 Z\" fill=\"#ffc2d8\"/><ellipse cx=\"40\" cy=\"20\" rx=\"8.5\" ry=\"21\" fill=\"#b8c2c8\" stroke=\"#1d2b3a\" stroke-width=\"3\" transform=\"rotate(-10 40 20)\"/><ellipse cx=\"40\" cy=\"22\" rx=\"4\" ry=\"13\" fill=\"#ffc2d8\" transform=\"rotate(-10 40 22)\"/><circle cx=\"76\" cy=\"80\" r=\"7\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><ellipse cx=\"50\" cy=\"76\" rx=\"25\" ry=\"20\" fill=\"#b8c2c8\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"80\" rx=\"13\" ry=\"12\" fill=\"#e3e8eb\"/><ellipse cx=\"34\" cy=\"93\" rx=\"11\" ry=\"6\" fill=\"#b8c2c8\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"66\" cy=\"93\" rx=\"11\" ry=\"6\" fill=\"#b8c2c8\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"46\" r=\"19\" fill=\"#b8c2c8\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"43\" cy=\"44\" r=\"2.8\" fill=\"#1d2b3a\"/><circle cx=\"57\" cy=\"44\" r=\"2.8\" fill=\"#1d2b3a\"/><circle cx=\"44\" cy=\"43\" r=\"0.9\" fill=\"#ffffff\"/><circle cx=\"58\" cy=\"43\" r=\"0.9\" fill=\"#ffffff\"/><ellipse cx=\"38\" cy=\"52\" rx=\"4\" ry=\"2.5\" fill=\"#ff7aa8\" opacity=\"0.6\"/><ellipse cx=\"62\" cy=\"52\" rx=\"4\" ry=\"2.5\" fill=\"#ff7aa8\" opacity=\"0.6\"/><path d=\"M47.5 50h5l-2.5 3z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><path d=\"M50 53v2.5M50 55.5q-2.5 2.5 -5 0M50 55.5q2.5 2.5 5 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><path d=\"M40 53l-10 -2M40 55l-10 2M60 53l10 -2M60 55l10 2\" stroke=\"#1d2b3a\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><path d=\"M42 64l8 4l8 -4l-1 7l-7 -2l-7 2z\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/>",
+ "vimpel": "<path d=\"M2 16Q50 34 98 16\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path d=\"M8 19l8 26l8 -22z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M28 24l8 26l8 -24z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M48 25l8 26l8 -26z\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M68 23l8 26l8 -24z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><text x=\"50\" y=\"74\" text-anchor=\"middle\" font-family=\"Fredoka, sans-serif\" font-weight=\"700\" font-size=\"14\" fill=\"#c2185b\">HURRA!</text>",
+ "trofae": "<path d=\"M32 20h-10a10 10 0 0 0 10 16M68 20h10a10 10 0 0 1 -10 16\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M32 12h36v24a18 18 0 0 1 -36 0z\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M46 54h8v14h-8z\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M30 68h40v10h-40z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M24 78h52v16h-52z\" fill=\"#1d2b3a\"/><text x=\"50\" y=\"90\" text-anchor=\"middle\" font-family=\"Fredoka, sans-serif\" font-weight=\"700\" font-size=\"9\" fill=\"#ffd84d\">NR. 1</text><path class=\"tw1\" d=\"M50 18l3 6l6 1l-5 4l1 6l-5 -3l-5 3l1 -6l-5 -4l6 -1z\" fill=\"#fff\"/>",
+ "palme": "<path d=\"M50 84V44\" stroke=\"#8a5a2b\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M50 44q-20 -20 -40 -8q20 0 40 8zM50 44q20 -20 40 -8q-20 0 -40 8zM50 44q-8 -26 -30 -30q16 10 30 30zM50 44q8 -26 30 -30q-16 10 -30 30z\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><circle cx=\"46\" cy=\"48\" r=\"4\" fill=\"#8a5a2b\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"54\" cy=\"48\" r=\"4\" fill=\"#8a5a2b\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><path d=\"M30 78h40l-4 18h-32z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/>",
+ "dino": "<path d=\"M22 84q-14 -2 -18 -14q10 6 20 4\" fill=\"#7fd6a8\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M40 30l4 -9l4 9M52 28l4 -9l4 9M30 40l2 -9l6 6\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M20 88q-4 -26 16 -32q2 -26 26 -28q20 0 22 16q10 2 10 10q-8 4 -18 0q-2 16 -10 22l2 12h-9l-2 -9q-10 2 -18 0l-2 9h-9z\" fill=\"#7fd6a8\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"72\" cy=\"36\" r=\"3\" fill=\"#1d2b3a\"/><path d=\"M84 46h-8\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
+ "medarbejder": "<path d=\"M50 14l-16 -10M50 14l16 -10\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><rect x=\"6\" y=\"14\" width=\"88\" height=\"66\" rx=\"8\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><rect x=\"13\" y=\"21\" width=\"74\" height=\"52\" rx=\"4\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path d=\"M50 25l3.5 7l7.5 1l-5.5 5l1.5 7.5l-7 -3.5l-7 3.5l1.5 -7.5l-5.5 -5l7.5 -1z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><text x=\"50\" y=\"57\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"8.5\" fill=\"#1d2b3a\">MÅNEDENS</text><text x=\"50\" y=\"67\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"9\" fill=\"#c2185b\">MEDARBEJDER</text><path d=\"M40 80l-4 16l8 -5l6 6v-17zM60 80l4 16l-8 -5l-6 6v-17z\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/>"
+};
+function pyntSVG(kind, size) {
+  return `<svg class="pynt" viewBox="0 0 100 100" width="${size}" height="${size}" style="display:block;overflow:visible" aria-hidden="true">${PYNT[kind] || ''}</svg>`;
+}
+
+function sigSVG(sg, animate) {
+  if (!sg) return '';
+  return `<svg viewBox="0 0 300 72" width="100%" class="${animate ? 'sig-draw' : ''}" style="display:block;max-width:300px;overflow:visible" role="img" aria-label="Kundens underskrift: ${esc(sg.text)}"><g transform="${sg.tr || 'rotate(' + sg.tilt + ' 150 36)'}"><path d="${sg.fl}" fill="none" stroke="${sg.color}" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/><text x="14" y="46" font-family="${sg.font}" font-size="${sg.size}" fill="${sg.color}" stroke="${sg.color}" stroke-width="0.6">${esc(sg.text)}</text></g></svg>`;
+}
+function foodSVG(id, size) { return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true" style="display:block;overflow:visible">${FOOD[id] || ''}</svg>`; }
+const ICON = {
+  clock: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#fff" stroke="#1d2b3a" stroke-width="2.2"/><path d="M12 7v5l3 2" fill="none" stroke="#1d2b3a" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  pen: '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.5-5L16 4.5l3.5 3.5L9 18.5z M14 6.5l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  star: '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="2" stroke-linejoin="round"/></svg>',
+  coin: '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#ffd84d" stroke="#1d2b3a" stroke-width="2"/><path d="M9.5 8.5v7M9.5 12l4-3.5M11 11l3 4.5" fill="none" stroke="#1d2b3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  home: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7M6.5 9.5V20h11V9.5M10 20v-5h4v5" fill="none" stroke="#1d2b3a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  bag: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z" fill="#ffc2d8" stroke="#1d2b3a" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 10V7a3 3 0 0 1 6 0v3" fill="none" stroke="#1d2b3a" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  soundOn: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5h3.5L11.5 5.5v13l-4.5-4H3.5z" fill="#a9e8e3" stroke="#1d2b3a" stroke-width="2.2" stroke-linejoin="round"/><path d="M15 9a4 4 0 0 1 0 6M17.8 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="#1d2b3a" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  soundOff: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5h3.5L11.5 5.5v13l-4.5-4H3.5z" fill="#ffc2d8" stroke="#1d2b3a" stroke-width="2.2" stroke-linejoin="round"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" fill="none" stroke="#c2185b" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  arrow: '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  back: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11 6l-6 6 6 6" fill="none" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  send: '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5l17-8-6 17-3-7z M11.5 13.5l9-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  ok: '<svg class="pop" width="34" height="34" viewBox="0 0 24 24" role="img" aria-label="Rigtigt"><circle cx="12" cy="12" r="10" fill="#0b7477" stroke="#1d2b3a" stroke-width="2"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  bad: '<svg class="pop" width="34" height="34" viewBox="0 0 24 24" role="img" aria-label="Forkert"><circle cx="12" cy="12" r="10" fill="#c2185b" stroke="#1d2b3a" stroke-width="2"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  plus: '<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+  mug: '<svg width="70" height="80" viewBox="0 0 70 80" aria-hidden="true"><path d="M52 30h6a10 10 0 0 1 0 20h-6" fill="none" stroke="#1d2b3a" stroke-width="5"/><path d="M10 20h44v42a10 10 0 0 1 -10 10h-24a10 10 0 0 1 -10 -10z" fill="#fff" stroke="#1d2b3a" stroke-width="4"/><path d="M24 12q-4 -6 0 -10M36 12q-4 -6 0 -10" fill="none" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/><path d="M24 44l3 6h6l-5 4l2 6l-6 -4l-6 4l2 -6l-5 -4h6z" fill="#c2185b"/></svg>',
+  logo: '<svg width="40" height="40" viewBox="0 0 44 44" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#1d2b3a"/><circle cx="21" cy="21" r="18" fill="#c2185b" stroke="#1d2b3a" stroke-width="3"/><circle cx="21" cy="21" r="11" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 3"/><path d="M16 21.5l3.5 3.5l6.5 -7" fill="none" stroke="#ffd84d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  starSolid: '<svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z" fill="currentColor" stroke="#1d2b3a" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+};
+
+
+/* ============================================================
+   VISNING — skærmene bygges som HTML-tekst og "morphes" ind,
+   så elementer og animationer bevares mellem opdateringer.
+   ============================================================ */
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+let HANDLERS = [];
+function on(fn) { HANDLERS.push(fn); return HANDLERS.length - 1; }
+
+/* Plads-koordinater i rummet (616 × 784) */
+const ROOM_SLOTS = {
+  H1: [22, 110, 96], H4: [104, 8, 84], H5: [22, 222, 84], H2: [196, -4, 84],
+  S1: [20, 368, 76], S2: [346, 368, 76], S3: [440, 368, 76], S4: [526, 368, 76],
+  B1: [14, 478, 80], B2: [116, 478, 80], B3: [218, 478, 80], H3: [320, 478, 80], B4: [422, 478, 80], B5: [524, 478, 80],
+  D1: [308, 584, 96], D2: [410, 584, 96], D3: [512, 584, 96], D4: [308, 686, 92], D5: [410, 686, 92], D6: [512, 686, 92]
+};
+function slotHTML(v, k) {
+  const sl = v.sl[k];
+  if (!sl || !sl.show) return '';
+  const p = ROOM_SLOTS[k];
+  return `<button class="${sl.cls}" type="button" tabindex="${sl.tab}" data-on="${on(sl.click)}" aria-label="${esc(sl.label)}" data-key="slot-${k}" style="position:absolute;left:${p[0]}px;top:${p[1]}px;width:${p[2]}px;height:${p[2]}px">${sl.has ? pyntSVG(sl.kind, p[2]) : ''}${sl.plus ? ICON.plus : ''}</button>`;
+}
+
+function headerHTML(v) {
+  return `<header class="top">
+<div class="brand">${ICON.logo}<span class="brand-name disp">Kontraktkontoret</span></div>
+${v.inGame ? `<div class="daybox" data-key="daybox"><b class="disp">${esc(v.dayLabel)}</b><span>${esc(v.custLabel)}</span></div>` : ''}
+<div class="controls">
+${v.inGame ? `<div class="count count-clock ${v.late ? 'late' : ''}" data-key="clock" aria-label="Klokken er ${v.clockText}">${ICON.clock}<span class="disp">${v.clockText}</span><span class="clockbar" aria-hidden="true"><i style="width:${v.clockPct}%"></i></span></div>` : ''}
+${v.inGame ? `<div class="count count-star" data-key="stars" aria-label="Stjerner i dag">${ICON.star}<span class="disp">${esc(v.starsLabel)}</span></div>` : ''}
+<div class="count count-money" data-key="money" aria-label="Penge i kassen">${ICON.coin}<span class="disp">${esc(v.moneyLabel)}</span></div>
+${v.canShop ? `<button class="icon-btn" type="button" data-key="bag" data-on="${on(v.openShop)}" aria-label="Kontorbutikken">${ICON.bag}</button>` : ''}
+${v.inGame ? `<button class="icon-btn" type="button" data-key="home" data-on="${on(v.goHome)}" aria-label="Til forsiden">${ICON.home}</button>` : ''}
+<button class="icon-btn" type="button" data-key="mute" data-on="${on(v.toggleMute)}" aria-label="${v.muteLabel}">${v.muted ? ICON.soundOff : ICON.soundOn}</button>
+</div>
+</header>`;
+}
+
+function titleHTML(v) {
+  const queue = [['trekant', '#ffd84d', 'blomst', 'glad', 'bob'], ['cirkel', '#ef5b93', 'sloejfe', 'snak', 'bob2'], ['firkant', '#34b8b5', 'briller', 'glad', 'bob3']];
+  return `<main class="screen" data-key="title">
+<div class="title-grid">
+<div class="title-text">
+<div class="disp pop kicker">Dit allerførste job!</div>
+<h1 class="disp title-h1">Kontrakt<br><span class="wobble">kontoret</span></h1>
+<p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel.</p>
+<div class="btn-row">
+${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-key="cont" data-on="${on(v.continueGame)}">${esc(v.continueLabel)} ${ICON.arrow}</button>
+<button class="btn" type="button" data-key="start1" data-on="${on(v.startGame)}">Start på dag 1</button>`
+: `<button class="btn btn-go btn-big ready" type="button" data-key="start" data-on="${on(v.startGame)}">Start arbejdsdagen ${ICON.arrow}</button>`}
+<button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Kontorbutikken</button>
+</div>
+<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk i browseren.${v.hasSave ? ` <button class="linkbtn" type="button" data-key="wipe" data-on="${on(v.newGame)}">Slet alt og start forfra</button>` : ''}</div>
+<div class="howto">
+<div class="howto-card"><div class="num done static">1</div><div class="disp h3">Læs kunden</div><div class="small">Læs sedlen og kundens talebobler. Pas på: nogle skifter mening!</div></div>
+<div class="howto-card"><div class="num done static">2</div><div class="disp h3">Udfyld kontrakten</div><div class="small">Navn, ydelse, varighed, dato og pris.</div></div>
+<div class="howto-card"><div class="num done static">3</div><div class="disp h3">Chef Bo stempler</div><div class="small">Godkendt giver penge og stjerner — og penge giver pynt!</div></div>
+</div>
+</div>
+<div class="stage card-stage title-stage" data-w="560" data-h="600"><div class="stage-in" style="width:560px;height:600px;background:#ffe0ec">
+<div style="position:absolute;left:0;right:0;bottom:0;height:150px;background:#c2185b;border-top:3px solid #1d2b3a"></div>
+<div style="position:absolute;left:0;right:0;bottom:118px;height:32px;background:#ffd84d;border-top:3px solid #1d2b3a;border-bottom:3px solid #1d2b3a"></div>
+<div class="bubble boss tail-b pop d1" style="position:absolute;left:36px;top:28px;width:300px">Velkommen! Jeg er Chef Bo. Jeg elsker stempler. MEGET meget meget.</div>
+<div class="bo-peek" style="position:absolute;right:30px;bottom:150px;width:280px;height:320px;transform-origin:50% 100%">${boSVG('jubel', 280)}</div>
+<div style="position:absolute;left:26px;bottom:10px;display:flex;gap:6px;align-items:flex-end">
+${queue.map(q => `<div class="${q[4]}">${kundeSVG({ shape: q[0], body: q[1], acc: q[2], mood: q[3] }, 120)}</div>`).join('')}
+</div>
+<div style="position:absolute;right:40px;bottom:20px">${ICON.mug}</div>
+</div></div>
+</div>
+</main>`;
+}
+
+function introHTML(v) {
+  return `<main class="screen center-screen" data-key="intro">
+<div class="card intro-card pop">
+<div class="bo-box bo-tilt">${boSVG(v.introMood)}</div>
+<div class="stack">
+<div class="lbl">${esc(v.introKicker)}</div>
+<h2 class="disp h-big">${esc(v.introTitle)}</h2>
+<div class="bubble boss tail-l">${esc(v.introTip)}</div>
+<div class="muted-text">${esc(v.introGoal)}</div>
+<div class="value-box"><div class="disp value-letter">${esc(v.introValue.letter)}</div><div><span class="lbl" style="display:block">Dagens værdi fra P.A.P.I.R.</span>${esc(v.introValue.text)}</div></div>
+<div><button class="btn btn-go btn-big ready" type="button" data-on="${on(v.openDesk)}">Åbn skranken ${ICON.arrow}</button></div>
+</div>
+</div>
+</main>`;
+}
+
+function chipsHTML(list, withIcon) {
+  return list.map(it => `<button type="button" class="${it.cls}" data-on="${on(it.pick)}" aria-pressed="${it.on}">${withIcon ? `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="${it.d}" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}${esc(it.label)}</button>`).join('');
+}
+
+function contractHTML(v) {
+  return `<div class="card contract" role="form" aria-label="Kontrakt" data-key="contract">
+<div class="clip" aria-hidden="true"></div>
+<div class="contract-head">
+<div><div class="disp contract-title">KONTRAKT</div><div class="small strong">${esc(v.contractNo)} · Kontraktkontoret A/S</div></div>
+${v.showRetry ? `<div class="bubble boss wiggle retry-note" data-key="retry">${esc(v.retryNote)}</div>` : `<div class="stamp-spot" data-key="spot">Chefens stempel</div>`}
+</div>
+<div class="field">
+<label for="kunde-navn" class="field-head"><span class="${v.numCls.name}">1</span><span class="lbl">Kundens navn</span><span class="hint">Tjek stavningen — læs, hvad kunden siger!</span></label>
+<input id="kunde-navn" class="name-input" type="text" autocomplete="off" spellcheck="false" placeholder="Skriv for- og efternavn" value="${esc(v.form.name)}" data-oninput="${on(v.onName)}" data-onkey="${on(v.onNameKey)}">
+</div>
+<div class="field"><div class="field-head"><span class="${v.numCls.service}">2</span><span class="lbl">Ydelse</span></div><div class="chips g-svc" role="group" aria-label="Ydelse">${chipsHTML(v.services, true)}</div></div>
+<div class="field"><div class="field-head"><span class="${v.numCls.duration}">3</span><span class="lbl">Varighed</span></div><div class="chips g-dur" role="group" aria-label="Varighed">${chipsHTML(v.durations)}</div></div>
+<div class="field"><div class="field-head"><span class="${v.numCls.date}">4</span><span class="lbl">Startdato</span></div><div class="chips g-small" role="group" aria-label="Startdato">${chipsHTML(v.dates)}</div></div>
+<div class="field"><div class="field-head"><span class="${v.numCls.price}">5</span><span class="lbl">Pris</span></div><div class="chips g-small" role="group" aria-label="Pris">${chipsHTML(v.prices)}</div></div>
+<div class="contract-foot">
+<div class="sign"><div class="lbl">Kundens underskrift</div><div class="sign-box" data-key="${v.signed ? v.sigKey : 'nosig'}">${v.signed ? sigSVG(v.cust.sig, v.signing) : '<div class="sign-empty">Kunden skriver under, når alt er udfyldt</div>'}</div><div class="sign-line"></div></div>
+<button class="${v.sendCls}" type="button" data-on="${on(v.onSend)}" ${v.sendDisabled ? 'disabled' : ''}>${esc(v.sendLabel)} ${v.sendIcon === 'send' ? ICON.send : ICON.pen}</button>
+</div>
+</div>`;
+}
+
+function decoPanelHTML(v) {
+  return `<div class="card deco-panel" data-key="deco">
+<div><h2 class="disp h-mid">Indret kontoret</h2><div class="muted-text">Hængende ting på væg og loft · stående ting på skranke og skrivebord.</div></div>
+<div class="${v.decoMsgCls}" data-key="decomsg">${esc(v.decoMsg)}</div>
+<div class="lbl">Dine ting (${v.ownedCount})</div>
+${v.hasOwned ? `<div class="inv-grid" data-key="invgrid">${v.inventory.map(it => `<button class="${it.cls}" type="button" data-on="${on(it.pick)}" aria-pressed="${it.on}" data-key="inv-${it.kind}">${pyntSVG(it.kind, 60)}<div class="disp inv-name">${esc(it.name)}</div><div class="inv-where">${esc(it.where)}</div></button>`).join('')}</div>`
+      : `<div class="empty" data-key="empty">Du har ikke købt noget endnu. Tjen penge hos kunderne og køb pynt i Kontorbutikken!</div>`}
+<div class="btn-row">
+${v.canStore ? `<button class="btn btn-berry" type="button" data-key="store" data-on="${on(v.storeSel)}">Læg på lager</button>` : ''}
+<button class="btn btn-teal" type="button" data-key="toshop" data-on="${on(v.openShop)}">Til butikken</button>
+<button class="btn btn-go ready" type="button" data-key="finish" data-on="${on(v.closeDecorate)}">Færdig</button>
+</div>
+</div>`;
+}
+
+function roomHTML(v) {
+  const c = v.cust;
+  const walls = ['H1', 'H4', 'H5', 'H2'].map(k => slotHTML(v, k)).join('');
+  const counter = ['S1', 'S2', 'S3', 'S4', 'B1', 'B2', 'B3', 'H3', 'B4', 'B5'].map(k => slotHTML(v, k)).join('');
+  const desk = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'].map(k => slotHTML(v, k)).join('');
+  let pokePop = '';
+  if (v.poke && ROOM_SLOTS[v.poke.k]) {
+    const pp = ROOM_SLOTS[v.poke.k];
+    pokePop = `<div class="poke-pop" data-key="poke-${v.poke.n}" style="left:${Math.min(560, Math.max(56, pp[0] + pp[2] / 2))}px;top:${Math.max(6, pp[1] - 34)}px">${esc(v.poke.text)}</div>`;
+  }
+  return `<div class="stage card-stage room-stage" data-w="616" data-h="784"><div class="stage-in" style="width:616px;height:784px">
+<div style="position:absolute;left:0;right:0;top:0;height:440px;background:#d3f4f1 repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 46px,rgba(255,255,255,.45) 46px 58px)"></div>
+<div class="wall-cal" aria-label="Kalender: ${esc(v.cal.weekday)} ${v.cal.date}. ${esc(v.cal.month)}"><div class="wall-cal-top">${esc(v.cal.month.toUpperCase())}</div><div class="disp wall-cal-num">${v.cal.date}</div><div class="wall-cal-wd">${esc(v.cal.weekday)}</div></div>
+<svg class="wall-clock ${v.late ? 'late' : ''}" width="60" height="60" viewBox="0 0 64 64" aria-label="Uret viser ${v.clockText}"><circle cx="32" cy="32" r="28" fill="${v.late ? '#ffe0ec' : '#fff'}" stroke="#1d2b3a" stroke-width="4"/><path d="M32 8v5M32 51v5M8 32h5M51 32h5" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/><g transform="rotate(${v.hourAng} 32 32)"><path d="M32 32V19" stroke="#1d2b3a" stroke-width="5" stroke-linecap="round"/></g><g transform="rotate(${v.minAng} 32 32)"><path d="M32 32V12" stroke="#c2185b" stroke-width="3" stroke-linecap="round"/></g><circle cx="32" cy="32" r="3.5" fill="#1d2b3a"/></svg>
+${walls}
+${v.isOffice ? `<div class="${v.walkCls}" data-key="cust-${esc(v.contractNo)}" style="position:absolute;left:110px;top:232px;width:200px;height:240px"><div class="bob">${kundeSVG({ shape: c.shape, body: c.body, acc: c.acc, mood: v.custMood }, 200)}</div></div>` : ''}
+<div style="position:absolute;left:0;right:0;top:440px;height:24px;background:#ffd84d;border-top:3px solid #1d2b3a;border-bottom:3px solid #1d2b3a"></div>
+<div style="position:absolute;left:0;right:0;top:467px;height:100px;background:#c2185b"></div>
+${v.isOffice && v.showNamePill ? `<div class="name-pill" data-key="namepill">${esc(c.navn)}</div>` : ''}
+${counter}
+<div style="position:absolute;left:0;right:0;top:566px;bottom:0;background:#34b8b5 repeating-linear-gradient(0deg,rgba(29,43,58,0) 0 34px,rgba(29,43,58,.08) 34px 37px);border-top:4px solid #1d2b3a"></div>
+<div style="position:absolute;left:0;right:0;top:570px;height:10px;background:#a9e8e3"></div>
+<svg width="150" height="30" viewBox="0 0 150 30" style="position:absolute;left:150px;top:742px;transform:rotate(-8deg)" aria-hidden="true"><path d="M10 10h110l18 5l-18 5h-110z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/><path d="M10 10h-4a5 5 0 0 0 0 10h4z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="3"/><path d="M120 10v10" stroke="#1d2b3a" stroke-width="3"/></svg>
+${v.isDecorate ? `<div class="tilt-note np-yellow deco-sticky" data-key="decosticky"><div class="hand" style="font-size:21px;line-height:27px">Mit skrivebord! Vælg en ting, og tryk så på en stiplet plads.</div></div>` : ''}
+${desk}
+${v.disco ? '<div class="disco-lights" data-key="disco" aria-hidden="true"></div>' : ''}
+${pokePop}
+</div></div>`;
+}
+
+function officeHTML(v) {
+  const isOffice = v.isOffice;
+  return `<main class="screen" data-key="room">
+<div class="office ${isOffice ? 'is-office' : 'is-deco'}">
+<div class="roomwrap">
+${roomHTML(v)}
+${isOffice ? `<div class="talk" data-key="talk">
+${v.bubbles.map((b, i) => `<div class="${b.cls}" data-key="b${i}">${esc(b.text)}</div>`).join('')}
+</div>
+<div class="${v.noteCls} note" data-key="note">
+<div class="tape" aria-hidden="true"></div>
+<div class="lbl" style="margin-bottom:4px;font-size:11px">Kundens bestillingsseddel</div>
+<div class="${v.noteFontCls}">
+<div>Navn: ${esc(v.note.name)}</div><div>Jeg vil have: ${esc(v.note.service)}</div><div>Hvor længe: ${esc(v.note.duration)}</div><div>Start: ${esc(v.note.date)}</div><div>Jeg betaler: ${esc(v.note.price)}</div>
+</div>
+</div>` : ''}
+</div>
+<div class="sidecol">${isOffice ? contractHTML(v) : decoPanelHTML(v)}</div>
+</div>
+${v.showKaj ? `<div class="kaj-toast kajIn" data-key="kaj">
+<div class="kaj-fig">${kundeSVG({ shape: 'sekskant', body: '#a9e8e3', acc: 'briller', mood: 'snak' }, 110)}</div>
+<div class="bubble tail-l pop d1 kaj-bubble"><div class="lbl" style="margin-bottom:2px">Kollega Kaj</div>${esc(v.kajLine)}
+<div style="margin-top:8px"><button class="btn btn-small" type="button" data-on="${on(v.dismissKaj)}">Tak, Kaj …</button></div></div>
+</div>` : ''}
+</main>`;
+}
+
+function reviewHTML(v) {
+  return `<main class="screen ${v.reviewCls}" data-key="review">
+<div class="review">
+<div class="stage card-stage bo-stage" data-w="520" data-h="600"><div class="stage-in" style="width:520px;height:600px;background:#ffe0ec">
+<div style="position:absolute;left:24px;top:22px;width:118px;height:96px;border:4px solid #1d2b3a;border-radius:10px;background:#ffd84d;transform:rotate(-4deg)">
+<svg width="110" height="62" viewBox="0 0 110 62" aria-hidden="true"><rect width="110" height="62" fill="#a9e8e3"/><path d="M30 31q18 -18 40 0q-22 18 -40 0zM70 31l14 -10v20z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/><circle cx="40" cy="28" r="3" fill="#1d2b3a"/></svg>
+<div style="font-size:9px;line-height:11px;font-weight:800;text-align:center;padding:3px 2px 0">MÅNEDENS MEDARBEJDER: GUNNAR</div>
+</div>
+<div class="${v.bubbleCls}" data-key="bo-bubble-${v.bubbleCls.indexOf('popB') > -1 ? 'b' : 'a'}" style="position:absolute;right:22px;top:26px;width:300px;z-index:2">${esc(v.bubbleText)}</div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:96px;background:#1d2b3a"></div>
+<div style="position:absolute;left:0;right:0;bottom:96px;height:18px;background:#0b7477;border-top:3px solid #1d2b3a"></div>
+<div class="${v.boCls}" style="position:absolute;left:70px;bottom:110px;width:280px;height:320px;transform-origin:50% 100%">${boSVG(v.boMood, 280)}</div>
+<div style="position:absolute;right:50px;bottom:112px">${ICON.mug}</div>
+<div style="position:absolute;left:24px;right:24px;bottom:18px;display:flex;flex-direction:column;gap:10px">
+<div class="disp" style="color:#fff;font-size:20px;font-weight:600"><span class="${v.statusCls}">${esc(v.statusText)}</span></div>
+<div style="display:flex;gap:6px">${v.segs.map(s => `<div class="${s.cls}"></div>`).join('')}</div>
+</div>
+</div></div>
+<div class="review-right">
+<div class="paper slideIn">
+<div class="paper-head"><div class="disp" style="font-size:24px;font-weight:700;letter-spacing:.04em">KONTRAKT</div><div class="small strong">${esc(v.contractNo)}</div></div>
+${v.rows.map(r => `<div class="paper-row ${r.cls}"><div class="lbl paper-lbl">${esc(r.label)}</div><div class="disp paper-val">${esc(r.value)}</div>${r.ok ? ICON.ok : ''}${r.bad ? ICON.bad : ''}</div>`).join('')}
+<div class="paper-sig"><div class="lbl">Kundens underskrift</div>${sigSVG(v.cust.sig, false)}</div>
+${v.showMag ? `<svg class="mag2" data-key="mag" width="100" height="100" viewBox="0 0 120 120" aria-hidden="true"><path d="M78 78l30 30" stroke="#1d2b3a" stroke-width="14" stroke-linecap="round"/><path d="M78 78l30 30" stroke="#c2185b" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="50" r="36" fill="#fff" fill-opacity="0.35" stroke="#1d2b3a" stroke-width="9"/><path d="M32 40q6 -12 20 -14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>` : ''}
+${v.showHover ? `<svg class="hover-stamp hover-pos" data-key="hover" width="130" height="120" viewBox="0 0 130 120" aria-hidden="true"><circle cx="65" cy="22" r="18" fill="#c2185b" stroke="#1d2b3a" stroke-width="4"/><rect x="56" y="38" width="18" height="30" fill="#1d2b3a"/><rect x="22" y="66" width="86" height="24" rx="8" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4"/><rect x="16" y="88" width="98" height="14" rx="4" fill="#1d2b3a"/></svg>` : ''}
+${v.showStamp ? `<div class="slam stamp-pos" data-key="stamp"><div class="${v.stampCls}">${esc(v.stampText)}</div></div>` : ''}
+</div>
+${v.showVerdict ? `<div class="${v.verdictCls}" data-key="verdict">
+<div class="verdict-head"><h2 class="disp h-mid" style="margin:0">${esc(v.verdictTitle)}</h2><div style="display:flex;gap:4px" aria-label="${esc(v.starsAria)}">${v.earned.map(st => `<span class="${st.cls}">${ICON.starSolid}</span>`).join('')}</div></div>
+<div class="disp remark">“${esc(v.remark)}”</div>
+<div class="muted-text">${esc(v.verdictSub)}</div>
+<div class="btn-row" style="margin-top:auto">
+${v.canRetry ? `<button class="btn btn-berry" type="button" data-on="${on(v.retry)}">Ret kontrakten</button>` : ''}
+${v.canNext ? `<button class="btn btn-go ready" type="button" data-on="${on(v.next)}">${esc(v.nextLabel)} ${ICON.arrow}</button>` : ''}
+</div>
+${v.showCoin ? `<div class="disp floatup coin-pop">${esc(v.coinText)}</div>` : ''}
+</div>` : ''}
+</div>
+</div>
+${v.showDim ? '<div class="dim spotlight" data-key="dim"></div>' : ''}
+${v.showConfetti ? confettiHTML() : ''}
+</main>`;
+}
+
+function eventHTML(v) {
+  const ev = v.ev || {};
+  let side = '', boMood = 'glad', boCls = 'bo-tilt';
+  if (ev.kind === 'gift') {
+    const g = ev.gift || {};
+    if (ev.phase === 'offer') {
+      side = `<div class="lbl">Chef Bo kommer forbi …</div><h2 class="disp h-big">${esc(g.name)}!</h2>
+<div class="bubble boss tail-l">${esc(g.line)}</div>
+<div class="muted-text">Siger du ja, går uret ${GIFT_COST} minutter frem — men du får en bonusstjerne for godt humør.</div>
+<div class="btn-row"><button class="btn btn-go btn-big ready" type="button" data-on="${on(v.giftYes)}">Ja tak! (${GIFT_COST} min, +1 ★)</button><button class="btn" type="button" data-on="${on(v.giftNo)}">Nej tak, jeg har travlt</button></div>`;
+      boMood = 'jubel'; boCls = 'bo-bounce';
+    } else {
+      side = `<div class="lbl">${ev.phase === 'yes' ? 'Mums!' : 'Nåh …'}</div><h2 class="disp h-big">${ev.phase === 'yes' ? 'Tak for hyggen!' : 'Så spiser Bo den selv'}</h2>
+<div class="bubble boss tail-l">${esc(ev.line)}</div>
+<div class="muted-text">Klokken er nu ${v.clockText}.</div>
+<div><button class="btn btn-go btn-big ready" type="button" data-on="${on(v.eventDone)}">Tilbage til skranken ${ICON.arrow}</button></div>`;
+      boMood = ev.phase === 'yes' ? 'jubel' : 'tosset'; boCls = ev.phase === 'yes' ? 'bo-jump' : 'bo-spin';
+    }
+    return `<main class="screen center-screen" data-key="event-gift">
+<div class="card intro-card pop">
+<div class="event-art"><div class="${boCls} bo-box" style="transform-origin:50% 100%">${boSVG(boMood)}</div><div class="food pop d1">${foodSVG(g.id, 110)}</div></div>
+<div class="stack">${side}</div>
+</div>
+${ev.phase === 'yes' ? confettiHTML() : ''}
+</main>`;
+  }
+  // møde
+  const total = (ev.points || []).length;
+  let board, bubble, btn;
+  if (ev.phase === 'start') {
+    board = `<div class="disp board-title">MØDE — NU!</div><div class="board-sub">Dagsorden: ${total} vigtige punkter</div>`;
+    bubble = 'Alle ind i mødelokalet! Det tager kun fem minutter. Cirka. Plus-minus en time.';
+    btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.meetingNext)}">Sæt dig ned (${MEETING_START} min)</button>`;
+  } else if (ev.phase === 'point') {
+    const pt = ev.points[ev.i];
+    board = `<div class="lbl">Punkt ${ev.i + 1} af ${total}</div><div class="disp board-title">${esc(pt[0])}</div>${boardChart(ev.i)}`;
+    bubble = pt[1];
+    btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.meetingNext)}">${esc(ev.reply)} (${MEETING_POINT} min)</button>`;
+    boMood = ev.i % 2 ? 'hmm' : 'glad';
+  } else {
+    board = `<div class="disp board-title">Mødet er slut!</div><div class="board-sub">Beslutninger: 0 · Kanelsnegle: 3</div>`;
+    bubble = 'Godt møde! Vi mødes igen i morgen og taler om, hvordan det gik i dag.';
+    btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.eventDone)}">Tilbage til skranken ${ICON.arrow}</button>`;
+    boMood = 'jubel'; boCls = 'bo-jump';
+  }
+  return `<main class="screen center-screen" data-key="event-meeting">
+<div class="card meeting-card pop">
+<div class="whiteboard" data-key="board-${ev.phase}-${ev.i}"><div class="pop">${board}</div></div>
+<div class="meeting-bottom">
+<div class="${boCls} bo-box small-bo" style="transform-origin:50% 100%">${boSVG(boMood)}</div>
+<div class="stack"><div class="bubble boss tail-l ${ev.i % 2 ? 'popB' : 'pop'}" data-key="mb-${ev.phase}-${ev.i}">${esc(bubble)}</div>
+<div class="muted-text">Klokken er ${v.clockText}. Kunderne venter …</div>
+<div>${btn}</div></div>
+</div>
+</div>
+</main>`;
+}
+function boardChart(i) {
+  const bars = [[30, 60, 45, 80], [70, 20, 90, 40], [50, 50, 50, 95]][i % 3];
+  const cols = ['#ef5b93', '#34b8b5', '#ffd84d', '#c2185b'];
+  return `<svg viewBox="0 0 220 110" width="220" height="110" style="display:block;max-width:100%;margin-top:10px" aria-hidden="true"><path d="M10 100H210M10 100V8" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/>${bars.map((b, j) => `<rect x="${24 + j * 46}" y="${100 - b}" width="30" height="${b}" rx="4" fill="${cols[j]}" stroke="#1d2b3a" stroke-width="2.5"/>`).join('')}<path d="M18 80 Q60 20 110 60 T206 16" fill="none" stroke="#1d2b3a" stroke-width="2.5" stroke-dasharray="6 5"/><text x="150" y="30" font-family="'Caveat', cursive" font-size="20" fill="#c2185b">synergi!</text></svg>`;
+}
+
+function confettiHTML() {
+  return '<div class="confetti" data-key="confetti" aria-hidden="true">' + '<i></i>'.repeat(20) + '</div>';
+}
+
+function doneHTML(v) {
+  return `<main class="screen center-screen" data-key="done">
+<div class="card done-card pop">
+<div class="done-bo">
+<div class="bubble boss tail-b" style="font-size:17px;line-height:23px">${esc(v.doneQuote)}</div>
+<div class="bo-box ${v.doneBoCls}" style="transform-origin:50% 100%">${boSVG(v.doneMood)}</div>
+</div>
+<div class="stack">
+<div class="lbl">${esc(v.dayLabel)}</div>
+<h2 class="disp h-big">${esc(v.doneTitle)}</h2>
+<div class="stats">
+<div class="stat" style="background:#fff4c2"><div class="lbl">Stjerner</div><div class="disp stat-num">${esc(v.doneStars)}</div></div>
+<div class="stat" style="background:#ffe0ec"><div class="lbl">Dagens mål</div><div class="disp stat-num">${esc(v.doneGoal)}</div></div>
+<div class="stat" style="background:#d3f4f1"><div class="lbl">Tjent i dag</div><div class="disp stat-num">${esc(v.doneMoney)}</div></div>
+</div>
+<div class="stack-tight">${v.resultRows.map(r => `<div class="result-row"><div class="disp" style="font-size:18px;font-weight:600;flex-grow:1">${esc(r.navn)}</div><div class="small strong">${esc(r.text)}</div><div class="disp" style="font-size:18px;font-weight:700;min-width:60px;text-align:right">${esc(r.stars)}</div></div>`).join('')}</div>
+${v.timeUpText ? `<div class="timeup-note">${esc(v.timeUpText)}</div>` : ''}
+${v.bonusText ? `<div class="bonus-note pop d1">${esc(v.bonusText)}</div>` : ''}
+${v.showAward ? '<div class="award pop d2">Chef Bo har hængt et Månedens medarbejder-skilt op på dit kontor!</div>' : ''}
+${v.showNew ? `<div class="new-items pop d2"><div class="disp new-title">Nye varer i butikken!</div><div class="new-row">${v.newItems.map(it => `<div class="new-item">${pyntSVG(it.kind, 54)}<span>${esc(it.name)}</span></div>`).join('')}</div><button class="btn btn-teal btn-small" type="button" data-on="${on(v.openShop)}">Se de nye varer</button></div>` : ''}
+<div class="muted-text">${esc(v.bestText)}</div>
+<div class="btn-row">
+${v.donePassed ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.nextDay)}">${esc(v.nextDayLabel)} ${ICON.arrow}</button>` : ''}
+<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>
+<button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Gå i butikken</button>
+<button class="btn" type="button" data-on="${on(v.goHome)}">Til forsiden</button>
+</div>
+</div>
+</div>
+${v.donePassed ? confettiHTML() : ''}
+</main>`;
+}
+
+function shopHTML(v) {
+  return `<main class="screen" data-key="shop">
+<div class="shop-head">
+<div class="shop-title"><h2 class="disp h-big" style="margin:0">Kontorbutikken</h2><div class="muted-text">Pimp din skranke! Alt du køber, står på kontoret, når kunderne kommer.</div></div>
+<div class="bubble boss pop shop-quote">${esc(v.shopQuote)}</div>
+<div class="btn-row">
+<button class="btn btn-berry" type="button" data-on="${on(v.openDecorate)}">Indret kontoret</button>
+<button class="btn btn-go" type="button" data-on="${on(v.closeShop)}">${ICON.back} Tilbage</button>
+</div>
+</div>
+<div class="shop-grid">
+${v.shopItems.map(it => `<div class="${it.cls}" data-key="shop-${it.kind}">
+<div class="shop-preview"><span class="${it.tagCls}">${esc(it.tag)}</span>${pyntSVG(it.kind, 94)}</div>
+<div class="shop-name-row"><div class="disp shop-name">${esc(it.name)}</div><div class="disp shop-price">${esc(it.priceText)}</div></div>
+<div class="shop-desc">${esc(it.desc)}</div>
+<button class="${it.btnCls} btn-small" type="button" data-on="${on(it.buy)}" ${it.disabled ? 'disabled' : ''}>${esc(it.btnText)}</button>
+</div>`).join('')}
+</div>
+${v.showBuyConfetti ? confettiHTML() : ''}
+</main>`;
+}
+
+/* ---------- morph: patcher DOM'en i stedet for at erstatte den ---------- */
+function keyOf(n) { return n.nodeType === 1 ? n.getAttribute('data-key') : null; }
+function morphEl(from, to) {
+  const fa = from.attributes;
+  for (let i = fa.length - 1; i >= 0; i--) { const n = fa[i].name; if (!to.hasAttribute(n)) from.removeAttribute(n); }
+  for (const a of Array.from(to.attributes)) if (from.getAttribute(a.name) !== a.value) from.setAttribute(a.name, a.value);
+  if (from.tagName === 'INPUT') { const val = to.getAttribute('value') || ''; if (from.value !== val) from.value = val; }
+  morphChildren(from, to);
+}
+function morphChildren(from, to) {
+  const olds = Array.from(from.childNodes), news = Array.from(to.childNodes);
+  const keyed = new Map();
+  olds.forEach(n => { const k = keyOf(n); if (k) keyed.set(k, n); });
+  const used = new Set();
+  let oi = 0;
+  news.forEach((nn, i) => {
+    let match = null;
+    const k = keyOf(nn);
+    if (k) {
+      const cand = keyed.get(k);
+      if (cand && cand.nodeName === nn.nodeName && !used.has(cand)) match = cand;
+    } else {
+      while (oi < olds.length && (used.has(olds[oi]) || keyOf(olds[oi]))) oi++;
+      if (oi < olds.length && olds[oi].nodeType === nn.nodeType && olds[oi].nodeName === nn.nodeName) { match = olds[oi]; oi++; }
+    }
+    let node;
+    if (match) {
+      used.add(match);
+      if (match.nodeType === 1) morphEl(match, nn);
+      else if (match.nodeValue !== nn.nodeValue) match.nodeValue = nn.nodeValue;
+      node = match;
+    } else node = nn;
+    const cur = from.childNodes[i];
+    if (cur !== node) from.insertBefore(node, cur || null);
+  });
+  while (from.childNodes.length > news.length) from.removeChild(from.lastChild);
+}
+
+/* ---------- skalering af de tegnede scener ---------- */
+function fitStages() {
+  document.querySelectorAll('.stage').forEach(st => {
+    const w = +st.dataset.w, h = +st.dataset.h;
+    const s = st.clientWidth / w;
+    const inner = st.firstElementChild;
+    if (!inner || !s) return;
+    inner.style.transform = 'scale(' + s + ')';
+    st.style.height = (h * s) + 'px';
+  });
+}
+
+let renderQueued = false;
+function scheduleRender() {
+  if (renderQueued) return;
+  renderQueued = true;
+  Promise.resolve().then(() => { renderQueued = false; render(); });
+}
+
+function render() {
+  const v = game.renderVals();
+  HANDLERS = [];
+  let body;
+  if (v.isTitle) body = titleHTML(v);
+  else if (v.isIntro) body = introHTML(v);
+  else if (v.showRoom) body = officeHTML(v);
+  else if (v.isReview) body = reviewHTML(v);
+  else if (v.isDone) body = doneHTML(v);
+  else if (v.isEvent) body = eventHTML(v);
+  else if (v.isShop) body = shopHTML(v);
+  else body = titleHTML(v);
+  const tpl = document.createElement('template');
+  tpl.innerHTML = `<div id="app" class="app">${headerHTML(v)}${body}</div>`;
+  const app = document.getElementById('app');
+  const prevScreen = app.getAttribute('data-screen');
+  morphEl(app, tpl.content.firstElementChild);
+  app.setAttribute('data-screen', game.state.screen);
+  fitStages();
+  if (prevScreen && prevScreen !== game.state.screen) window.scrollTo(0, 0);
+}
+
+/* ---------- hændelser ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-on]');
+  if (!el || el.disabled) return;
+  const fn = HANDLERS[+el.getAttribute('data-on')];
+  if (fn) fn(e);
+});
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-oninput]');
+  if (!el) return;
+  const fn = HANDLERS[+el.getAttribute('data-oninput')];
+  if (fn) fn(e);
+});
+document.addEventListener('keydown', e => {
+  const el = e.target.closest && e.target.closest('[data-onkey]');
+  if (!el) return;
+  const fn = HANDLERS[+el.getAttribute('data-onkey')];
+  if (fn) fn(e);
+});
+window.addEventListener('resize', fitStages);
+
+const game = new Component({});
+render();
+
+</script>
+</body>
+</html>
