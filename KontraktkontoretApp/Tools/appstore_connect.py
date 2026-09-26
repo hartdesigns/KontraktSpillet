@@ -374,10 +374,15 @@ def setup(api):
             "review-info (kontakt + bemærkninger)",
             "POST", "/appStoreReviewDetails",
             {"data": {"type": "appStoreReviewDetails",
-                       "attributes": {"contactEmail": api.cfg["contactEmail"],
+                       "attributes": {"contactFirstName": "Magnus",
+                                      "contactLastName": "Skou Andersen",
+                                      "contactEmail": api.cfg["contactEmail"],
+                                      "contactPhone": api.cfg.get("contactPhone", "+45 53373006"),
                                       "demoAccountRequired": False,
-                                      "notes": REVIEW_NOTES}}},
-            "Udfyld 'Info til review' i webbet (e-mail + bemærkninger).")
+                                      "notes": REVIEW_NOTES},
+                       "relationships": {"appStoreVersion":
+                                          {"data": {"type": "appStoreVersions", "id": vid}}}}},
+            "Udfyld 'Info til review' i webbet (navn, e-mail, telefon + bemærkninger).")
         if ok:
             new = payload.get("data") or {}
             if new.get("id"):
@@ -460,11 +465,20 @@ def do_screenshots(api, loc_id):
                                                   {"data": {"type": "appScreenshotSets", "id": sid}}}}},
                     None)
             if ok:
-                upload_bytes(api, payload.get("data") or {}, open(path, "rb").read())
+                shot = payload.get("data")
+                if isinstance(shot, list):
+                    shot = shot[0] if shot else None
+                if shot:
+                    upload_bytes(api, shot, open(path, "rb").read())
 
 
 def upload_bytes(api, shot, raw):
-    """Upload billedets bytes via signed URL'er (uploadOperations), hvis der er nogle."""
+    """Upload billedets bytes via signed URL'er (uploadOperations), hvis der er nogle.
+
+    VIGTIGT: efter PUT'en skal uploaden bekræftes med PATCH {uploaded: true} —
+    ellers ligger billedet i Apples storage, men skærmbilledet står i
+    AWAITING_UPLOAD for evigt (API'et flipper ikke status af sig selv).
+    """
     ops = shot.get("attributes", {}).get("uploadOperations") or []
     for op in ops:
         url = op.get("url")
@@ -477,6 +491,17 @@ def upload_bytes(api, shot, raw):
                 print(f"    upload {r.status}")
         except Exception as e:
             api.failures.append((f"upload {shot.get('id')}", str(e)))
+    sid = shot.get("id")
+    if sid:
+        code, payload = api.call("PATCH", f"/appScreenshots/{sid}",
+                                 {"data": {"type": "appScreenshots", "id": sid,
+                                           "attributes": {"uploaded": True}}})
+        if code == 200:
+            print("    upload bekræftet (uploaded=true)")
+        else:
+            err = (payload.get("errors") or [{}])[0]
+            print(f"    WARNING: bekræftelse fejlede: {err.get('detail', '')[:120]}")
+            api.failures.append((f"upload-bekræftelse {sid}", err.get("detail", "")))
 
 
 # ---------------------------------------------------------------------------
