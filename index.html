@@ -390,6 +390,7 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 @keyframes disco{50%{background-position:140px 60px,-120px 80px,80px -100px,0 0}}
 .timeup-note{padding:10px 14px;border:3px solid #1d2b3a;border-radius:14px;background:#ffe0ec;font-weight:800;font-size:15px}
 .bonus-note{padding:10px 14px;border:3px solid #1d2b3a;border-radius:14px;background:#d3f4f1;font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:17px}
+.record-note{padding:10px 14px;border:3px solid #1d2b3a;border-radius:14px;background:#fff4c2;font-family:Fredoka,system-ui,sans-serif;font-weight:700;font-size:17px;box-shadow:4px 4px 0 #1d2b3a}
 .new-items{padding:12px 14px;border:3px solid #1d2b3a;border-radius:16px;background:#fff4c2;box-shadow:4px 4px 0 #1d2b3a;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .new-title{font-size:20px;font-weight:700}
 .new-row{display:flex;flex-wrap:wrap;gap:10px}
@@ -997,7 +998,7 @@ function saveSave(v) {
 }
 
 function loadBest() {
-  try { const raw = window.localStorage.getItem('kontraktkontoret-best'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  try { const raw = window.localStorage.getItem('kontraktkontoret-best'); return raw ? Object.assign({ day: 0, money: 0, stars: 0 }, JSON.parse(raw)) : null; } catch (e) { return null; }
 }
 function saveBest(b) {
   try { window.localStorage.setItem('kontraktkontoret-best', JSON.stringify(b)); } catch (e) { }
@@ -1162,7 +1163,7 @@ class Component extends DCLogic {
     const customers = buildDay(day, this.state.recent);
     const recent = this.state.recent.concat(customers.map(c => c.navn.split(' ')[0])).slice(-30);
     const info = DAYS[day - 1] || pick(OVERTIME);
-    this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false,
+    this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false, starRecord: false,
       saveDay: day, clock: 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false });
   }
   openDesk() { this.startCustomer(0); }
@@ -1278,15 +1279,16 @@ class Component extends DCLogic {
     const passed = s.dayStars >= goal;
     const early = !s.timeUp && s.clock < DAY_MIN ? Math.floor((DAY_MIN - s.clock) / 30) * 10 : 0;
     let best = s.best;
+    const starRecord = passed && s.dayStars > ((s.best && s.best.stars) || 0);
     if (passed) {
-      const b = best || { day: 0, money: 0 };
-      best = { day: Math.max(b.day, s.day), money: Math.max(b.money, s.money) };
+      const b = best || { day: 0, money: 0, stars: 0 };
+      best = { day: Math.max(b.day, s.day), money: Math.max(b.money, s.money), stars: Math.max(b.stars, s.dayStars) };
       saveBest(best);
     }
     const cleared = passed ? Math.max(s.cleared, s.day) : s.cleared;
     const newItems = cleared > s.cleared ? SHOP.filter(it => UNLOCK[it.id] === cleared + 1).map(it => ({ kind: it.id, name: it.name })) : [];
     const upd = {
-      screen: 'done', best, cleared, newItems, bonus: early, saveDay: passed ? s.day + 1 : s.day,
+      screen: 'done', best, cleared, newItems, bonus: early, starRecord, saveDay: passed ? s.day + 1 : s.day,
       money: s.money + early, earned: s.earned + early, dayMoney: s.dayMoney + early, award: false
     };
     const perfect = !s.timeUp && s.results.length > 0 && s.results.every(r => r.stars === 3);
@@ -1348,7 +1350,7 @@ class Component extends DCLogic {
 
     const passed = s.dayStars >= goal;
     const best = s.best;
-    const bestText = best ? 'Din rekord: dag ' + best.day + ' klaret · ' + fmtKr(s.earned) + ' tjent i alt' : 'Ingen rekord endnu — bliv den første!';
+    const bestText = best ? 'Din rekord: dag ' + best.day + ' klaret · ' + fmtKr(s.earned) + ' tjent i alt' + (best.stars ? ' · ' + best.stars + ' ★ på en dag' : '') : 'Ingen rekord endnu — bliv den første!';
     const owns = (id) => s.owned.includes(id);
     const editing = s.screen === 'decorate';
     const sl = {};
@@ -1506,6 +1508,7 @@ class Component extends DCLogic {
       doneMood: passed ? 'jubel' : 'glad',
       doneBoCls: passed ? 'bo-jump' : 'bo-tilt',
       doneStars: s.dayStars + ' ★',
+      doneRecord: s.starRecord && passed ? 'Ny stjerne-rekord: ' + s.dayStars + ' ★ på en dag!' : '',
       doneGoal: goal + ' ★',
       doneMoney: fmtKr(s.dayMoney),
       resultRows: s.results.map(r => ({ navn: r.navn, text: r.missed ? 'Nåede ikke — fyraften!' : r.ok ? (r.tries === 1 ? 'Godkendt i første forsøg' : 'Godkendt efter rettelse') : 'Sendt hjem', stars: r.stars ? '★'.repeat(r.stars) : '–' })),
@@ -1739,7 +1742,7 @@ ${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-k
 <div class="howto">
 <div class="howto-card"><div class="num done static">1</div><div class="disp h3">Læs kunden</div><div class="small">Læs sedlen og kundens talebobler. Pas på: nogle skifter mening!</div></div>
 <div class="howto-card"><div class="num done static">2</div><div class="disp h3">Udfyld kontrakten</div><div class="small">Navn, ydelse, varighed, dato og pris.</div></div>
-<div class="howto-card"><div class="num done static">3</div><div class="disp h3">Chef Bo stempler</div><div class="small">Godkendt giver penge og stjerner — og penge giver pynt!</div></div>
+<div class="howto-card"><div class="num done static">3</div><div class="disp h3">Chef Bo stempler</div><div class="small">Godkendt giver penge og stjerner — penge giver pynt, og flest stjerner på en dag giver rekord!</div></div>
 </div>
 </div>
 <div class="stage card-stage title-stage" data-w="560" data-h="600"><div class="stage-in" style="width:560px;height:600px;background:#ffe0ec">
@@ -1999,6 +2002,7 @@ function doneHTML(v) {
 <div class="stack-tight">${v.resultRows.map(r => `<div class="result-row"><div class="disp" style="font-size:18px;font-weight:600;flex-grow:1">${esc(r.navn)}</div><div class="small strong">${esc(r.text)}</div><div class="disp" style="font-size:18px;font-weight:700;min-width:60px;text-align:right">${esc(r.stars)}</div></div>`).join('')}</div>
 ${v.timeUpText ? `<div class="timeup-note">${esc(v.timeUpText)}</div>` : ''}
 ${v.bonusText ? `<div class="bonus-note pop d1">${esc(v.bonusText)}</div>` : ''}
+${v.doneRecord ? `<div class="record-note pop d2">🏆 ${esc(v.doneRecord)}</div>` : ''}
 ${v.showAward ? '<div class="award pop d2">Chef Bo har hængt et Månedens medarbejder-skilt op på dit kontor!</div>' : ''}
 ${v.showNew ? `<div class="new-items pop d2"><div class="disp new-title">Nye varer i butikken!</div><div class="new-row">${v.newItems.map(it => `<div class="new-item">${pyntSVG(it.kind, 54)}<span>${esc(it.name)}</span></div>`).join('')}</div><button class="btn btn-teal btn-small" type="button" data-on="${on(v.openShop)}">Se de nye varer</button></div>` : ''}
 <div class="muted-text">${esc(v.bestText)}</div>
