@@ -36,30 +36,30 @@ ROOT = os.path.dirname(HERE)  # KontraktkontoretApp/
 NAME = "Kontraktkontoret"
 SUBTITLE = "Læs. Udfyld. Stempel."
 KEYWORDS = "kontor, kontrakt, læsning, stempel, chef, papir, job, skole, børn, leg"
-PROMO = "Dit allerførste job! Læs kunderne, udfyld kontrakter og få dem stemplet af den lidt tossede Chef Bo."
-DESCRIPTION = """Har du nogensinde drømt om at arbejde på et kontor? Nu kan du — i Kontraktkontoret, dit allerførste rigtige job!
+PROMO = "Dit allerførste job! Hør efter på kunderne, udfyld kontrakter og få dem stemplet af den lidt tossede Chef Bo."
+DESCRIPTION = """Har du nogensinde drømt om at arbejde på et kontor? Med Kontraktkontoret får du dit allerførste rigtige job!
 
-Du er den nye medarbejder på et lille kontor, hvor papiret er i højsæde. Kunderne stormer ind med hver sin sag, og dit job er at læse deres sedge, udfylde kontrakten helt rigtigt — og så vente spændt på, at Chef Bo slår sit store stempel.
+Du er den nye medarbejder på et lille kontor, hvor alt drejer sig om papir. Kunderne kommer forbi med hver sin sag, og dit job er at læse deres besked, udfylde kontrakten helt rigtigt — og så vente spændt på, at Chef Bo slår sit store stempel.
 
-SÅDAN VIRKER DIT JOB:
-• Læs kunden og talebøblerne GODT efter. Også da, når ordene pludselig skifter mening!
-• Udfyld kontrakten med rigtigt navn, ydelse, varighed, dato og pris.
-• Chef Bo undersøger det hele gennem sit forstørrelsesglas.
+SÅDAN GÅR DET FOR SIG:
+• Læs kunden og talebøberne GODT efter. Især når ordene pludselig skifter mening!
+• Udfyld kontrakten med det rigtige navn, ydelse, varighed, dato og pris.
+• Chef Bo undersøger det hele med sit forstørrelsesglas.
 • GODKENDT giver penge og stjerner — og penge giver pynt.
-• I kontorbutikken kan du købe kaffemaskiner, kaktusser, plakater og meget mere, som du kan pynte dit kontor med.
+• I kontorbutikken kan du købe kaffemaskiner, kaktusser, plakater og meget mere til dit kontor.
 
-Hver dag kommer nye kunder — og de bliver mere og mere kræsne. Hvor langt kan du nå?
+Hver dag kommer der nye kunder — og de bliver mere og mere kræsne. Hvor langt kan du nå?
 
 PERFEKT TIL BØRN:
-• Øver læsning, opmærksomhed og tålmodighed — på en sjov og blid måde.
-• 100 % offline: Ingen internetforbindelse, ingen reklamer, ingen køb, ingen chat. Alt indhold medfølger appen.
+• Træner læsning, koncentration og tålmodighed — på en sjov og blid måde.
+• 100 % offline: ingen internetforbindelse, ingen reklamer, ingen køb, ingen chat. Alt indhold medfølger appen.
 • Ingen rigtige tabere: Der er aldrig nogen, der taber — der er bare flere kunder, du kan hjælpe.
 
 Godt arbejde, medarbejder!"""
 
 REVIEW_NOTES = """Single-player, fully offline office game for kids. The player reads a customer's order, fills in a contract with the correct details, and the office boss stamps it. The app is 100% offline: no network access, no ads, no in-app purchases, no social features, no sign-in. Progress is saved on the device. Nothing to configure — just start playing.
 
-Enkeltspiller-kontorspil for børn, fuldt offline. Spilleren læser en kundes bestilling, udfylder en kontrakt med de rette oplysninger, og kontorchefen stempler den. Ingen netværk, reklamer, køb eller sociale funktioner. Fremskridt gemmes på enheden."""
+Enkeltspiller-kontorspil for børn, 100 % offline. Spilleren læser en kundes bestilling, udfylder en kontrakt med de rette oplysninger, og kontorchefen stempler den. Ingen netværksgennemstrømning, ingen reklamer, ingen køb, ingen sociale funktioner. Fremskridt gemmes på enheden."""
 
 # Aldersvurdering: alt "Ingen" → 4+
 AGE_RATING_ALL_NONE = {
