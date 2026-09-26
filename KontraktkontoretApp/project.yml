@@ -1,0 +1,33 @@
+# XcodeGen-spec: generér Xcode-projektet med `xcodegen generate`.
+# (project.pbxproj er genereret fra denne fil — rediger denne, ikke pbxproj.)
+name: Kontraktkontoret
+options:
+  bundleIdPrefix: dk.hartdesigns
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "1.0.0"
+
+targets:
+  Kontraktkontoret:
+    type: application
+    platform: iOS
+    sources:
+      - path: Kontraktkontoret
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dk.hartdesigns.kontraktkontoret
+        PRODUCT_NAME: Kontraktkontoret
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Kontraktkontoret/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Kun iPad. (Appen dukker alligevel op på iPhone som "Designed for iPad".)
+        TARGETED_DEVICE_FAMILY: "2"
+        CODE_SIGN_STYLE: automatic
