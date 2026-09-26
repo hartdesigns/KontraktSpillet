@@ -2049,7 +2049,12 @@ function roomHTML(v) {
   let pokePop = '';
   if (v.poke && ROOM_SLOTS[v.poke.k]) {
     const pp = ROOM_SLOTS[v.poke.k];
-    pokePop = `<div class="poke-pop" data-key="poke-${v.poke.n}" style="left:${Math.min(560, Math.max(56, pp[0] + pp[2] / 2))}px;top:${Math.max(6, pp[1] - 34)}px">${esc(v.poke.text)}</div>`;
+    // Boblen står normalt ovenfor tinget — men nær loftet vender vi den nedad,
+    // så den ikke ryger ud over rammen.
+    const top = pp[1] > 70 ? Math.max(6, pp[1] - 34) : pp[1] + pp[2] + 8;
+    const halfW = Math.max(60, Math.round(v.poke.text.length * 5.2) + 14);
+    const left = Math.min(616 - halfW - 6, Math.max(halfW + 6, pp[0] + pp[2] / 2));
+    pokePop = `<div class="poke-pop" data-key="poke-${v.poke.n}" style="left:${left}px;top:${top}px">${esc(v.poke.text)}</div>`;
   }
   return `<div class="stage card-stage room-stage" data-w="616" data-h="784"><div class="stage-in" style="width:616px;height:784px">
 <div style="position:absolute;left:0;right:0;top:0;height:440px;background:#d3f4f1 repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 46px,rgba(255,255,255,.45) 46px 58px)"></div>
