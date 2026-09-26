@@ -42,7 +42,7 @@ DESCRIPTION = """Har du nogensinde drømt om at arbejde på et kontor? Med Kontr
 Du er den nye medarbejder på et lille kontor, hvor alt drejer sig om papir. Kunderne kommer forbi med hver sin sag, og dit job er at læse deres besked, udfylde kontrakten helt rigtigt — og så vente spændt på, at Chef Bo slår sit store stempel.
 
 SÅDAN GÅR DET FOR SIG:
-• Læs kunden og talebøberne GODT efter. Især når ordene pludselig skifter mening!
+• Læs kunden og taleboblerne GODT efter. Især når kunden pludselig skifter mening!
 • Udfyld kontrakten med det rigtige navn, ydelse, varighed, dato og pris.
 • Chef Bo undersøger det hele med sit forstørrelsesglas.
 • GODKENDT giver penge og stjerner — og penge giver pynt.
