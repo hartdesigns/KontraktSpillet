@@ -391,6 +391,11 @@ button{font:inherit;color:inherit}
 .slot.target{border-color:#c2185b;background:rgba(255,255,255,.7);color:#c2185b;animation:slotPulse .9s ease-in-out infinite}
 .slot.picked{border:3px solid #c2185b;background:rgba(255,216,77,.55);animation:wiggle .6s ease-in-out infinite}
 .slot:focus-visible{outline:3px solid #c2185b;outline-offset:3px}
+button.slot,.inv-grid button{touch-action:none;-webkit-user-select:none;user-select:none}
+button.slot.dragok{border-color:#0b7477;background:rgba(199,236,233,.92);color:#0b7477;animation:none}
+button.slot.dragbad{border-color:#c2185b;background:rgba(255,214,224,.85);animation:none}
+.dragging-src .pynt{opacity:.25}
+.drag-ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 10px rgba(29,43,58,.35))}
 .inv{font:inherit;color:#1d2b3a;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:3px solid #1d2b3a;border-radius:16px;background:#ffffff;box-shadow:4px 4px 0 #1d2b3a;cursor:pointer;text-align:center;transition:transform .12s cubic-bezier(.3,1.6,.5,1)}
 .inv:hover{transform:translate(-1px,-3px) rotate(-1deg)}
 .inv.stored{background:#eefaf4;border-style:dashed}
@@ -1323,33 +1328,37 @@ class Component extends DCLogic {
   pickItem(id) {
     this.sfx('blip');
     const sel = this.state.decoSel === id ? null : id;
-    this.setState({ decoSel: sel, decoMsg: sel ? 'Tryk på en blinkende plads i rummet.' : '' });
+    this.setState({ decoSel: sel, decoMsg: sel ? 'Træk den til en blinkende plads — eller tryk på pladsen.' : '' });
+  }
+  placeItem(id, k) {
+    const s = this.state;
+    if (s.screen !== 'decorate') return;
+    if (!fits(id, k)) { this.sfx('boing'); this.setState({ decoMsg: ITEM_TYPE[id] === 'haeng' ? 'Den skal hænge — vælg væggen, loftet eller det røde bånd.' : 'Den skal stå — vælg skranken, skrivebordet eller det røde bånd.' }); return; }
+    const p = Object.assign({}, s.place);
+    const from = slotOf(p, id);
+    if (from === k) return;
+    if (from) delete p[from];
+    const occupant = p[k];
+    const swap = occupant && occupant !== id && from && fits(occupant, from);
+    if (swap) p[from] = occupant;
+    p[k] = id;
+    this.sfx('coin');
+    this.persist({ place: p, decoSel: null, decoMsg: occupant && occupant !== id ? (swap ? 'Byttet om!' : 'Sat på plads — den gamle ting røg på lageret.') : 'Sat på plads!' });
   }
   clickSlot(k) {
     const s = this.state;
     if (s.screen !== 'decorate') { this.poke(k); return; }
-    if (s.decoSel) {
-      if (!fits(s.decoSel, k)) { this.sfx('boing'); this.setState({ decoMsg: ITEM_TYPE[s.decoSel] === 'haeng' ? 'Den skal hænge — vælg væggen, loftet eller det røde bånd.' : 'Den skal stå — vælg skranken, skrivebordet eller det røde bånd.' }); return; }
-      const p = Object.assign({}, s.place);
-      const from = slotOf(p, s.decoSel);
-      const occupant = p[k];
-      if (from) delete p[from];
-      const swap = occupant && occupant !== s.decoSel && from && fits(occupant, from);
-      if (swap) p[from] = occupant;
-      p[k] = s.decoSel;
-      this.sfx('coin');
-      this.persist({ place: p, decoSel: null, decoMsg: occupant && occupant !== s.decoSel ? (swap ? 'Byttet om!' : 'Sat på plads — den gamle ting røg på lageret.') : 'Sat på plads!' });
-      return;
-    }
-    if (s.place[k]) { this.sfx('blip'); this.setState({ decoSel: s.place[k], decoMsg: 'Tryk på en ny plads — eller læg den på lager.' }); }
+    if (s.decoSel) { this.placeItem(s.decoSel, k); return; }
+    if (s.place[k]) { this.sfx('blip'); this.setState({ decoSel: s.place[k], decoMsg: 'Træk den til en ny plads — eller tryk på pladsen.' }); }
     else this.setState({ decoMsg: 'Vælg først en ting til højre.' });
   }
-  storeSel() {
-    const s = this.state; if (!s.decoSel) return;
-    const p = Object.assign({}, s.place); const from = slotOf(p, s.decoSel); if (from) delete p[from];
+  storeItem(id) {
+    const s = this.state; if (!id) return;
+    const p = Object.assign({}, s.place); const from = slotOf(p, id); if (from) delete p[from];
     this.sfx('blip');
     this.persist({ place: p, decoSel: null, decoMsg: 'Lagt på lager.' });
   }
+  storeSel() { this.storeItem(this.state.decoSel); }
   closeShop() { this.sfx('blip'); this.setState({ screen: this.state.shopFrom || 'title', justBought: null }); }
   buy(id) {
     const s = this.state, item = SHOP.find(x => x.id === id);
@@ -1639,7 +1648,7 @@ class Component extends DCLogic {
       closeDecorate: () => this.closeDecorate(),
       storeSel: () => this.storeSel(),
       canStore: !!s.decoSel && !!slotOf(s.place, s.decoSel),
-      decoMsg: s.decoMsg || (s.owned.length ? 'Vælg en ting herunder — eller tryk på en ting i rummet for at flytte den.' : 'Her kan du stille dine ting, når du har købt noget.'),
+      decoMsg: s.decoMsg || (s.owned.length ? 'Træk tingene til nye pladser i rummet — eller tryk på en ting og vælg en plads.' : 'Her kan du stille dine ting, når du har købt noget.'),
       decoMsgCls: 'bubble boss sm ' + (s.decoMsg ? 'popB' : ''),
       ownedCount: s.owned.length,
       hasOwned: s.owned.length > 0, noOwned: s.owned.length === 0,
@@ -2331,8 +2340,92 @@ function render() {
   if (prevScreen && prevScreen !== game.state.screen) window.scrollTo(0, 0);
 }
 
+/* ---------- træk og slip (indretning) ---------- */
+let drag = null, dragEndedAt = 0;
+function dragScale() {
+  const st = document.querySelector('.room-stage');
+  return st && st.clientWidth ? st.clientWidth / 616 : 1;
+}
+function dragCleanup(d) {
+  if (d.ghost) d.ghost.remove();
+  if (d.srcEl) d.srcEl.classList.remove('dragging-src');
+  if (d.hl) d.hl.classList.remove('dragok', 'dragbad');
+}
+document.addEventListener('pointerdown', e => {
+  if (!e.isPrimary || drag) return;
+  if (game.state.screen !== 'decorate') return;
+  let id = null, fromSlot = null, srcEl = null;
+  const slotBtn = e.target.closest && e.target.closest('button.slot');
+  if (slotBtn) {
+    fromSlot = slotBtn.getAttribute('data-key').slice(5);
+    id = game.state.place[fromSlot];
+    if (id) srcEl = slotBtn;
+  } else {
+    const invBtn = e.target.closest && e.target.closest('.inv-grid button');
+    if (invBtn) { id = invBtn.getAttribute('data-key').slice(4); srcEl = invBtn; }
+  }
+  if (!id || !srcEl) return;
+  drag = { id, fromSlot, srcEl, x0: e.clientX, y0: e.clientY, active: false, ghost: null, hl: null, size: 0 };
+});
+document.addEventListener('pointermove', e => {
+  if (!drag || !e.isPrimary) return;
+  if (!drag.active) {
+    if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 12) return;
+    const svg = drag.srcEl.querySelector('svg.pynt');
+    if (!svg) { drag.active = false; return; }
+    drag.size = Math.round((drag.fromSlot ? ROOM_SLOTS[drag.fromSlot][2] : 60) * Math.max(.75, dragScale()));
+    const g = document.createElement('div');
+    g.className = 'drag-ghost';
+    const c = svg.cloneNode(true);
+    c.setAttribute('width', drag.size);
+    c.setAttribute('height', drag.size);
+    c.style.display = 'block';
+    g.appendChild(c);
+    document.body.appendChild(g);
+    drag.active = true;
+    drag.ghost = g;
+    drag.srcEl.classList.add('dragging-src');
+  }
+  drag.ghost.style.left = e.clientX + 'px';
+  drag.ghost.style.top = e.clientY + 'px';
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const slot = el && el.closest ? el.closest('button.slot') : null;
+  if (drag.hl && drag.hl !== slot) drag.hl.classList.remove('dragok', 'dragbad');
+  if (slot) {
+    const k = slot.getAttribute('data-key').slice(5);
+    slot.classList.add(fits(drag.id, k) ? 'dragok' : 'dragbad');
+    drag.hl = slot;
+  } else drag.hl = null;
+});
+function dragDrop(e) {
+  if (!drag) return;
+  const d = drag;
+  drag = null;
+  if (!d.active) return;
+  dragEndedAt = Date.now();
+  dragCleanup(d);
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const slot = el && el.closest ? el.closest('button.slot') : null;
+  if (slot) {
+    game.placeItem(d.id, slot.getAttribute('data-key').slice(5));
+  } else if (el && el.closest && (el.closest('.inv-grid') || el.closest('[data-key="store"]'))) {
+    game.storeItem(d.id);
+  } else {
+    game.sfx('blip');
+    game.setState({ decoMsg: 'Drag den til en plads i rummet — eller til lageret til højre.' });
+  }
+}
+document.addEventListener('pointerup', dragDrop);
+document.addEventListener('pointercancel', e => {
+  if (!drag) return;
+  if (drag.active) { dragEndedAt = Date.now(); dragCleanup(drag); }
+  drag = null;
+});
+document.addEventListener('touchmove', e => { if (drag && drag.active) e.preventDefault(); }, { passive: false });
+
 /* ---------- hændelser ---------- */
 document.addEventListener('click', e => {
+  if (Date.now() - dragEndedAt < 500) return;
   const el = e.target.closest('[data-on]');
   if (!el || el.disabled) return;
   const fn = HANDLERS[+el.getAttribute('data-on')];
