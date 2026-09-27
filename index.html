@@ -1036,7 +1036,7 @@ class Component extends DCLogic {
       revStep: 0, verdict: null, retryNote: '',
       money: save.money, earned: save.earned, owned: save.owned, place: save.place, saveDay: save.day, cleared: save.cleared,
       clock: 0, timeUp: false, warned: false, signed: false, signing: false, signN: 0, poke: null, disco: false,
-      event: null, giftDone: false, meetingDone: false, bonus: 0, newItems: [], decoSel: null, decoMsg: '', recent: [], steps: ['', '', '', '', ''], boLine: '', doneQuote: '', final: false, justWiped: false, introTip: '', introTitle: '', shopFrom: 'title', justBought: null, globe: 0, snowing: false,
+      event: null, giftDone: false, meetingDone: false, bonus: 0, newItems: [], decoSel: null, decoMsg: '', recent: [], steps: ['', '', '', '', ''], boLine: '', doneQuote: '', final: false, justWiped: false, wipeAsk: false, introTip: '', introTitle: '', shopFrom: 'title', justBought: null, globe: 0, snowing: false,
       dayMoney: 0, dayStars: 0, results: [], muted: false, best: loadBest()
     };
     this.tickT = setInterval(() => this.tick(), TICK_MS);
@@ -1108,10 +1108,11 @@ class Component extends DCLogic {
 
   startGame() { this.sfx('blip'); this.startDay(1, this.state.money); }
   continueGame() { this.sfx('blip'); this.startDay(this.state.saveDay || 1, this.state.money); }
+  /* Spørger på forsiden i stedet for window.confirm — den vises ikke i appens webview */
+  askWipe(yes) { this.sfx('blip'); this.setState({ wipeAsk: yes }); }
   newGame() {
-    if (!window.confirm('Vil du slette alt det gemte (penge, pynt og dage) og starte helt forfra?')) return;
     this.clearTimers();
-    this.setState({ screen: 'title', money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, best: null, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0, justWiped: true });
+    this.setState({ wipeAsk: false, screen: 'title', money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, best: null, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0, justWiped: true });
     wipeSave();
     saveSave({ money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 });
     this.later(3000, () => this.setState({ justWiped: false }));
@@ -1329,7 +1330,7 @@ class Component extends DCLogic {
     this.persist(upd);
     if (passed) this.sfx('fanfare'); else this.sfx('boing');
   }
-  goHome() { this.clearTimers(); this.sfx('blip'); this.setState({ screen: 'title' }); }
+  goHome() { this.clearTimers(); this.sfx('blip'); this.setState({ screen: 'title', wipeAsk: false }); }
 
   renderVals() {
     const s = this.state;
@@ -1432,7 +1433,8 @@ class Component extends DCLogic {
       canContinue: (s.saveDay || 1) > 1, continueLabel: 'Fortsæt: Dag ' + (s.saveDay || 1) + ' · ' + dayDate(s.saveDay || 1).weekday,
       continueGame: () => this.continueGame(), newGame: () => this.newGame(),
       hasSave: (s.saveDay || 1) > 1 || s.owned.length > 0 || s.money > 0,
-      justWiped: !!s.justWiped,
+      justWiped: !!s.justWiped, wipeAsk: !!s.wipeAsk,
+      askWipe: () => this.askWipe(true), cancelWipe: () => this.askWipe(false),
       bonusText: s.bonus ? 'Tidlig fyraften kl. ' + clockText(s.clock) + ': +' + fmtKr(s.bonus) + (dayMod(s.day).bonusX ? ' i DOBBELT bonus!' : ' i bonus!') : '',
       timeUpText: s.timeUp ? 'Klokken blev 16:00 — fyraften! Kunder, der ikke nåede at blive betjent, gik hjem.' : '',
       newItems: s.newItems || [], showNew: !!(s.newItems && s.newItems.length),
@@ -1772,7 +1774,7 @@ ${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-k
 : `<button class="btn btn-go btn-big ready" type="button" data-key="start" data-on="${on(v.startGame)}">Start arbejdsdagen ${ICON.arrow}</button>`}
 <button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Kontorbutikken</button>
 </div>
-${v.justWiped ? '<div class="muted-text">🧹 Alt er slettet! Penge, pynt og dage er borte — nu starter du helt fra bunden.</div>' : `<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk i browseren.${v.hasSave ? ` <button class="linkbtn" type="button" data-key="wipe" data-on="${on(v.newGame)}">Slet alt og start forfra</button>` : ''}</div>`}
+${v.justWiped ? '<div class="muted-text">🧹 Alt er slettet! Penge, pynt og dage er borte — nu starter du helt fra bunden.</div>' : `<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk i browseren.${v.hasSave ? (v.wipeAsk ? `<br><b>Slet ALT? Penge, pynt og dage forsvinder for altid.</b> <button class="linkbtn" type="button" data-key="wipe-yes" data-on="${on(v.newGame)}">Ja, slet alt</button> · <button class="linkbtn" type="button" data-key="wipe-no" data-on="${on(v.cancelWipe)}">Nej, behold det</button>` : ` <button class="linkbtn" type="button" data-key="wipe" data-on="${on(v.askWipe)}">Slet alt og start forfra</button>`) : ''}</div>`}
 <div class="howto">
 <div class="howto-card"><div class="num done static">1</div><div class="disp h3">Læs kunden</div><div class="small">Læs sedlen og kundens talebobler. Pas på: nogle skifter mening!</div></div>
 <div class="howto-card"><div class="num done static">2</div><div class="disp h3">Udfyld kontrakten</div><div class="small">Navn, ydelse, varighed, dato og pris.</div></div>
