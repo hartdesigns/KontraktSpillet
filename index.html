@@ -45,6 +45,8 @@ button{font:inherit;color:inherit}
 .bubble{position:relative;background:#ffffff;border:3px solid #1d2b3a;border-radius:18px;box-shadow:4px 4px 0 #1d2b3a;padding:12px 16px;font-family:Fredoka,ui-rounded,system-ui,sans-serif;font-size:18px;line-height:24px;font-weight:500}
 .bubble.alert{background:#fff4c2}
 .bubble.boss{background:#ffe0ec}
+/* Lyserøde scener (titel + chefens gennemgang) — her skal boblen være hvid, så den ses */
+.title-stage .bubble.boss,.bo-stage .bubble.boss{background:#fff}
 .bubble.tail-l::after{content:"";position:absolute;left:-13px;top:22px;width:18px;height:18px;background:inherit;border-left:3px solid #1d2b3a;border-bottom:3px solid #1d2b3a;transform:rotate(45deg);border-radius:0 0 0 4px}
 .bubble.tail-b::after{content:"";position:absolute;left:48px;bottom:-13px;width:18px;height:18px;background:inherit;border-right:3px solid #1d2b3a;border-bottom:3px solid #1d2b3a;transform:rotate(45deg);border-radius:0 0 4px 0}
 .pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
@@ -289,6 +291,8 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
   .talk .bubble.sm{font-size:15px;line-height:20px}
   .roomwrap .note{position:absolute;left:3.4%;top:74.3%;width:45.5%;max-width:none;margin:0;z-index:3;transform:rotate(-3deg)}
 }
+/* Smaller screens: boblerne ligger på den hvide sidebaggrund, så de tinges lyserøde (gule advarsels-bobler undtaget) */
+@media (max-width:1259px){ .roomwrap .talk .bubble:not(.alert){background:#ffe0ec} }
 .name-pill{position:absolute;left:24px;top:478px;padding:4px 12px;border:3px solid #1d2b3a;border-radius:999px;background:#fff;font-size:15px;font-weight:800}
 .note.crumple{transform:rotate(2.5deg) skewX(-2deg)}
 .note .note-stain{position:absolute;right:8px;bottom:6px;width:46px;height:36px;background:radial-gradient(ellipse at 42% 40%,#8a4b2a 0%,#a05a30 55%,rgba(160,90,48,.5) 74%,transparent 78%);border-radius:58% 42% 55% 45%/48% 60% 40% 52%;opacity:.85;mix-blend-mode:multiply;pointer-events:none}
@@ -317,7 +321,7 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 
 .kaj-toast{position:fixed;left:12px;right:12px;bottom:12px;max-width:470px;display:flex;align-items:flex-end;gap:6px;z-index:40;pointer-events:none}
 .kaj-fig{flex-shrink:0;width:110px}
-.kaj-bubble{pointer-events:auto;font-size:16px;line-height:21px;padding:10px 14px;margin-bottom:40px}
+.kaj-bubble{pointer-events:auto;background:#ffe0ec;font-size:16px;line-height:21px;padding:10px 14px;margin-bottom:40px}
 @media (max-width:420px){ .kaj-fig{width:80px} .kaj-fig svg{width:80px;height:96px} }
 
 .deco-panel{padding:22px clamp(14px,3vw,24px);border-radius:22px;display:flex;flex-direction:column;gap:14px}
@@ -406,6 +410,9 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 .event-art .bo-box{max-width:220px}
 .food{margin-top:-40px}
 .meeting-card{width:100%;max-width:880px;padding:clamp(18px,3vw,30px);display:flex;flex-direction:column;gap:20px}
+.vote-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.vote-opt{padding:8px 14px;border:3px dashed #b9d9ca;border-radius:12px;font-weight:800;font-size:17px;color:#4d5f6e}
+.vote-opt.on{border-style:solid;border-color:#1d2b3a;background:#fff4c2;color:#1d2b3a;box-shadow:3px 3px 0 #1d2b3a;animation:chipPop .45s cubic-bezier(.3,1.8,.5,1)}
 .whiteboard{border:4px solid #1d2b3a;border-radius:16px;background:#fff;padding:18px 22px;min-height:190px;box-shadow:inset 0 0 0 6px #eefaf4}
 .board-title{font-size:clamp(24px,4vw,34px);font-weight:700;color:#0b7477;line-height:1.1}
 .board-sub{font-family:'Caveat',cursive;font-size:24px;color:#c2185b;margin-top:6px}
@@ -530,15 +537,16 @@ const TYPO_LINES = [
   'PS: Min lillebror skrev sedlen. Mit navn staves {navn} — {spell}!',
   'Ups, der er en stavefejl på sedlen! Jeg hedder {navn}. Det staves {spell}.',
   'Min hund har tygget i sedlen. Mit navn er {navn}: {spell}!',
-  'Min printer er lidt skør. Det rigtige navn er {navn} — {spell}.',
+  'Lillebror brugte den forkerte farve. Det rigtige navn er {navn} — {spell}.',
   'Kan du stave til {navn}? Det er {spell}. Sedlen tager fejl!',
-  'Hov, jeg skrev mit eget navn forkert. Det er {navn}, altså {spell}.',
-  'Min farfar skrev sedlen uden briller. Jeg hedder {navn}: {spell}!'
+  'Hov! Lillebror stavede mit navn forkert. Det er {navn}, altså {spell}!',
+  'Min lillebror er SÅ stolt af sin nye skrift. Jeg hedder {navn}: {spell}!'
 ];
 const CHANGE_LINES = {
   duration: ['Åh, vent! Jeg har skiftet mening — skriv {v} i stedet!', 'Hmm, min mor siger, det skal være {v}. Kan du rette det?', 'Nej, vent! {V}. Det er bedre. Helt sikkert. Næsten.', 'Ups, jeg læste min kalender på hovedet. Det skal være {v}!'],
   date: ['Ups! Jeg skal til tandlæge den dag. Kan vi starte {v} i stedet?', 'Åh nej, min kusine har bryllup! Kan vi sige {v}?', 'Vent — min hamster har fødselsdag den dag. Start {v} i stedet!', 'Hov, den dag er jeg på lejrskole. {V} er bedre!'],
-  price: ['Hov, jeg fandt flere penge i lommen! Skriv {v} i stedet.', 'Min sparegris var tykkere, end jeg troede. Gør det til {v}!', 'Ups, jeg har kun {v}. Kan det lade sig gøre?', 'Min bedstemor gav mig lommepenge! Skriv {v}.'],
+  price: ['Hov, jeg fandt flere penge i lommen! Skriv {v} i stedet.', 'Min sparegris var tykkere, end jeg troede. Gør det til {v}!', 'Min bedstemor gav mig lommepenge! Skriv {v}.'],
+  price2: ['Ups, jeg har kun {v}. Kan det lade sig gøre?', 'Hmm, min bedstemor brugte pengene på kage i går. Jeg har kun {v}!'],
   service: ['Hmm… ved nærmere eftertanke vil jeg hellere have {v}!', 'Vent! Jeg har skiftet mening. Jeg vil have {v} i stedet.', 'Ups, jeg sagde forkert. Det var {v}, jeg mente!', 'Min ven siger, at {v} er meget sjovere. Lad os tage det!']
 };
 const KAJ_LINES = [
@@ -684,6 +692,7 @@ const GIFT_COST = 40;
 const GIFT_YES = ['Mums! Det var hyggeligt. Nu tilbage til skranken — kunderne venter!', 'Nam nam! Du får en bonusstjerne for godt humør.', 'Hyggeligt! Gunnar fik krummerne.'];
 const GIFT_NO = ['Nåh… så spiser jeg den selv. Alle sammen.', 'Okay! Gunnar får din.', 'Travlt? Det kalder jeg PROAKTIVITET! Det er P’et i P.A.P.I.R.!'];
 const AGENDA = [
+  /* [overskrift, Chef Bos replik] — eller med et 3. felt: afstemning [[valg, Bos reaktion], …] */
   ['Vores værdigrundlag P.A.P.I.R.', 'Vi skal lige gennemgå P. Igen. P står for Passion. Eller Papir. Måske begge dele!'],
   ['Kaffemaskinens navn', 'Skal kaffemaskinen hedde Karsten eller Kirsten? Det er en MEGET vigtig beslutning.'],
   ['Synergi', 'Synergi er, når 1 + 1 bliver 3. Eller 11. Jeg er ikke helt sikker.'],
@@ -698,8 +707,101 @@ const AGENDA = [
   ['Fredags-slips', 'Afstemning: Stribet eller prikket slips på fredag? Jeg stemmer på begge dele.'],
   ['Kundetilfredshed', 'En kunde sagde “fint nok”. Det skal trykkes på en plakat!'],
   ['Brainstorm', 'Hvad rimer på kontrakt? Jeg har kun fundet “kontrakt-or”. Det er en maskine.'],
-  ['Mission og vision', 'Vores vision er at have en mission. Vores mission er at have en vision. Enkelt!']
+  ['Mission og vision', 'Vores vision er at have en mission. Vores mission er at have en vision. Enkelt!'],
+  ['Nyt kontorstol-reglement', 'Man må kun snurre rundt på kontorstolen tre gange i træk. Ellers bliver Kaj søsyg.'],
+  ['Kaffemaskinen har følelser', 'Karsten har lavet varm kakao i stedet for kaffe tre gange i dag. Jeg tror, han er ked af det.'],
+  ['Den tørre stempelpude', 'Stempelpuden er tør. Jeg har prøvet at puste på den. Den er stadig tør. Nu er min næse blå.'],
+  ['Månedens medarbejder', 'Kandidaterne er: dig, Kaj og Gunnar. Gunnar fører. Han har ikke lavet en eneste fejl. Han har heller ikke lavet noget.'],
+  ['Brandøvelse', 'Næste brandøvelse er på torsdag kl. 10. Den er hemmelig, så I skal lade som om, I bliver overraskede.'],
+  ['Kantinens menu', 'Mandag: kanelsnegle. Tirsdag: kanelsnegle. Onsdag: overraskelse. (Det er kanelsnegle.)'],
+  ['Julefrokost i juni', 'Hvorfor vente til december? Jeg har allerede købt nisser. De står i kopimaskinen.'],
+  ['Printeren', 'Printeren siger “PAPIRSTOP”. Jeg sagde “STOP SELV”. Nu taler vi ikke sammen.'],
+  ['Kajs nye hobby', 'Kaj er begyndt at strikke. Han har strikket en sok. Til sin mus. Computermusen.'],
+  ['Bæredygtighed', 'Fra i dag genbruger vi gule sedler. Man skriver bare MEGET småt på bagsiden.'],
+  ['Ny kontorplante', 'Vi har fået en ny plante. Den hedder Bent. Bent skal have vand, sol og ros. Mest ros.'],
+  ['Gave til Gunnar', 'Vi har samlet ind til Gunnar. Vi har 14 kr og en knap. Forslag: en ny sten til akvariet.'],
+  ['Det hemmelige projekt', 'Jeg kan ikke sige noget om det hemmelige projekt. …Okay, det er en kage. Formet som et stempel.'],
+  ['Kontorets lyde', 'Nogen har klaget over, at stemplet siger BAM for højt. Fra i dag siger det bam. Med små bogstaver.'],
+  ['Kvartalets smil', 'Vi har smilet 3.412 gange i dette kvartal. Kaj står for de 3.000. Han har ondt i kinderne.'],
+  ['Ny e-mail-regel', 'Alle e-mails skal nu slutte med “Kh. og et stempel”. Også dem til mormor.'],
+  ['Glemte sokker', 'Nogen har glemt et par stribede sokker i mødelokalet. Det er ikke mine. …Jo, det er.'],
+  ['Glemte paraplyer', 'Vi har nu 27 glemte paraplyer. Når det regner, er vi verdens mest tørre kontor.'],
+  ['Chefens nye hobby', 'Jeg spiller blokfløjte nu. Jeg kan en hel sang. Den varer fire sekunder. Vil I høre den? …Senere.'],
+  ['Sikkerhed på kontoret', 'Husk: Man må ikke stemple sig selv i panden. Heller ikke om fredagen.'],
+  ['Kunde-ros', 'En kunde sagde, at vores kontor dufter af kanelsnegle. Det tager vi som et kompliment.'],
+  ['Frikadelles opførsel', 'Frikadelle har gemt tre kuglepenne i sin kurv. Og et stempel. Og Kajs madpakke.'],
+  ['Teamdag', 'Vi skal på teamdag! Hvad skal vi lave?', [
+    ['Bowling', 'Bowling! Jeg bowler altid med to hænder. Og nogle gange med fødderne.'],
+    ['Kagebagning', 'KAGE! Jeg bager en kage formet som mig selv. Så kan I spise chefen.'],
+    ['Skattejagt i parken', 'Skattejagt! Jeg gemmer stemplet. …Hov, jeg har allerede glemt hvor.']]],
+  ['Kontorets motto', 'Vi skal have et motto. Et der rimer. Eller i hvert fald næsten.', [
+    ['“Stemplet er vores ven”', 'Smukt. Jeg får tårer i overskægget.'],
+    ['“Kontrakt er klogt”', 'Kontrakt er klogt! Det skal broderes på en pude.'],
+    ['“Kanelsnegle til alle”', 'Det har intet med kontrakter at gøre. Det er PERFEKT.']]],
+  ['Frikadelles frikadeller', 'Hvor mange frikadeller må kontorhunden Frikadelle spise om dagen?', [
+    ['Én', 'Én frikadelle. Streng, men fair. Frikadelle kigger meget skuffet på dig.'],
+    ['Tolv', 'TOLV?! Så hedder hun snart Frikadellen-der-ikke-kan-komme-gennem-døren.'],
+    ['Nul — hun får hundemad', 'Hundemad … Det er så fornuftigt, at jeg slet ikke vidste, det var en mulighed.']]],
+  ['Ny farve på væggene', 'Vi skal male kontoret. Hvilken farve?', [
+    ['Lyserød', 'Lyserød! Så passer væggene til mit hår.'],
+    ['Tigerstriber', 'Tigerstriber! Kunderne vil tro, vi er en zoo. Det er fint.'],
+    ['Usynlig maling', 'Usynlig maling … Genialt. Så behøver vi slet ikke male.']]],
+  ['Kontorets maskot', 'Vi skal have en maskot. Hvem skal det være?', [
+    ['Gunnar', 'Gunnar! Han har allerede øvet sig i at se vigtig ud.'],
+    ['Et stempel med øjne', 'Et stempel med øjne … lidt uhyggeligt. Jeg elsker det.'],
+    ['Kaj i kostume', 'Kaj har allerede sagt ja. Han har altid drømt om at være en kanelsnegl.']]],
+  ['Fredagsmusik', 'Hvilken musik skal vi høre fredag eftermiddag?', [
+    ['Disko', 'DISKO! Jeg tager diskokuglen med hjemmefra. Jeg har tre.'],
+    ['Chef Bo på blokfløjte', 'Endelig nogen, der forstår kunst! Fire sekunder musik, her kommer den!'],
+    ['Hvalsang', 'Hvalsang. Meget beroligende. Gunnar bliver lidt jaloux.']]],
+  ['Julefrokostens tema', 'Hvad skal temaet være til årets julefrokost?', [
+    ['Pirater', 'Arrr! Jeg har allerede en guldtand. Den er af chokolade.'],
+    ['Rumvæsner', 'Rumvæsner! Vi spiser kun mad, der svæver.'],
+    ['Kontorartikler', 'Jeg kommer som hæftemaskine. Kaj kommer som papirclips.']]],
+  ['Nyt navn til kaffemaskinen', 'Karsten vil gerne skifte navn. Forslag?', [
+    ['Kaffe-Karl', 'Kaffe-Karl! Han bippede. Jeg tror, han er glad.'],
+    ['Bønne-Bent', 'Bønne-Bent. Nu har vi to, der hedder Bent. Det bliver forvirrende.'],
+    ['Hr. Brøøøm', 'Hr. Brøøøm! Det er præcis den lyd, han laver.']]],
+  ['Kontorets nye regel', 'Vi skal have en ny regel. Hvilken?', [
+    ['Hattefredag', 'Hattefredag! Jeg har en hat med en lille hat på.'],
+    ['Højst 10 kanelsnegle om dagen', '10? Det er … strengt. Men sundt. Jeg sukker lidt.'],
+    ['Alle siger “Hej Gunnar”', 'Gunnar vil elske det. Han siger “blub” tilbage.']]],
+  ['Kontorudflugt', 'Hvor skal vi hen på udflugt?', [
+    ['Zoologisk have', 'Zoo! Jeg vil hilse på pingvinerne. De går også i jakkesæt.'],
+    ['Stempelmuseet', 'Stempelmuseet! Det findes ikke. Så vi må bygge det selv.'],
+    ['Månen', 'Månen! Jeg har pakket madpakke. Og en ekstra luftboble.']]],
+  ['Kontorets sang', 'Kontoret skal have sin egen sang. Hvad skal den handle om?', [
+    ['Stempler', 'BAM-BAM, stempel-stempel, BAM! …Den er færdig.'],
+    ['Frikadelle', '“Frikadelle, lille hund, du er så rund” … Nej, det må vi nok ikke synge.'],
+    ['Kontrakter', 'Kon-trakt, kon-trakt, du er så smukt skrevet … Jeg græder lidt.']]],
+  ['Pausegymnastik', 'Vi skal lave pausegymnastik. Hvilken øvelse?', [
+    ['Stempel-hop', 'Stempel-hop! Man hopper og råber BAM. Jeg er allerede forpustet.'],
+    ['Kontorstol-karrusel', 'Tre omgange. Ikke flere. Tænk på Kaj.'],
+    ['Kanelsnegle-løft', 'Man løfter en kanelsnegl op til munden. Gentag 14 gange.']]]
 ];
+const MEETING_OPEN = [
+  'Alle ind i mødelokalet! Det tager kun fem minutter. Cirka. Plus-minus en time.',
+  'MØDE! Tag en stol. Ikke den der knirker — det er Kajs.',
+  'Ding-dong, mødetid! Jeg har lavet slides. Tre af dem handler om kanelsnegle.',
+  'Vigtigt møde! Så vigtigt, at jeg har taget mit fine slips på. Det med prikker.',
+  'Sæt jer ned. Gunnar er med på video. Han siger blub.',
+  'Møde! Og I skal stemme om noget. Demokrati er næsten lige så sjovt som stempler.'
+];
+const MEETING_END = [
+  'Godt møde! Vi mødes igen i morgen og taler om, hvordan det gik i dag.',
+  'Tak for i dag! Referatet kommer på en gul seddel. Den er meget lille.',
+  'Fantastisk møde. Jeg har lært en masse. Mest om mig selv.',
+  'Mødet er slut! Husk at vinke til Gunnar på vej ud.',
+  'Det var et produktivt møde. Vi har produceret tre kanelsnegle-krummer.'
+];
+const MEETING_END_BOARD = ['Beslutninger: 0 · Kanelsnegle: 3', 'Beslutninger: 1 (ja til kage)', 'Idéer: 17 · Gode idéer: 2 · Kaj-idéer: 15', 'Varighed: 5 min (plus 50 min)', 'Referat: “Det var hyggeligt.”'];
+const CHART_WORDS = ['synergi!', 'kage-kurve', 'BAM-faktor', 'smil pr. time', 'P.A.P.I.R.', 'Gunnar-indeks'];
+function makeMeeting() {
+  const mix = a => a.slice().sort(() => Math.random() - 0.5);
+  const votes = AGENDA.filter(a => a[2]), talk = AGENDA.filter(a => !a[2]);
+  const points = mix([pick(votes)].concat(mix(talk).slice(0, 2)));
+  return { kind: 'meeting', phase: 'start', points, i: 0, reply: pick(REPLIES), open: pick(MEETING_OPEN), close: pick(MEETING_END), closeSub: pick(MEETING_END_BOARD), answer: null, chosen: null };
+}
 const REPLIES = ['Nik klogt', 'Sig: “Spændende!”', 'Skriv noter', 'Kig diskret på uret', 'Sig: “Helt enig!”', 'Rynk panden tænksomt', 'Klap høfligt'];
 const MEETING_START = 10, MEETING_POINT = 15;
 const TIMEUP_NO = ['Klokken blev fire! Selv Gunnar er gået hjem. Prøv dagen igen!', 'Fyraften! Resten af kunderne kommer igen en anden dag. Måske.', 'Uret ringede! Næste gang: lidt mindre kage og lidt flere kontrakter.'];
@@ -886,7 +988,7 @@ function buildDay(day, recent) {
       correct[f] = v;
       if (t.math && f === 'duration') correct.price = base.rate * WEEKS[v];
       c.changeField = f;
-      c.changeLine = fill(pick(CHANGE_LINES[f]), valText(f, v));
+      c.changeLine = fill(pick(f === 'price' && v < base[f] ? CHANGE_LINES.price2 : CHANGE_LINES[f]), valText(f, v));
     }
     if (t.kaj) {
       const f = pick(['price', 'date', 'duration'].filter(x => x !== c.changeField));
@@ -901,7 +1003,7 @@ function buildDay(day, recent) {
 }
 
 const SLOT_TYPE = { H1: 'haeng', H4: 'haeng', H5: 'haeng', H2: 'haeng', W1: 'haeng', W2: 'haeng', W3: 'haeng', W4: 'haeng', W5: 'haeng', S1: 'staa', S2: 'staa', S3: 'staa', S4: 'staa', D1: 'staa', D2: 'staa', D3: 'staa', D4: 'staa', D5: 'staa', D6: 'staa', F1: 'staa', B1: 'alle', B2: 'alle', B3: 'alle', H3: 'alle', B4: 'alle', B5: 'alle' };
-const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', W1: 'Væggen, midten', W2: 'Væggen, under uret', W3: 'Væggen, venstre, nederst', W4: 'Væggen, højre, nederst', W5: 'Væggen, yderst, nederst', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', F1: 'Gulvet', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
+const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', W1: 'Væggen, midten', W2: 'Væggen, under uret', W3: 'Væggen, venstre, nederst', W4: 'Væggen, højre, nederst', W5: 'Væggen, yderst, nederst', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', F1: 'Væggen, højre, øverst', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
 SLOT_NAME.H3 = 'Det røde bånd 4';
 const ITEM_TYPE = { kaktus: 'staa', plante: 'staa', kugle: 'staa', lava: 'staa', kat: 'staa', kop: 'staa', globus: 'staa', tyggegummi: 'staa', guldabe: 'staa', akvarie: 'staa', stork: 'staa', plakat: 'haeng', lys: 'haeng', disko: 'haeng', vaerdier: 'haeng', fladfisk: 'haeng', kukur: 'haeng', neon: 'haeng', medarbejder: 'haeng', radio: 'staa', bamse: 'staa', yoyo: 'haeng', trofae: 'staa', palme: 'staa', dino: 'staa', vimpel: 'haeng' };
 function fits(id, k) { return SLOT_TYPE[k] === 'alle' || SLOT_TYPE[k] === ITEM_TYPE[id]; }
@@ -946,7 +1048,7 @@ const SHOP = [
 const UNLOCK = { medarbejder: 1, kaktus: 1, kop: 1, plakat: 1, plante: 1, kugle: 1, vaerdier: 2, globus: 2, lys: 2, fladfisk: 3, kukur: 3, lava: 3, tyggegummi: 4, neon: 4, radio: 4, disko: 5, guldabe: 5, bamse: 1, yoyo: 1, akvarie: 6, kat: 6, vimpel: 6, stork: 7, trofae: 7, palme: 8, dino: 8 };
 const POKE = {
   kaktus: ['Hov! Det stikker, undskyld!', 'pop'], plante: ['Rasle-rasle', 'pop'], kop: ['Slurp!', 'pop'], globus: ['Snurre-snurr!', 'ding'],
-  lava: ['Blub-blub!', 'pop'], kat: ['Voff! Voff!', 'bark'], tyggegummi: ['Klonk! Et tyggegummi!', 'coin'], guldabe: ['Uh-uh-ah-ah!', 'kuk'],
+  lava: ['Blub-blub!', 'pop'], kat: ['Jeg elsker kiks', 'bark'], tyggegummi: ['Klonk! Et tyggegummi!', 'coin'], guldabe: ['Uh-uh-ah-ah!', 'kuk'],
   akvarie: ['Blub!', 'pop'], stork: ['Klap-klap-klap!', 'klap'], plakat: ['Hæng i!', 'blip'], lys: ['Blink-blink!', 'ding'],
   disko: ['DISKO!', 'jingle'], vaerdier: ['P.A.P.I.R.!', 'blip'], fladfisk: ['Flap!', 'boing'], kukur: ['Kukkuk! Kukkuk!', 'kuk'],
   neon: ['Bzzzzt!', 'buzz'], medarbejder: ['Det er dig!', 'coin'], radio: ['♪ Dum-di-dum ♪', 'jingle'], bamse: ['Ninus vil have et kram!', 'pop'], yoyo: ['Yo-yo-yo!', 'yoyo'],
@@ -1012,7 +1114,7 @@ function loadSave() {
   return { money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 };
 }
 function wipeSave() {
-  try { window.localStorage.removeItem('kontraktkontoret-save'); window.localStorage.removeItem('kontraktkontoret-best'); } catch (e) { }
+  try { window.localStorage.removeItem('kontraktkontoret-save'); } catch (e) { } /* Rekorden (best) beholdes */
 }
 function saveSave(v) {
   try { window.localStorage.setItem('kontraktkontoret-save', JSON.stringify(v)); } catch (e) { }
@@ -1107,15 +1209,20 @@ class Component extends DCLogic {
   }
 
   startGame() { this.sfx('blip'); this.startDay(1, this.state.money); }
-  continueGame() { this.sfx('blip'); this.startDay(this.state.saveDay || 1, this.state.money); }
+  continueGame() {
+    if (this.state.cleared >= MAX_DAY) return;
+    this.sfx('blip'); this.startDay(this.state.saveDay || 1, this.state.money);
+  }
   /* Spørger på forsiden i stedet for window.confirm — den vises ikke i appens webview */
   askWipe(yes) { this.sfx('blip'); this.setState({ wipeAsk: yes }); }
   newGame() {
     this.clearTimers();
-    this.setState({ wipeAsk: false, screen: 'title', money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, best: null, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0, justWiped: true });
+    this.sfx('blip');
+    /* Nyt spil: sletter penge, pynt og dage — men rekorden (best) beholdes, så den kan slåes. */
     wipeSave();
     saveSave({ money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 });
-    this.later(3000, () => this.setState({ justWiped: false }));
+    this.setState({ wipeAsk: false, money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0 });
+    this.startDay(1, 0);
   }
   persist(patch) {
     const s = Object.assign({}, this.state, patch);
@@ -1273,12 +1380,9 @@ class Component extends DCLogic {
     const s = this.state, d = s.day, mod = dayMod(d);
     if (mod.noEvents) return null;
     if (mod.gift && !s.giftDone) return { kind: 'gift', phase: 'offer', gift: GIFTS[dayDate(d).weekday] };
-    if (mod.meeting && !s.meetingDone) return { kind: 'meeting', phase: 'start', points: AGENDA.slice().sort(() => Math.random() - 0.5).slice(0, 3), i: 0, reply: pick(REPLIES) };
+    if (mod.meeting && !s.meetingDone) return makeMeeting();
     if (d >= 2 && !s.giftDone && Math.random() < 0.4) return { kind: 'gift', phase: 'offer', gift: GIFTS[dayDate(d).weekday] };
-    if (d >= 3 && !s.meetingDone && Math.random() < 0.4) {
-      const pts = AGENDA.slice().sort(() => Math.random() - 0.5).slice(0, 3);
-      return { kind: 'meeting', phase: 'start', points: pts, i: 0, reply: pick(REPLIES) };
-    }
+    if (d >= 3 && !s.meetingDone && Math.random() < 0.4) return makeMeeting();
     return null;
   }
   giftAnswer(yes) {
@@ -1286,11 +1390,17 @@ class Component extends DCLogic {
     if (yes) { this.advanceClock(GIFT_COST); this.setState({ dayStars: this.state.dayStars + 1, event: Object.assign({}, ev, { phase: 'yes', line: pick(GIFT_YES) }) }); this.sfx('fanfare'); }
     else { this.setState({ event: Object.assign({}, ev, { phase: 'no', line: pick(GIFT_NO) }) }); this.sfx('boing'); }
   }
+  meetingVote(j) {
+    const ev = this.state.event, ch = (ev.points[ev.i][2] || [])[j];
+    if (!ch || ev.answer) return;
+    this.sfx('ding');
+    this.setState({ event: Object.assign({}, ev, { answer: ch[1], chosen: ch[0] }) });
+  }
   meetingNext() {
     const ev = this.state.event;
     if (ev.phase === 'start') { this.advanceClock(MEETING_START); this.setState({ event: Object.assign({}, ev, { phase: 'point', i: 0, reply: pick(REPLIES) }) }); this.sfx('hmm'); return; }
     this.advanceClock(MEETING_POINT);
-    if (ev.i + 1 < ev.points.length) { this.setState({ event: Object.assign({}, ev, { i: ev.i + 1, reply: pick(REPLIES) }) }); this.sfx('hmm'); }
+    if (ev.i + 1 < ev.points.length) { this.setState({ event: Object.assign({}, ev, { i: ev.i + 1, reply: pick(REPLIES), answer: null, chosen: null }) }); this.sfx('hmm'); }
     else { this.setState({ event: Object.assign({}, ev, { phase: 'end' }) }); this.sfx('ding'); }
   }
   eventDone() {
@@ -1430,11 +1540,10 @@ class Component extends DCLogic {
       cal: dd, showNamePill: s.day === 1,
       signed: s.signed, signing: s.signing, sigKey: 'sig-' + s.signN,
       poke: !editing && s.poke ? s.poke : null, disco: s.disco && s.screen === 'office',
-      canContinue: (s.saveDay || 1) > 1, continueLabel: 'Fortsæt: Dag ' + (s.saveDay || 1) + ' · ' + dayDate(s.saveDay || 1).weekday,
+      completed: s.cleared >= MAX_DAY,
+      canContinue: (s.saveDay || 1) > 1 && s.cleared < MAX_DAY, continueLabel: 'Fortsæt: Dag ' + (s.saveDay || 1) + ' · ' + dayDate(s.saveDay || 1).weekday,
       continueGame: () => this.continueGame(), newGame: () => this.newGame(),
-      hasSave: (s.saveDay || 1) > 1 || s.owned.length > 0 || s.money > 0,
-      justWiped: !!s.justWiped, wipeAsk: !!s.wipeAsk,
-      askWipe: () => this.askWipe(true), cancelWipe: () => this.askWipe(false),
+      wipeAsk: !!s.wipeAsk, askWipe: () => this.askWipe(true), cancelWipe: () => this.askWipe(false),
       bonusText: s.bonus ? 'Tidlig fyraften kl. ' + clockText(s.clock) + ': +' + fmtKr(s.bonus) + (dayMod(s.day).bonusX ? ' i DOBBELT bonus!' : ' i bonus!') : '',
       timeUpText: s.timeUp ? 'Klokken blev 16:00 — fyraften! Kunder, der ikke nåede at blive betjent, gik hjem.' : '',
       newItems: s.newItems || [], showNew: !!(s.newItems && s.newItems.length),
@@ -1444,7 +1553,7 @@ class Component extends DCLogic {
       starsLabel: s.dayStars + ' / ' + goal,
       moneyLabel: fmtKr(s.money),
       isShop: s.screen === 'shop',
-      canShop: s.screen === 'title' || s.screen === 'intro' || s.screen === 'done' || s.screen === 'decorate',
+      canShop: s.cleared < MAX_DAY && (s.screen === 'title' || s.screen === 'intro' || s.screen === 'done' || s.screen === 'decorate'),
       openShop: () => this.openShop(),
       closeShop: () => this.closeShop(),
       shopItems,
@@ -1736,7 +1845,7 @@ const ROOM_SLOTS = {
   S1: [20, 368, 76], S2: [346, 368, 76], S3: [440, 368, 76], S4: [526, 368, 76],
   B1: [14, 478, 80], B2: [116, 478, 80], B3: [218, 478, 80], H3: [320, 478, 80], B4: [422, 478, 80], B5: [524, 478, 80],
   D1: [308, 584, 96], D2: [410, 584, 96], D3: [512, 584, 96], D4: [308, 686, 92], D5: [410, 686, 92], D6: [512, 686, 92],
-  F1: [20, 698, 84]
+  F1: [360, 110, 84]
 };
 function slotHTML(v, k) {
   const sl = v.sl[k];
@@ -1770,11 +1879,11 @@ function titleHTML(v) {
 <p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel. Han har ansat dig på prøve i <b>20 arbejdsdage</b>. Klarer du dem alle, har du gennemført spillet — og så lærer han måske endda dit navn.</p>
 <div class="btn-row">
 ${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-key="cont" data-on="${on(v.continueGame)}">${esc(v.continueLabel)} ${ICON.arrow}</button>
-<button class="btn" type="button" data-key="start1" data-on="${on(v.startGame)}">Start på dag 1</button>`
-: `<button class="btn btn-go btn-big ready" type="button" data-key="start" data-on="${on(v.startGame)}">Start arbejdsdagen ${ICON.arrow}</button>`}
-<button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Kontorbutikken</button>
+<button class="btn" type="button" data-key="start1" data-on="${on(v.askWipe)}">Start på dag 1</button>`
+: `<button class="btn btn-go btn-big ready" type="button" data-key="start" data-on="${on(v.completed ? v.newGame : v.startGame)}">${v.completed ? 'Nyt spil' : 'Start arbejdsdagen'} ${ICON.arrow}</button>`}
+${!v.completed ? `<button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Kontorbutikken</button>` : ''}
 </div>
-${v.justWiped ? '<div class="muted-text">🧹 Alt er slettet! Penge, pynt og dage er borte — nu starter du helt fra bunden.</div>' : `<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk i browseren.${v.hasSave ? (v.wipeAsk ? `<br><b>Slet ALT? Penge, pynt og dage forsvinder for altid.</b> <button class="linkbtn" type="button" data-key="wipe-yes" data-on="${on(v.newGame)}">Ja, slet alt</button> · <button class="linkbtn" type="button" data-key="wipe-no" data-on="${on(v.cancelWipe)}">Nej, behold det</button>` : ` <button class="linkbtn" type="button" data-key="wipe" data-on="${on(v.askWipe)}">Slet alt og start forfra</button>`) : ''}</div>`}
+<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk i browseren.${v.wipeAsk ? `<br><b>Er du sikker på du vil starte spillet forfra? Alle dine penge og indkøbte ting forsvinder.</b> <button class="linkbtn" type="button" data-key="wipe-yes" data-on="${on(v.newGame)}">Ja, det vil jeg gerne</button> · <button class="linkbtn" type="button" data-key="wipe-no" data-on="${on(v.cancelWipe)}">Nej, behold det</button>` : ''}</div>
 <div class="howto">
 <div class="howto-card"><div class="num done static">1</div><div class="disp h3">Læs kunden</div><div class="small">Læs sedlen og kundens talebobler. Pas på: nogle skifter mening!</div></div>
 <div class="howto-card"><div class="num done static">2</div><div class="disp h3">Udfyld kontrakten</div><div class="small">Navn, ydelse, varighed, dato og pris.</div></div>
@@ -1989,18 +2098,21 @@ ${ev.phase === 'yes' ? confettiHTML() : ''}
   const total = (ev.points || []).length;
   let board, bubble, btn;
   if (ev.phase === 'start') {
-    board = `<div class="disp board-title">MØDE — NU!</div><div class="board-sub">Dagsorden: ${total} vigtige punkter</div>`;
-    bubble = 'Alle ind i mødelokalet! Det tager kun fem minutter. Cirka. Plus-minus en time.';
+    board = `<div class="disp board-title">MØDE — NU!</div><div class="board-sub">Dagsorden: ${total} vigtige punkter — og en afstemning!</div>`;
+    bubble = ev.open || MEETING_OPEN[0];
     btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.meetingNext)}">Sæt dig ned (${MEETING_START} min)</button>`;
   } else if (ev.phase === 'point') {
     const pt = ev.points[ev.i];
-    board = `<div class="lbl">Punkt ${ev.i + 1} af ${total}</div><div class="disp board-title">${esc(pt[0])}</div>${boardChart(ev.i)}`;
-    bubble = pt[1];
-    btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.meetingNext)}">${esc(ev.reply)} (${MEETING_POINT} min)</button>`;
-    boMood = ev.i % 2 ? 'hmm' : 'glad';
+    const votes = pt[2];
+    board = `<div class="lbl">Punkt ${ev.i + 1} af ${total}${votes ? ' · AFSTEMNING' : ''}</div><div class="disp board-title">${esc(pt[0])}</div>` +
+      (votes ? `<div class="vote-list">${votes.map(c => `<div class="vote-opt${ev.chosen === c[0] ? ' on' : ''}">${ev.chosen === c[0] ? '✓ ' : ''}${esc(c[0])}</div>`).join('')}</div>` : boardChart(ev.i, pt[0]));
+    bubble = ev.answer || pt[1];
+    if (votes && !ev.answer) btn = `<div class="btn-row">${votes.map((c, j) => `<button class="btn btn-teal" type="button" data-on="${on(() => game.meetingVote(j))}">Stem: ${esc(c[0])}</button>`).join('')}</div>`;
+    else btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.meetingNext)}">${votes ? 'Videre til næste punkt' : esc(ev.reply)} (${MEETING_POINT} min)</button>`;
+    boMood = ev.answer ? 'jubel' : (ev.i % 2 ? 'hmm' : 'glad');
   } else {
-    board = `<div class="disp board-title">Mødet er slut!</div><div class="board-sub">Beslutninger: 0 · Kanelsnegle: 3</div>`;
-    bubble = 'Godt møde! Vi mødes igen i morgen og taler om, hvordan det gik i dag.';
+    board = `<div class="disp board-title">Mødet er slut!</div><div class="board-sub">${esc(ev.closeSub || MEETING_END_BOARD[0])}</div>`;
+    bubble = ev.close || MEETING_END[0];
     btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.eventDone)}">Tilbage til skranken ${ICON.arrow}</button>`;
     boMood = 'jubel'; boCls = 'bo-jump';
   }
@@ -2009,17 +2121,18 @@ ${ev.phase === 'yes' ? confettiHTML() : ''}
 <div class="whiteboard" data-key="board-${ev.phase}-${ev.i}"><div class="pop">${board}</div></div>
 <div class="meeting-bottom">
 <div class="${boCls} bo-box small-bo" style="transform-origin:50% 100%">${boSVG(boMood)}</div>
-<div class="stack"><div class="bubble boss tail-l ${ev.i % 2 ? 'popB' : 'pop'}" data-key="mb-${ev.phase}-${ev.i}">${esc(bubble)}</div>
+<div class="stack"><div class="bubble boss tail-l ${ev.i % 2 ? 'popB' : 'pop'}" data-key="mb-${ev.phase}-${ev.i}-${ev.answer ? 'a' : 'q'}">${esc(bubble)}</div>
 <div class="muted-text">Klokken er ${v.clockText}. Kunderne venter …</div>
 <div>${btn}</div></div>
 </div>
 </div>
 </main>`;
 }
-function boardChart(i) {
+function boardChart(i, title) {
+  const word = CHART_WORDS[(i + String(title || '').length) % CHART_WORDS.length];
   const bars = [[30, 60, 45, 80], [70, 20, 90, 40], [50, 50, 50, 95]][i % 3];
   const cols = ['#ef5b93', '#34b8b5', '#ffd84d', '#c2185b'];
-  return `<svg viewBox="0 0 220 110" width="220" height="110" style="display:block;max-width:100%;margin-top:10px" aria-hidden="true"><path d="M10 100H210M10 100V8" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/>${bars.map((b, j) => `<rect x="${24 + j * 46}" y="${100 - b}" width="30" height="${b}" rx="4" fill="${cols[j]}" stroke="#1d2b3a" stroke-width="2.5"/>`).join('')}<path d="M18 80 Q60 20 110 60 T206 16" fill="none" stroke="#1d2b3a" stroke-width="2.5" stroke-dasharray="6 5"/><text x="150" y="30" font-family="'Caveat', cursive" font-size="20" fill="#c2185b">synergi!</text></svg>`;
+  return `<svg viewBox="0 0 220 110" width="220" height="110" style="display:block;max-width:100%;margin-top:10px" aria-hidden="true"><path d="M10 100H210M10 100V8" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/>${bars.map((b, j) => `<rect x="${24 + j * 46}" y="${100 - b}" width="30" height="${b}" rx="4" fill="${cols[j]}" stroke="#1d2b3a" stroke-width="2.5"/>`).join('')}<path d="M18 80 Q60 20 110 60 T206 16" fill="none" stroke="#1d2b3a" stroke-width="2.5" stroke-dasharray="6 5"/><text x="150" y="30" font-family="'Caveat', cursive" font-size="20" fill="#c2185b">${esc(word)}</text></svg>`;
 }
 
 function confettiHTML(big) {
