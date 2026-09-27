@@ -322,7 +322,7 @@ button{font:inherit;color:inherit}
 .mark-ok{color:#0b7477}.mark-bad{color:#c2185b}
 .row-bad{background:#ffe0ec}
 .stamp{font-family:Fredoka,ui-rounded,system-ui,sans-serif;font-weight:700;font-size:58px;line-height:1;letter-spacing:.08em;padding:10px 20px;border:7px solid currentColor;border-radius:14px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 3px rgba(255,255,255,.9)}
-.stamp-ok{color:#0b7477}.stamp-no{color:#c2185b}
+.stamp-ok{color:#0b7477}.stamp-no{color:#c2185b}.stamp-lilla{color:#7b3fb8}
 .verdict{background:#ffffff}.verdict.ok{background:#d3f4f1}.verdict.no{background:#ffe0ec}
 .bubble.sm{font-size:16px;line-height:21px;padding:10px 14px}
 .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -509,7 +509,6 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
   .roomwrap .note{position:absolute;left:3.4%;top:74.3%;width:45.5%;max-width:none;margin:0;z-index:3;transform:rotate(-3deg)}
 }
 .name-pill{position:absolute;left:24px;top:478px;padding:4px 12px;border:3px solid #1d2b3a;border-radius:999px;background:#fff;font-size:15px;font-weight:800}
-.family-note{border:3px solid #1d2b3a;border-radius:16px;background:#ffe0ec;box-shadow:4px 4px 0 #1d2b3a;padding:10px 14px;font-size:15px;font-weight:700;line-height:22px;text-align:center}
 .note.crumple{transform:rotate(2.5deg) skewX(-2deg)}
 .note .note-stain{position:absolute;right:8px;bottom:6px;width:46px;height:36px;background:radial-gradient(ellipse at 42% 40%,#8a4b2a 0%,#a05a30 55%,rgba(160,90,48,.5) 74%,transparent 78%);border-radius:58% 42% 55% 45%/48% 60% 40% 52%;opacity:.85;mix-blend-mode:multiply;pointer-events:none}
 .note .note-heart{position:absolute;right:12px;top:6px;font-size:18px;color:#c2185b;transform:rotate(14deg);pointer-events:none}
@@ -672,7 +671,7 @@ const SERVICES = [
 const DURATIONS = ['1 uge', '2 uger', '3 uger', '1 måned', '3 måneder'];
 const WEEKS = { '1 uge': 1, '2 uger': 2, '3 uger': 3 };
 const DAY_MIN = 480; /* arbejdsdagen: 08:00–16:00 = 480 spil-minutter */
-const MAX_DAY = 8; /* spillet slutter, når alle 8 arbejdsdage er klaret */
+const MAX_DAY = 20; /* spillet er gennemført, når alle 20 arbejdsdage er klaret */
 const TICK_MS = 500; /* ét spil-minut varer et halvt sekund */
 const DATES = ['2. juni', '5. juni', '9. juni', '12. juni', '16. juni', '20. juni'];
 const PRICES = [50, 100, 150, 200, 250, 300];
@@ -782,17 +781,24 @@ const DAYS = [
   { title: 'Skifte-mening-onsdag', tip: 'I dag skifter kunderne mening midt i det hele. Vent til kunden er færdig med at snakke, før du sender!' },
   { title: 'Kollega-Kaj-torsdag', tip: 'Kollega Kaj vil så gerne hjælpe. Men Kaj hører ikke så godt. Stol på kunden — ikke på Kaj.' },
   { title: 'Fredags-kaos', tip: 'Fredag! Stavefejl, skift af mening OG Kaj. Alt på én gang. Jeg har taget mine lykkesokker på.' },
-  { title: 'Regne-mandag', tip: 'Nyt i dag: Nogle kunder siger, hvad de betaler PR. UGE. Så skal du selv regne prisen ud. 50 kr om ugen i 3 uger = 150 kr!' }
+  { title: 'Regne-mandag', tip: 'Nyt i dag: Nogle kunder siger, hvad de betaler PR. UGE. Så skal du selv regne prisen ud. 50 kr om ugen i 3 uger = 150 kr!' },
+  /* Dag 7–20: temaet (mod) ændrer dagen — se twistsFor, buildDay, maybeEvent, startDay og finishDay */
+  { title: 'Fart-på-dag', tip: 'Nu går det stærkt! Der kommer en ekstra kunde i dag. Jeg har smurt stemplet.', mod: { extra: 1 } },
+  { title: 'Lilla stempel-dag', tip: 'Jeg har fået en ny stempelpude. Den er LILLA! Kunderne har kun ét trick hver i dag, så vi kan nyde farven.', mod: { purple: true, gentle: true } },
+  { title: 'Kaffe-Kaj-dag', tip: 'Kaj har drukket tre kopper kaffe og vil hjælpe med ALLE kunder. Stol på kunden — ikke på Kaj!', mod: { only: 'kaj' } },
+  { title: 'Fuldmåne-dag', tip: 'Der er fuldmåne! ALLE kunder skifter mening i dag. Vent, til de er helt færdige med at snakke.', mod: { only: 'change' } },
+  { title: 'Lillebror-dag', tip: 'Alle lillebrødre har skoleferie og har skrevet ALLE sedlerne. Tjek, hvordan kunderne selv staver deres navn!', mod: { only: 'typo' } },
+  { title: 'Regnvejrsdag', tip: 'Det regner! …Nej vent, der står REGNE-dag. Alle kunder betaler pr. uge, så du må selv regne prisen ud.', mod: { only: 'math' } },
+  { title: 'Møde-dag', tip: 'Jeg har indkaldt til et vigtigt møde i dag. MEGET vigtigt. Det tager lidt tid, så skynd dig med kunderne!', mod: { meeting: true } },
+  { title: 'Kø-kaos', tip: 'Kunderne står i kø helt ned ad gaden — der kommer en ekstra! Til gengæld aflyser jeg alle møder. Og kagen.', mod: { extra: 1, noEvents: true } },
+  { title: 'Gunnars fødselsdag', tip: 'Gunnar fylder 3! Der bliver helt sikkert serveret noget lækkert i løbet af dagen. Og fiskefoder.', mod: { gift: true } },
+  { title: 'Kaj har fri', tip: 'Kaj har fri! Hurra … eller? Til gengæld har ALLE kunder både stavefejl OG skifter mening.', mod: { pair: ['typo', 'change'] } },
+  { title: 'Dobbelt-bonus-dag', tip: 'Jeg har fundet sparegrisen! Bliver du færdig før fyraften, får du DOBBELT bonus.', mod: { bonusX: 2 } },
+  { title: 'Sovet-over-dag', tip: 'Undskyld! Jeg sov over mig, så vi åbner først kl. 9. Fyraften er stadig kl. 16 — men jeg aflyser alle møder.', mod: { lateStart: 60, noEvents: true } },
+  { title: 'Superkaos', tip: 'Alle tricks er i spil — flere på én gang! Jeg har taget BEGGE mine lykkesokker på. På samme fod.', mod: { hard: true } },
+  { title: 'Sidste prøvedag', tip: 'Sidste dag på prøve! Kunderne har gemt deres sværeste tricks til i dag. Klarer du den, har du gennemført spillet!', mod: { hard: true } }
 ];
-const OVERTIME = [
-  { title: 'Overtid!', tip: 'Overtid! Nu går det stærkt. Flere kunder, flere tricks.' },
-  { title: 'Lilla stempel-dag', tip: 'Jeg har fået en ny stempelpude. Den er lilla. Lad os bruge den på MANGE kontrakter!' },
-  { title: 'Kaffe-Kaj-dag', tip: 'Kaj har drukket tre kopper kaffe. Pas godt på, hvad han siger!' },
-  { title: 'Kø-kaos', tip: 'Kunderne står i kø helt ned ad gaden. Jeg har bestilt kanelsnegle til alle.' },
-  { title: 'Fuldmåne-dag', tip: 'Der er fuldmåne. Kunderne skifter mening dobbelt så meget. Hold ørerne stive!' },
-  { title: 'Regnvejrsdag', tip: 'Det regner, så ALLE vil have noget lavet. Læs grundigt — også det med småt.' },
-  { title: 'Gunnars fødselsdag', tip: 'Gunnar fylder 3! Vi fejrer det med perfekte kontrakter. Og fiskefoder.' }
-];
+function dayMod(day) { return (DAYS[day - 1] && DAYS[day - 1].mod) || {}; }
 
 const MATH_LINES = [
   'Jeg betaler {r} om ugen. Så må du selv regne ud, hvad det bliver i alt!',
@@ -1049,6 +1055,15 @@ function twistsFor(day, i) {
   if (day === 5) return [['typo'], ['change'], ['kaj'], ['typo', 'kaj']][i] || ['change'];
   if (day === 6) return i < 2 ? ['math'] : ['math', pick(['typo', 'kaj'])];
   const all = ['typo', 'change', 'kaj', 'math'];
+  const mod = dayMod(day);
+  if (mod.pair) return mod.pair.slice();
+  if (mod.gentle) return [pick(all)];
+  if (mod.only) return Math.random() < 0.4 ? [mod.only, pick(all.filter(t => t !== mod.only))] : [mod.only];
+  if (mod.hard) {
+    if (Math.random() < 0.5) return all.slice();
+    const a = pick(all);
+    return [a, pick(all.filter(t => t !== a))];
+  }
   const first = pick(all);
   const out = [first];
   if (Math.random() < 0.55) out.push(pick(all.filter(t => t !== first)));
@@ -1057,7 +1072,7 @@ function twistsFor(day, i) {
 }
 
 function buildDay(day, recent) {
-  const n = day <= 4 ? 3 : day === 5 ? 4 : Math.min(6, 4 + Math.floor((day - 5) / 2));
+  const n = (day <= 4 ? 3 : day === 5 ? 4 : Math.min(6, 4 + Math.floor((day - 5) / 2))) + (dayMod(day).extra || 0);
   const used = new Set(recent || []);
   const list = [];
   const svcIds = SERVICES.map(s => s.id);
@@ -1143,7 +1158,7 @@ const SHOP = [
   { id: 'disko', name: 'Diskokugle', price: 800, desc: 'Til de helt store stempel-fester.' },
   { id: 'guldabe', name: 'Siddende guldabe', price: 900, desc: 'Ingen ved, hvorfor den er der. Alle vil have en.' },
   { id: 'akvarie', name: 'Akvarie', price: 1000, desc: 'Med Gunnars kusine Gerda. Hun er lidt fornem.' },
-  { id: 'kat', name: 'Kontorhunden Gård', price: 1200, desc: 'Dansk-svensk gårdhund. Vagter kontoret — og kaffekoppen.' },
+  { id: 'kat', name: 'Kontorhunden Frikadelle', price: 1200, desc: 'Dansk-svensk gårdhund. Hun hedder Frikadelle, fordi hun engang spiste tolv. På én gang.' },
   { id: 'stork', name: 'Udstoppet stork', price: 1500, desc: 'Den hedder Storkeline og holder øje med alt.' },
   { id: 'radio', name: 'Radio', price: 500, desc: 'Tryk på den — så spiller den kontor-hits.' },
   { id: 'yoyo', name: 'Yoyo', price: 150, desc: 'Den hopper op og ned hele dagen. Tryk på den for et trick!' },
@@ -1165,7 +1180,7 @@ const POKE = {
 const SHOP_QUOTES = [
   'Jeg har selv købt en rystekugle med en rystekugle indeni. Den ryster dobbelt!',
   'Husk: en potteplante lytter bedre end Kaj.',
-  'Kontorhunden Gård? Den vagter mit stempel. Meget professionelt, siger den.',
+  'Frikadelle vogter mit stempel. Hun har kun slikket lidt på det.',
   'Diskokuglen er IKKE kun til fredag. Den er også til torsdag.',
   'Guldaben? Jeg har også én derhjemme. Den hedder Chef Bo 2.',
   'Storken kigger på mig. Jeg kigger tilbage. Det er en konkurrence.',
@@ -1173,7 +1188,7 @@ const SHOP_QUOTES = [
 ];
 const NOTICE = {
   lava: ['Flot lavalampe! Den bobler ligesom min mave.', 'Uh, en lavalampe! Min onkel har én fra 1970.'],
-  kat: ['Åh, en dansk-svensk gårdhund! Må jeg klø den bag øret?', 'Wuff! Den ser ud til at vagte kaffekoppen.'],
+  kat: ['Åh, en dansk-svensk gårdhund! Må jeg klø Frikadelle bag øret?', 'Hedder hun virkelig Frikadelle? Hun ser mere ud som en Frederikke.'],
   stork: ['Er det … en udstoppet stork? Den kigger på mig.', 'Wow, en stork! Kommer den med babyer eller kontrakter?'],
   guldabe: ['Er den abe af RIGTIGT guld?!', 'Sikke en fin guldabe. Den sidder bedre end mig.'],
   tyggegummi: ['Må jeg få et tyggegummi? Bare et lille ét?', 'En tyggegummi automat! Det her er byens bedste kontor.'],
@@ -1396,9 +1411,9 @@ class Component extends DCLogic {
     this.clearTimers();
     const customers = buildDay(day, this.state.recent);
     const recent = this.state.recent.concat(customers.map(c => c.navn.split(' ')[0])).slice(-30);
-    const info = DAYS[day - 1] || pick(OVERTIME);
+    const info = DAYS[day - 1] || DAYS[DAYS.length - 1];
     this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false, starRecord: false,
-      saveDay: day, clock: 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false, final: false });
+      saveDay: day, clock: dayMod(day).lateStart || 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false, final: false });
   }
   openDesk() { this.startCustomer(0); }
   startCustomer(idx) {
@@ -1479,7 +1494,10 @@ class Component extends DCLogic {
     this.startCustomer(s.idx + 1);
   }
   maybeEvent() {
-    const s = this.state, d = s.day;
+    const s = this.state, d = s.day, mod = dayMod(d);
+    if (mod.noEvents) return null;
+    if (mod.gift && !s.giftDone) return { kind: 'gift', phase: 'offer', gift: GIFTS[dayDate(d).weekday] };
+    if (mod.meeting && !s.meetingDone) return { kind: 'meeting', phase: 'start', points: AGENDA.slice().sort(() => Math.random() - 0.5).slice(0, 3), i: 0, reply: pick(REPLIES) };
     if (d >= 2 && !s.giftDone && Math.random() < 0.4) return { kind: 'gift', phase: 'offer', gift: GIFTS[dayDate(d).weekday] };
     if (d >= 3 && !s.meetingDone && Math.random() < 0.4) {
       const pts = AGENDA.slice().sort(() => Math.random() - 0.5).slice(0, 3);
@@ -1511,7 +1529,7 @@ class Component extends DCLogic {
     const s = this.state;
     const goal = s.customers.length * 2;
     const passed = s.dayStars >= goal;
-    const early = !s.timeUp && s.clock < DAY_MIN ? Math.floor((DAY_MIN - s.clock) / 30) * 10 : 0;
+    const early = (!s.timeUp && s.clock < DAY_MIN ? Math.floor((DAY_MIN - s.clock) / 30) * 10 : 0) * (dayMod(s.day).bonusX || 1);
     let best = s.best;
     const starRecord = passed && s.dayStars > ((s.best && s.best.stars) || 0);
     if (passed) {
@@ -1532,7 +1550,7 @@ class Component extends DCLogic {
     } else {
       upd.doneQuote = perfect ? 'Perfekt dag! Igen! Jeg er nødt til at lave et skilt til skiltet.' : (s.timeUp && !passed ? pick(TIMEUP_NO) : pick(passed ? DONE_YES : DONE_NO));
     }
-    if (final) upd.doneQuote = 'VI RULLER KONFETTI-KANONEN IND! Du har klaret alle otte arbejdsdage. Du er officielt kontorchef!';
+    if (final) upd.doneQuote = 'VI RULLER KONFETTI-KANONEN IND! Prøvetiden er slut, og nu åbner Kontraktkontoret en ny afdeling: HJEMME HOS DIG! Find papir og en blyant, og lav et stempel af en kartoffel. Mor og far står allerede i kø. De ved det bare ikke endnu.';
     this.persist(upd);
     if (passed) this.sfx('fanfare'); else this.sfx('boing');
   }
@@ -1640,7 +1658,7 @@ class Component extends DCLogic {
       continueGame: () => this.continueGame(), newGame: () => this.newGame(),
       hasSave: (s.saveDay || 1) > 1 || s.owned.length > 0 || s.money > 0,
       justWiped: !!s.justWiped,
-      bonusText: s.bonus ? 'Tidlig fyraften kl. ' + clockText(s.clock) + ': +' + fmtKr(s.bonus) + ' i bonus!' : '',
+      bonusText: s.bonus ? 'Tidlig fyraften kl. ' + clockText(s.clock) + ': +' + fmtKr(s.bonus) + (dayMod(s.day).bonusX ? ' i DOBBELT bonus!' : ' i bonus!') : '',
       timeUpText: s.timeUp ? 'Klokken blev 16:00 — fyraften! Kunder, der ikke nåede at blive betjent, gik hjem.' : '',
       newItems: s.newItems || [], showNew: !!(s.newItems && s.newItems.length),
       isEvent: s.screen === 'event', ev: s.event,
@@ -1723,7 +1741,7 @@ class Component extends DCLogic {
       showHover: step === 4,
       showStamp: revealed,
       stampText: v.ok ? 'GODKENDT' : 'RETUR',
-      stampCls: v.ok ? 'stamp stamp-ok' : 'stamp stamp-no',
+      stampCls: v.ok ? (dayMod(s.day).purple ? 'stamp stamp-lilla' : 'stamp stamp-ok') : 'stamp stamp-no',
       showDim: step === 4,
       showConfetti: revealed && v.ok,
       showVerdict: revealed,
@@ -1741,7 +1759,7 @@ class Component extends DCLogic {
       showCoin: revealed && v.ok,
       coinText: '+' + fmtKr(c.correct ? c.correct.price : 0),
 
-      doneTitle: passed ? ((s.final || s.day >= MAX_DAY) ? 'Du har klaret alle 8 dage!' : (s.timeUp ? 'Fyraften — og dagen er klaret!' : 'Dagen er klaret!')) : (s.timeUp ? 'Fyraften! Tiden løb ud' : 'Næsten! Prøv igen'),
+      doneTitle: passed ? ((s.final || s.day >= MAX_DAY) ? 'Du har klaret alle ' + MAX_DAY + ' dage!' : (s.timeUp ? 'Fyraften — og dagen er klaret!' : 'Dagen er klaret!')) : (s.timeUp ? 'Fyraften! Tiden løb ud' : 'Næsten! Prøv igen'),
       final: !!(s.final && passed),
       doneQuote: s.doneQuote,
       doneMood: passed ? 'jubel' : 'glad',
@@ -1752,7 +1770,7 @@ class Component extends DCLogic {
       doneMoney: fmtKr(s.dayMoney),
       resultRows: s.results.map(r => ({ navn: r.navn, text: r.missed ? 'Nåede ikke — fyraften!' : r.ok ? (r.tries === 1 ? 'Godkendt i første forsøg' : 'Godkendt efter rettelse') : 'Sendt hjem', stars: r.stars ? '★'.repeat(r.stars) : '–' })),
       donePassed: passed,
-      nextDayLabel: (s.day >= 5 ? 'Tag på overarbejde' : 'Næste dag') + ' · ' + (s.day + 1) + ' af ' + MAX_DAY,
+      nextDayLabel: 'Næste dag · ' + (s.day + 1) + ' af ' + MAX_DAY,
       nextDay: () => { this.sfx('blip'); this.startDay(s.day + 1, s.money); },
       retryDay: () => { this.sfx('blip'); const m = Math.max(0, s.money - s.dayMoney); this.persist({ money: m, earned: Math.max(0, s.earned - s.dayMoney) }); this.startDay(s.day, m); },
       retryDayCls: passed ? 'btn' : 'btn btn-go btn-big ready'
@@ -1874,7 +1892,7 @@ const PYNT = {
  "plakat": "<rect x=\"12\" y=\"8\" width=\"76\" height=\"86\" rx=\"4\" fill=\"#fff4c2\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M30 14h40\" stroke=\"#34b8b5\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M50 14v14\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path d=\"M42 28h16\" stroke=\"#1d2b3a\" stroke-width=\"5\" stroke-linecap=\"round\"/><path d=\"M36 44l2 -12l8 8M64 44l-2 -12l-8 8\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"16\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"44\" cy=\"48\" r=\"2.2\" fill=\"#1d2b3a\"/><circle cx=\"56\" cy=\"48\" r=\"2.2\" fill=\"#1d2b3a\"/><path d=\"M46 55q4 3 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><text x=\"50\" y=\"84\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#c2185b\">HÆNG I!</text><circle cx=\"50\" cy=\"8\" r=\"4\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
  "lys": "<path d=\"M0 22Q25 44 50 22T100 22\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><ellipse class=\"tw1\" cx=\"12\" cy=\"32\" rx=\"5\" ry=\"7\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw2\" cx=\"30\" cy=\"36\" rx=\"5\" ry=\"7\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw3\" cx=\"50\" cy=\"28\" rx=\"5\" ry=\"7\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw1\" cx=\"70\" cy=\"16\" rx=\"5\" ry=\"7\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw2\" cx=\"88\" cy=\"16\" rx=\"5\" ry=\"7\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
  "disko": "<path d=\"M50 0v22\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><g class=\"sway\"><circle cx=\"50\" cy=\"50\" r=\"28\" fill=\"#cfe3ea\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><path d=\"M24 40h52M22 52h56M26 64h48M40 24v52M52 22v56M64 26v48\" stroke=\"#1d2b3a\" stroke-width=\"1.5\" opacity=\"0.5\"/><rect class=\"tw1\" x=\"41\" y=\"41\" width=\"10\" height=\"10\" fill=\"#ffffff\"/><rect class=\"tw2\" x=\"53\" y=\"53\" width=\"10\" height=\"10\" fill=\"#ef5b93\"/><rect class=\"tw3\" x=\"29\" y=\"53\" width=\"10\" height=\"10\" fill=\"#ffd84d\"/></g><path class=\"tw2\" d=\"M14 70l3 7l7 3l-7 3l-3 7l-3 -7l-7 -3l7 -3z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path class=\"tw3\" d=\"M86 20l3 6l6 3l-6 3l-3 6l-3 -6l-6 -3l6 -3z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
- "kat": "<path class=\"tail\" d=\"M76 84q18 4 18 -14q0 -8 -8 -10\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"10\" stroke-linecap=\"round\"/><path class=\"tail\" d=\"M76 84q18 4 18 -14q0 -8 -8 -10\" fill=\"none\" stroke=\"#8d8171\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"56\" cy=\"74\" rx=\"28\" ry=\"20\" fill=\"#8d8171\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M42 56q8 -10 18 -8M60 52q8 -4 14 2\" fill=\"none\" stroke=\"#5f574a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M36 88V72\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"11\" stroke-linecap=\"round\"/><path d=\"M36 88V72\" fill=\"none\" stroke=\"#8d8171\" stroke-width=\"6\" stroke-linecap=\"round\"/><path d=\"M48 88V72\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"11\" stroke-linecap=\"round\"/><path d=\"M48 88V72\" fill=\"none\" stroke=\"#8d8171\" stroke-width=\"6\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"50\" r=\"17\" fill=\"#8d8171\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M14 36q-8 4 -6 18q9 3 13 -4z\" fill=\"#5f574a\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M34 34q10 0 14 12q-9 5 -16 0z\" fill=\"#5f574a\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M12 52q0 14 12 16q12 -2 14 -14q-2 18 -14 20q-12 -2 -12 -22z\" fill=\"#cfc6b8\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"24\" cy=\"49\" r=\"3.2\" fill=\"#1d2b3a\"/><circle cx=\"18\" cy=\"42\" r=\"2\" fill=\"#1d2b3a\"/><circle cx=\"30\" cy=\"42\" r=\"2\" fill=\"#1d2b3a\"/><path d=\"M20 56q4 3 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/>",
+ "kat": "<path class=\"tail\" style=\"transform-origin:70px 86px\" d=\"M70 86Q88 84 86 64\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"10\" stroke-linecap=\"round\"/><path class=\"tail\" style=\"transform-origin:70px 86px\" d=\"M70 86Q88 84 86 64\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"5\" stroke-linecap=\"round\"/><path class=\"tail\" style=\"transform-origin:70px 86px\" d=\"M87 72Q88 67 86 63\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"5\" stroke-linecap=\"round\"/><path d=\"M29 95C25 74 33 60 50 60C67 60 75 74 71 95Z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M33 66C27 72 27 84 30 93C35 88 38 78 38 66Z\" fill=\"#1d2b3a\"/><path d=\"M67 66C73 72 73 84 70 93C65 88 62 78 62 66Z\" fill=\"#1d2b3a\"/><path d=\"M42 76V92M58 76V92\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"11\" stroke-linecap=\"round\"/><path d=\"M42 76V92M58 76V92\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"6\" stroke-linecap=\"round\"/><ellipse cx=\"41\" cy=\"95\" rx=\"8\" ry=\"4.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"59\" cy=\"95\" rx=\"8\" ry=\"4.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M38 92v4M44 92v4M56 92v4M62 92v4\" stroke=\"#1d2b3a\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><path d=\"M35 60q15 8 30 0\" fill=\"none\" stroke=\"#c2185b\" stroke-width=\"5\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"66\" r=\"4\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse cx=\"50\" cy=\"40\" rx=\"21\" ry=\"19.5\" fill=\"#c98a4b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M37 30C38 23.5 43 21 50 21C57 21 62 23.5 63 30C58.5 28.5 54 29 50 32C46 29 41.5 28.5 37 30Z\" fill=\"#1d2b3a\"/><path d=\"M47.5 31.5C48.5 29.5 51.5 29.5 52.5 31.5L55 43H45Z\" fill=\"#ffffff\"/><path d=\"M28 27Q31 17 43 19L37 35Q31 33 28 27Z\" fill=\"#2b2f36\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M72 27Q69 17 57 19L63 35Q69 33 72 27Z\" fill=\"#2b2f36\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M29.5 24Q33 19 41 19.5M70.5 24Q67 19 59 19.5\" fill=\"none\" stroke=\"#8a96a0\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><circle cx=\"42.5\" cy=\"39\" r=\"3.8\" fill=\"#1d2b3a\"/><circle cx=\"57.5\" cy=\"39\" r=\"3.8\" fill=\"#1d2b3a\"/><circle cx=\"43.8\" cy=\"37.7\" r=\"1.2\" fill=\"#ffffff\"/><circle cx=\"58.8\" cy=\"37.7\" r=\"1.2\" fill=\"#ffffff\"/><ellipse cx=\"36\" cy=\"47\" rx=\"4\" ry=\"2.6\" fill=\"#ff7aa8\" opacity=\"0.45\"/><ellipse cx=\"64\" cy=\"47\" rx=\"4\" ry=\"2.6\" fill=\"#ff7aa8\" opacity=\"0.45\"/><ellipse cx=\"50\" cy=\"49\" rx=\"9.5\" ry=\"7\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse cx=\"50\" cy=\"46.3\" rx=\"4\" ry=\"2.8\" fill=\"#1d2b3a\"/><path d=\"M50 49v2.5M50 51.5q-3 3 -6 0M50 51.5q3 3 6 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><path d=\"M48 53q2 7 4 0z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>",
  "guldabe": "<path d=\"M22 86h56v10h-56z\" fill=\"#0b7477\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M68 80q18 2 16 -16q-1 -8 -8 -6\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M68 80q18 2 16 -16q-1 -8 -8 -6\" fill=\"none\" stroke=\"#f2c230\" stroke-width=\"4\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"68\" rx=\"21\" ry=\"18\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"72\" rx=\"11\" ry=\"10\" fill=\"#ffe58a\"/><ellipse cx=\"36\" cy=\"84\" rx=\"11\" ry=\"6\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"64\" cy=\"84\" rx=\"11\" ry=\"6\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M32 60q-4 14 8 20M68 60q4 14 -8 20\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"34\" cy=\"34\" r=\"8\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"66\" cy=\"34\" r=\"8\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"36\" r=\"16\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"42\" rx=\"10\" ry=\"7\" fill=\"#ffe58a\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"44\" cy=\"32\" r=\"2.2\" fill=\"#1d2b3a\"/><circle cx=\"56\" cy=\"32\" r=\"2.2\" fill=\"#1d2b3a\"/><path d=\"M45 44q5 4 10 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><path class=\"tw1\" d=\"M80 14l2.5 6l6 2.5l-6 2.5l-2.5 6l-2.5 -6l-6 -2.5l6 -2.5z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><path d=\"M40 26q4 -6 10 -6\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/>",
  "fladfisk": "<path d=\"M50 20l-12 -12M50 20l12 -12\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"50\" cy=\"7\" r=\"3\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><rect x=\"6\" y=\"20\" width=\"88\" height=\"62\" rx=\"14\" fill=\"#c98a4b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M14 51q22 -26 54 -8l18 -12l-2 38l-16 -10q-32 18 -54 -8z\" fill=\"#e8c07a\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"44\" cy=\"54\" r=\"2.5\" fill=\"#c2185b\"/><circle cx=\"54\" cy=\"46\" r=\"2\" fill=\"#c2185b\"/><circle cx=\"58\" cy=\"57\" r=\"2.5\" fill=\"#c2185b\"/><circle cx=\"26\" cy=\"46\" r=\"3.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"26\" cy=\"46\" r=\"1.5\" fill=\"#1d2b3a\"/><circle cx=\"33\" cy=\"42\" r=\"3.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"33\" cy=\"42\" r=\"1.5\" fill=\"#1d2b3a\"/><path d=\"M20 56q4 2 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M30 36q16 -8 30 -2\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\" opacity=\"0.8\"/>",
  "kop": "<path class=\"tw2\" d=\"M40 22q-4 -6 0 -12M52 22q-4 -6 0 -12\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M72 44h6a10 10 0 0 1 0 20h-6\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"6\"/><path d=\"M22 28h52v56a10 10 0 0 1 -10 10h-32a10 10 0 0 1 -10 -10z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><text x=\"48\" y=\"50\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"7.5\" fill=\"#1d2b3a\">VERDENS</text><text x=\"48\" y=\"60\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"7.5\" fill=\"#1d2b3a\">BEDSTE</text><text x=\"48\" y=\"74\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"11\" fill=\"#c2185b\">KOLLEGA</text><path d=\"M44 82l2 3h3l-2.5 2l1 3l-3.5 -2l-3.5 2l1 -3l-2.5 -2h3z\" fill=\"#ffd84d\"/>",
@@ -1972,7 +1990,7 @@ function titleHTML(v) {
 <div class="title-text">
 <div class="disp pop kicker">Dit allerførste job!</div>
 <h1 class="disp title-h1">Kontrakt<br><span class="wobble">kontoret</span></h1>
-<p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel. Der er <b>otte arbejdsdage</b> — klar dem alle, og du får konfetti!</p>
+<p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel. Han har ansat dig på prøve i <b>20 arbejdsdage</b>. Klarer du dem alle, har du gennemført spillet — og så lærer han måske endda dit navn.</p>
 <div class="btn-row">
 ${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-key="cont" data-on="${on(v.continueGame)}">${esc(v.continueLabel)} ${ICON.arrow}</button>
 <button class="btn" type="button" data-key="start1" data-on="${on(v.startGame)}">Start på dag 1</button>`
@@ -2259,12 +2277,11 @@ ${v.timeUpText ? `<div class="timeup-note">${esc(v.timeUpText)}</div>` : ''}
 ${v.bonusText ? `<div class="bonus-note pop d1">${esc(v.bonusText)}</div>` : ''}
 ${v.doneRecord ? `<div class="record-note pop d2">🏆 ${esc(v.doneRecord)}</div>` : ''}
 ${v.showAward ? '<div class="award pop d2">Chef Bo har hængt et Månedens medarbejder-skilt op på dit kontor!</div>' : ''}
-${v.final ? '<div class="family-note pop d2">🎉 Nu ved DU, hvordan man laver kontrakter! Hiv din mor og far ud af sofaen — og lav et RIGTIGT kontraktkontor derhjemme. Papir, en blyant og ét stempel er nok!</div>' : ''}
 ${v.showNew ? `<div class="new-items pop d2"><div class="disp new-title">Nye varer i butikken!</div><div class="new-row">${v.newItems.map(it => `<div class="new-item">${pyntSVG(it.kind, 54)}<span>${esc(it.name)}</span></div>`).join('')}</div><button class="btn btn-teal btn-small" type="button" data-on="${on(v.openShop)}">Se de nye varer</button></div>` : ''}
 <div class="muted-text">${esc(v.bestText)}</div>
 <div class="btn-row">
 ${v.donePassed && !v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.nextDay)}">${esc(v.nextDayLabel)} ${ICON.arrow}</button>` : ''}
-${v.final ? '<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.openDecorate)}">Indret dit færdige kontor</button>' : `<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>`}
+${v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.openDecorate)}">Indret dit færdige kontor</button>` : `<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>`}
 <button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Gå i butikken</button>
 <button class="btn" type="button" data-on="${on(v.goHome)}">Til forsiden</button>
 </div>
