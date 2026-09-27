@@ -20,7 +20,7 @@ Den oprindelige web-version (`index.html`) er **ikke** rørt ved.
 | `Kontraktkontoret/Info.plist` | Metadata: dansk, alle iPad-orienteringer, iPad-kun |
 | `project.yml` | XcodeGen-spec — **projektet genereres fra denne fil** |
 | `Tools/embed-fonts.py` | Regenererer `game.html` ud fra `index.html` |
-| `Tools/make-icon.swift` | Tegner app-ikonet (1024×1024) |
+| `Tools/AppIcon.svg` + `Tools/make-icon.sh` | App-ikonet: Chef Bo med GODKENDT-stempel (1024×1024) |
 
 > `.xcodeproj`-filen er genereret af [XcodeGen](https://github.com/yonaskolb/XcodeGen). Rediger `project.yml` og kør `xcodegen generate` — ikke pbxproj'et.
 
@@ -39,10 +39,10 @@ python3 Tools/embed-fonts.py ../index.html Kontraktkontoret/Resources/game.html
 
 (Det kræver internet den ene gang for at hente fonts fra Google Fonts. Derefter er alt offline igen.)
 
-Til et nyt app-ikon:
+Til et nyt app-ikon (ret i `Tools/AppIcon.svg`, kræver Google Chrome):
 
 ```bash
-swift Tools/make-icon.swift Kontraktkontoret/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+sh Tools/make-icon.sh Kontraktkontoret/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 ```
 
 ## Udgiv i App Store (gratis app)

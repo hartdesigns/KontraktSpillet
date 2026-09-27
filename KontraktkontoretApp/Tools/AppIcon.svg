@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<!-- Kontraktkontoret app-ikon: Chef Bo jubler, mens GODKENDT-stemplet smækker ned. Kilde til AppIcon.png. -->
+<rect width="1024" height="1024" fill="#34b8b5"/>
+<path d="M500 470 L1600 470 L1583 661Z" fill="#4cc4c1"/><path d="M500 470 L1534 846 L1453 1020Z" fill="#4cc4c1"/><path d="M500 470 L1343 1177 L1207 1313Z" fill="#4cc4c1"/><path d="M500 470 L1050 1423 L876 1504Z" fill="#4cc4c1"/><path d="M500 470 L691 1553 L500 1570Z" fill="#4cc4c1"/><path d="M500 470 L309 1553 L124 1504Z" fill="#4cc4c1"/><path d="M500 470 L-50 1423 L-207 1313Z" fill="#4cc4c1"/><path d="M500 470 L-343 1177 L-453 1020Z" fill="#4cc4c1"/><path d="M500 470 L-534 846 L-583 661Z" fill="#4cc4c1"/><path d="M500 470 L-600 470 L-583 279Z" fill="#4cc4c1"/><path d="M500 470 L-534 94 L-453 -80Z" fill="#4cc4c1"/><path d="M500 470 L-343 -237 L-207 -373Z" fill="#4cc4c1"/><path d="M500 470 L-50 -483 L124 -564Z" fill="#4cc4c1"/><path d="M500 470 L309 -613 L500 -630Z" fill="#4cc4c1"/><path d="M500 470 L691 -613 L876 -564Z" fill="#4cc4c1"/><path d="M500 470 L1050 -483 L1207 -373Z" fill="#4cc4c1"/><path d="M500 470 L1343 -237 L1453 -80Z" fill="#4cc4c1"/><path d="M500 470 L1534 94 L1583 279Z" fill="#4cc4c1"/>
+<circle cx="500" cy="470" r="330" fill="#7fd6d3" opacity="0.55"/>
+<circle cx="110" cy="170" r="17" fill="#ffd84d" stroke="#1d2b3a" stroke-width="6"/><rect x="178" y="68" width="24" height="44" rx="8" fill="#ef5b93" stroke="#1d2b3a" stroke-width="6" transform="rotate(-21 190 90)"/><rect x="848" y="98" width="24" height="44" rx="8" fill="#ffffff" stroke="#1d2b3a" stroke-width="6" transform="rotate(10 860 120)"/><circle cx="930" cy="260" r="17" fill="#ffd84d" stroke="#1d2b3a" stroke-width="6"/><rect x="68" y="398" width="24" height="44" rx="8" fill="#c2185b" stroke="#1d2b3a" stroke-width="6" transform="rotate(-31 80 420)"/><rect x="928" y="448" width="24" height="44" rx="8" fill="#ffd84d" stroke="#1d2b3a" stroke-width="6" transform="rotate(28 940 470)"/><circle cx="150" cy="640" r="17" fill="#ef5b93" stroke="#1d2b3a" stroke-width="6"/><rect x="78" y="838" width="24" height="44" rx="8" fill="#ffffff" stroke="#1d2b3a" stroke-width="6" transform="rotate(6 90 860)"/><rect x="318" y="88" width="24" height="44" rx="8" fill="#ffd84d" stroke="#1d2b3a" stroke-width="6" transform="rotate(34 330 110)"/><circle cx="700" cy="70" r="17" fill="#c2185b" stroke="#1d2b3a" stroke-width="6"/>
+<g transform="translate(68 116) rotate(-6 420 336) scale(3.05)">
+<path d="M34 54l5 12l12 5l-12 5l-5 12l-5 -12l-12 -5l12 -5z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/>
+<path d="M244 30l4 9l9 4l-9 4l-4 9l-4 -9l-9 -4l9 -4z" fill="#ffffff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/>
+<path d="M40 330v-66q0 -62 100 -62q100 0 100 62v66z" fill="#1d2b3a"/>
+<path d="M108 204l32 46l32 -46z" fill="#fff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/>
+<path d="M130 212h20l-4 12l13 66l-19 20l-19 -20l13 -66z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="140" cy="244" r="3.5" fill="#c2185b"/><circle cx="134" cy="266" r="3.5" fill="#c2185b"/><circle cx="146" cy="282" r="3.5" fill="#c2185b"/>
+<circle cx="64" cy="118" r="15" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4"/><circle cx="216" cy="118" r="15" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4"/>
+<circle cx="147" cy="119" r="76" fill="#1d2b3a"/>
+<circle cx="140" cy="112" r="76" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4"/>
+<path d="M66 98L54 44L92 70L94 14L122 56L140 0L158 56L186 14L188 70L226 44L214 98Q140 58 66 98z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="4" stroke-linejoin="round"/>
+<path d="M94 74q18 -16 34 -4" fill="none" stroke="#1d2b3a" stroke-width="7" stroke-linecap="round"/>
+<path d="M152 70q16 -12 34 4" fill="none" stroke="#1d2b3a" stroke-width="7" stroke-linecap="round"/>
+
+<path d="M90 114a22 22 0 1 0 44 0a22 22 0 1 0 -44 0zM146 114a22 22 0 1 0 44 0a22 22 0 1 0 -44 0z" fill="#fff" fill-opacity="0.35" stroke="#1d2b3a" stroke-width="5"/>
+<path d="M134 112q6 -6 12 0M90 110l-24 2M190 110l24 2" fill="none" stroke="#1d2b3a" stroke-width="5" stroke-linecap="round"/><path d="M102 120q10 -14 20 0M158 120q10 -14 20 0" fill="none" stroke="#1d2b3a" stroke-width="6" stroke-linecap="round"/>
+<ellipse cx="96" cy="150" rx="12" ry="7" fill="#ff7aa8" opacity="0.7"/><ellipse cx="184" cy="150" rx="12" ry="7" fill="#ff7aa8" opacity="0.7"/>
+<ellipse cx="140" cy="138" rx="11" ry="9" fill="#ffc2d8" stroke="#1d2b3a" stroke-width="3"/>
+<path d="M116 166h48q-4 28 -24 28q-20 0 -24 -28z" fill="#1d2b3a" stroke="#1d2b3a" stroke-width="5" stroke-linejoin="round"/>
+<path d="M128 184q12 -10 24 0q-4 10 -12 10q-8 0 -12 -10z" fill="#ef5b93"/>
+<path d="M140 150q-14 -12 -30 -4q-14 8 -26 -2q2 20 26 20q20 0 30 -10q10 10 30 10q24 0 26 -20q-12 10 -26 2q-16 -8 -30 4z" fill="#1d2b3a"/>
+</g>
+<g transform="rotate(-14 770 790)">
+<circle cx="784" cy="804" r="158" fill="#1d2b3a"/>
+<circle cx="770" cy="790" r="158" fill="#c2185b" stroke="#1d2b3a" stroke-width="16"/>
+<circle cx="770" cy="790" r="118" fill="none" stroke="#ffffff" stroke-width="10" stroke-dasharray="26 18"/>
+<path d="M705 795l45 45l90 -100" fill="none" stroke="#1d2b3a" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M705 795l45 45l90 -100" fill="none" stroke="#ffd84d" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>
