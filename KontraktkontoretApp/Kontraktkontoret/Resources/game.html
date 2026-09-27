@@ -632,6 +632,35 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 .vote-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .vote-opt{padding:8px 14px;border:3px dashed #b9d9ca;border-radius:12px;font-weight:800;font-size:17px;color:#4d5f6e}
 .vote-opt.on{border-style:solid;border-color:#1d2b3a;background:#fff4c2;color:#1d2b3a;box-shadow:3px 3px 0 #1d2b3a;animation:chipPop .45s cubic-bezier(.3,1.8,.5,1)}
+/* Finalen: konfettikanon, diplom og mission */
+.fin-cannon{animation:finRollIn 1.3s cubic-bezier(.2,1.1,.4,1) both, finRecoil 2.6s ease-out 1.35s infinite}
+.fin-cannon .fin-wheel{transform-box:fill-box;transform-origin:center;animation:finSpin 1.3s cubic-bezier(.2,1.1,.4,1) both}
+.fin-boom{transform-origin:center;animation:finBoom 2.6s ease-out 1.35s infinite both}
+.fin-burst{position:absolute;animation:finBurst 2.6s cubic-bezier(.15,.7,.35,1) infinite both}
+.fin-rain{position:absolute;top:-30px;width:12px;height:18px;border-radius:3px;animation:finRain 4s linear infinite both}
+.fin-stamp{animation:finSlam 3.9s cubic-bezier(.2,1.5,.5,1) 1.8s infinite both}
+.fin-title{display:inline-block;animation:finTb 1.6s ease-in-out infinite}
+.fin-bo{animation:finBoJump 1.3s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes finRollIn{0%{transform:translateX(520px)}80%{transform:translateX(-14px)}100%{transform:translateX(0)}}
+@keyframes finSpin{0%{transform:rotate(720deg)}100%{transform:rotate(0)}}
+@keyframes finRecoil{0%{transform:translateX(0)}6%{transform:translateX(34px) rotate(3deg)}22%{transform:translateX(0)}100%{transform:translateX(0)}}
+@keyframes finBoom{0%{opacity:0;transform:scale(.2)}6%{opacity:1;transform:scale(1.15)}30%{opacity:1;transform:scale(1)}45%,100%{opacity:0;transform:scale(.9)}}
+@keyframes finBurst{0%{opacity:0;transform:translate(0,0) rotate(0)}4%{opacity:1}55%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 260px)) rotate(calc(var(--rot) * 2))}}
+@keyframes finRain{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(920px) rotate(540deg)}}
+@keyframes finSlam{0%{opacity:0;transform:scale(2.6) rotate(-24deg)}8%{opacity:1;transform:scale(.92) rotate(-12deg)}12%,100%{opacity:1;transform:scale(1) rotate(-12deg)}}
+@keyframes finTb{0%,100%{transform:rotate(-2deg) scale(1)}50%{transform:rotate(2deg) scale(1.04)}}
+@keyframes finBoJump{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px) rotate(-4deg)}70%{transform:translateY(0) scaleY(.94)}}
+.finale-wrap{display:flex;flex-direction:column;gap:20px;max-width:1280px;margin:0 auto}
+.fin-stage{border:3px solid #1d2b3a;border-radius:24px;box-shadow:8px 8px 0 #1d2b3a;background:#ffe0ec}
+.fin-bottom{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.mission{flex:1 1 420px;padding:14px 20px;border:3px solid #1d2b3a;border-radius:20px;background:#fff4c2;box-shadow:6px 6px 0 #1d2b3a;transform:rotate(-1deg)}
+.mission-kicker{font-size:13px;font-weight:800;letter-spacing:.1em;color:#c2185b}
+.mission-title{font-size:clamp(20px,2.4vw,24px);line-height:1.2;font-weight:700;margin:2px 0 8px}
+.mission-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 16px;font-size:16px;font-weight:800}
+.fin-buttons{flex:1 1 300px;display:flex;flex-wrap:wrap;gap:12px}
+.name-card{width:100%;max-width:760px;padding:clamp(20px,4vw,34px);display:grid;gap:22px;align-items:center}
+@media (min-width:700px){ .name-card{grid-template-columns:200px 1fr} }
+.name-card .bo-box{max-width:200px}
 .whiteboard{border:4px solid #1d2b3a;border-radius:16px;background:#fff;padding:18px 22px;min-height:190px;box-shadow:inset 0 0 0 6px #eefaf4}
 .board-title{font-size:clamp(24px,4vw,34px);font-weight:700;color:#0b7477;line-height:1.1}
 .board-sub{font-family:'Caveat',cursive;font-size:24px;color:#c2185b;margin-top:6px}
@@ -1333,10 +1362,10 @@ function loadSave() {
       let place = {};
       if (v.place && typeof v.place === 'object') Object.keys(v.place).forEach(k => { if (SLOT_TYPE[k] && owned.includes(v.place[k]) && fits(v.place[k], k)) place[k] = v.place[k]; });
       else owned.forEach(id => { place = autoPlace(place, id); });
-      return { money: v.money, earned: v.earned || 0, owned, place, day: Math.min(v.day || 1, MAX_DAY), cleared: Math.min(v.cleared || 0, MAX_DAY) };
+      return { money: v.money, earned: v.earned || 0, owned, place, day: Math.min(v.day || 1, MAX_DAY), cleared: Math.min(v.cleared || 0, MAX_DAY), name: typeof v.name === 'string' ? v.name.slice(0, 20) : '', contracts: v.contracts || 0 };
     }
   } catch (e) { }
-  return { money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 };
+  return { money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0, name: '', contracts: 0 };
 }
 function wipeSave() {
   try { window.localStorage.removeItem('kontraktkontoret-save'); } catch (e) { } /* Rekorden (best) beholdes */
@@ -1361,7 +1390,7 @@ class Component extends DCLogic {
       screen: 'title', day: 1, idx: 0, customers: [], form: this.emptyForm(),
       tries: 0, talking: false, changed: false, kaj: false, kajGone: false,
       revStep: 0, verdict: null, retryNote: '',
-      money: save.money, earned: save.earned, owned: save.owned, place: save.place, saveDay: save.day, cleared: save.cleared,
+      money: save.money, earned: save.earned, owned: save.owned, place: save.place, saveDay: save.day, cleared: save.cleared, playerName: save.name, contracts: save.contracts, dayContracts: 0, nameDraft: '',
       clock: 0, timeUp: false, warned: false, signed: false, signing: false, signN: 0, poke: null, disco: false,
       event: null, giftDone: false, meetingDone: false, bonus: 0, newItems: [], decoSel: null, decoMsg: '', recent: [], steps: ['', '', '', '', ''], boLine: '', doneQuote: '', final: false, justWiped: false, wipeAsk: false, introTip: '', introTitle: '', shopFrom: 'title', justBought: null, globe: 0, snowing: false,
       dayMoney: 0, dayStars: 0, results: [], muted: false, best: loadBest()
@@ -1424,6 +1453,7 @@ class Component extends DCLogic {
       if (name === 'meow') { tone(620, 0.18, 'sine', 0, 0.12, 900); tone(900, 0.25, 'sine', 0.18, 0.1, 520); }
       if (name === 'bark') { tone(240, 0.1, 'square', 0, 0.1, 190); tone(200, 0.12, 'square', 0.14, 0.1, 150); }
       if (name === 'kuk') { tone(780, 0.16, 'sine', 0, 0.14); tone(620, 0.22, 'sine', 0.2, 0.14); tone(780, 0.16, 'sine', 0.55, 0.12); tone(620, 0.22, 'sine', 0.75, 0.12); }
+      if (name === 'boom') { tone(90, 0.55, 'sawtooth', 0, 0.2, 35); tone(180, 0.25, 'square', 0, 0.12, 60); [900, 1200, 1500].forEach((f, i) => tone(f, 0.08, 'triangle', 0.15 + i * 0.07, 0.06)); }
       if (name === 'roar') tone(160, 0.6, 'sawtooth', 0, 0.12, 60);
       if (name === 'buzz') tone(110, 0.45, 'sawtooth', 0, 0.06, 118);
       if (name === 'jingle') [523, 659, 784, 659, 880, 784, 1047].forEach((f, i) => tone(f, 0.12, 'triangle', i * 0.12, 0.1));
@@ -1445,13 +1475,13 @@ class Component extends DCLogic {
     this.sfx('blip');
     /* Nyt spil: sletter penge, pynt og dage — men rekorden (best) beholdes, så den kan slåes. */
     wipeSave();
-    saveSave({ money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 });
-    this.setState({ wipeAsk: false, money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0 });
+    saveSave({ money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0, name: this.state.playerName, contracts: 0 });
+    this.setState({ contracts: 0, wipeAsk: false, money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0 });
     this.startDay(1, 0);
   }
   persist(patch) {
     const s = Object.assign({}, this.state, patch);
-    saveSave({ money: s.money, earned: s.earned, owned: s.owned, place: s.place, day: s.saveDay, cleared: s.cleared });
+    saveSave({ money: s.money, earned: s.earned, owned: s.owned, place: s.place, day: s.saveDay, cleared: s.cleared, name: s.playerName, contracts: s.contracts });
     this.setState(patch);
   }
   fromScreen() { const sc = this.state.screen; return (sc === 'shop' || sc === 'decorate') ? this.state.shopFrom : sc; }
@@ -1520,7 +1550,7 @@ class Component extends DCLogic {
     const customers = buildDay(day, this.state.recent);
     const recent = this.state.recent.concat(customers.map(c => c.navn.split(' ')[0])).slice(-30);
     const info = DAYS[day - 1] || DAYS[DAYS.length - 1];
-    this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false, starRecord: false,
+    this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false, starRecord: false, contracts: day === 1 ? 0 : this.state.contracts, dayContracts: 0,
       saveDay: day, clock: dayMod(day).lateStart || 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false, final: false });
   }
   openDesk() { this.startCustomer(0); }
@@ -1651,8 +1681,10 @@ class Component extends DCLogic {
     const cleared = passed ? Math.max(s.cleared, s.day) : s.cleared;
     const newItems = cleared > s.cleared ? SHOP.filter(it => UNLOCK[it.id] === cleared + 1).map(it => ({ kind: it.id, name: it.name })) : [];
     const final = passed && s.day >= MAX_DAY;
+    const dayContracts = passed ? s.results.filter(r => r.ok).length : 0;
     const upd = {
-      screen: 'done', best, cleared, newItems, bonus: early, starRecord, final, saveDay: passed && s.day < MAX_DAY ? s.day + 1 : s.day,
+      contracts: s.contracts + dayContracts, dayContracts,
+      screen: final ? 'finalname' : 'done', nameDraft: s.playerName || '', best, cleared, newItems, bonus: early, starRecord, final, saveDay: passed && s.day < MAX_DAY ? s.day + 1 : s.day,
       money: s.money + early, earned: s.earned + early, dayMoney: s.dayMoney + early, award: false
     };
     const perfect = !s.timeUp && s.results.length > 0 && s.results.every(r => r.stars === 3);
@@ -1661,9 +1693,22 @@ class Component extends DCLogic {
     } else {
       upd.doneQuote = perfect ? 'Perfekt dag! Igen! Jeg er nødt til at lave et skilt til skiltet.' : (s.timeUp && !passed ? pick(TIMEUP_NO) : pick(passed ? DONE_YES : DONE_NO));
     }
-    if (final) upd.doneQuote = 'VI RULLER KONFETTI-KANONEN IND! Prøvetiden er slut, og nu åbner Kontraktkontoret en ny afdeling: HJEMME HOS DIG! Find papir og en blyant, og lav et stempel af en kartoffel. Mor og far står allerede i kø. De ved det bare ikke endnu.';
+    if (final) upd.doneQuote = 'VI RULLER KONFETTI-KANONEN IND!';
     this.persist(upd);
-    if (passed) this.sfx('fanfare'); else this.sfx('boing');
+    if (final) this.sfx('kuk'); else if (passed) this.sfx('fanfare'); else this.sfx('boing');
+  }
+  setName() {
+    const n = String(this.state.nameDraft || '').trim().replace(/\s+/g, ' ').slice(0, 20);
+    if (!n) return;
+    this.persist({ playerName: n });
+    this.showFinale();
+  }
+  showFinale() {
+    this.clearTimers();
+    this.setState({ screen: 'finale' });
+    this.sfx('fanfare');
+    this.later(1350, () => this.sfx('boom'));
+    this.later(3950, () => this.sfx('boom'));
   }
   goHome() { this.clearTimers(); this.sfx('blip'); this.setState({ screen: 'title', wipeAsk: false }); }
 
@@ -1672,7 +1717,7 @@ class Component extends DCLogic {
     const c = s.customers[s.idx] || { navn: '', t: {}, correct: { price: 0 }, service: '', duration: '', date: '', price: 0, shape: 'cirkel', body: '#ef5b93', acc: 'ingen', hello: '', closer: '' };
     const n = s.customers.length || 3;
     const goal = n * 2;
-    const inGame = s.screen !== 'title' && s.screen !== 'shop' && s.screen !== 'decorate';
+    const inGame = s.screen !== 'title' && s.screen !== 'shop' && s.screen !== 'decorate' && s.screen !== 'finale' && s.screen !== 'finalname';
     const dayInfo = { title: s.introTitle || 'Første arbejdsdag', tip: s.introTip };
     const dd = dayDate(s.day);
     const f = s.form;
@@ -1800,6 +1845,14 @@ class Component extends DCLogic {
         return { kind: it.id, name: it.name, where: at ? SLOT_NAME[at] : 'På lageret', on: on ? 'true' : 'false', cls: 'inv' + (on ? ' on' : '') + (at ? '' : ' stored'), pick: () => this.pickItem(it.id) };
       }),
       shakeGlobe: () => this.shakeGlobe(),
+      isFinalName: s.screen === 'finalname', isFinale: s.screen === 'finale',
+      playerName: s.playerName || '', nameDraft: s.nameDraft || '',
+      onNameDraft: (e) => this.setState({ nameDraft: e.target.value }),
+      onNameDraftKey: (e) => { if (e && e.key === 'Enter') { e.preventDefault(); this.setName(); } },
+      setName: () => this.setName(), showFinale: () => this.showFinale(),
+      canFinale: s.cleared >= MAX_DAY && !!s.playerName,
+      finNameSize: (s.playerName || '').length > 14 ? 40 : (s.playerName || '').length > 9 ? 52 : 64,
+      finContracts: s.contracts || 0, finEarned: fmtKr(s.earned),
       isTitle: s.screen === 'title', isIntro: s.screen === 'intro', isOffice: s.screen === 'office', isReview: s.screen === 'review', isDone: s.screen === 'done',
       startGame: () => this.startGame(),
       bestText,
@@ -1883,7 +1936,7 @@ class Component extends DCLogic {
       donePassed: passed,
       nextDayLabel: 'Næste dag · ' + (s.day + 1) + ' af ' + MAX_DAY,
       nextDay: () => { this.sfx('blip'); this.startDay(s.day + 1, s.money); },
-      retryDay: () => { this.sfx('blip'); const m = Math.max(0, s.money - s.dayMoney); this.persist({ money: m, earned: Math.max(0, s.earned - s.dayMoney) }); this.startDay(s.day, m); },
+      retryDay: () => { this.sfx('blip'); const m = Math.max(0, s.money - s.dayMoney); this.persist({ money: m, earned: Math.max(0, s.earned - s.dayMoney), contracts: Math.max(0, s.contracts - (s.dayContracts || 0)), dayContracts: 0 }); this.startDay(s.day, m); },
       retryDayCls: passed ? 'btn' : 'btn btn-go btn-big ready'
     };
   }
@@ -2103,6 +2156,7 @@ function titleHTML(v) {
 <h1 class="disp title-h1">Kontrakt<br><span class="wobble">kontoret</span></h1>
 <p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel. Han har ansat dig på prøve i <b>20 arbejdsdage</b>. Klarer du dem alle, har du gennemført spillet — og så lærer han måske endda dit navn.</p>
 <div class="btn-row">
+${v.canFinale ? `<button class="btn btn-berry" type="button" data-key="finale" data-on="${on(v.showFinale)}">Se finalen igen</button>` : ''}
 ${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-key="cont" data-on="${on(v.continueGame)}">${esc(v.continueLabel)} ${ICON.arrow}</button>
 <button class="btn" type="button" data-key="start1" data-on="${on(v.askWipe)}">Start på dag 1</button>`
 : `<button class="btn btn-go btn-big ready" type="button" data-key="start" data-on="${on(v.completed ? v.newGame : v.startGame)}">${v.completed ? 'Nyt spil' : 'Start arbejdsdagen'} ${ICON.arrow}</button>`}
@@ -2372,6 +2426,161 @@ function confettiHTML(big) {
   return '<div class="confetti" data-key="confetti" aria-hidden="true">' + s + '</div>';
 }
 
+function finalNameHTML(v) {
+  return `<main class="screen center-screen" data-key="finalname">
+<div class="card name-card pop">
+<div class="bo-box bo-tilt" style="transform-origin:50% 100%">${boSVG('hmm')}</div>
+<div class="stack">
+<div class="lbl">Dag ${MAX_DAY} er klaret!</div>
+<h2 class="disp h-big">Vent lige et øjeblik …</h2>
+<div class="bubble boss tail-l">Før jeg ruller konfettikanonen ind, skal jeg vide én ting: Hvad hedder du egentlig? Det skal stå på dit diplom!</div>
+<label for="spiller-navn" class="lbl">Dit navn</label>
+<input id="spiller-navn" class="name-input" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="Skriv dit navn" value="${esc(v.nameDraft)}" data-oninput="${on(v.onNameDraft)}" data-onkey="${on(v.onNameDraftKey)}">
+<div><button class="btn btn-go btn-big ready" type="button" data-on="${on(v.setName)}" ${v.nameDraft.trim() ? '' : 'disabled'}>Det er mig! ${ICON.arrow}</button></div>
+</div>
+</div>
+</main>`;
+}
+
+function finaleHTML(v) {
+  return `<main class="screen" data-key="finale">
+<div class="finale-wrap">
+<div class="stage fin-stage" data-w="1280" data-h="660"><div class="stage-in" style="width:1280px;height:660px">
+<div style="position: absolute; left: 0; top: 0; bottom: 0; width: 96px; background: #c2185b repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 18px, rgba(29,43,58,0.18) 18px 24px); border-right: 4px solid #1d2b3a"></div>
+<div style="position: absolute; right: 0; top: 0; bottom: 0; width: 96px; background: #c2185b repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 18px, rgba(29,43,58,0.18) 18px 24px); border-left: 4px solid #1d2b3a"></div>
+<svg width="1280" height="70" viewBox="0 0 1280 70" style="position: absolute; left: 0; top: 0" aria-hidden="true"><path d="M0 18Q640 44 1280 18" fill="none" stroke="#1d2b3a" stroke-width="3"></path><path d="M20 18l22 40l22 -38z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M82 18l22 40l22 -38z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M144 18l22 40l22 -38z" fill="#34b8b5" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M206 18l22 40l22 -38z" fill="#ffffff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M268 18l22 40l22 -38z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M330 18l22 40l22 -38z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M392 18l22 40l22 -38z" fill="#34b8b5" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M454 18l22 40l22 -38z" fill="#ffffff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M516 18l22 40l22 -38z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M578 18l22 40l22 -38z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M640 18l22 40l22 -38z" fill="#34b8b5" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M702 18l22 40l22 -38z" fill="#ffffff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M764 18l22 40l22 -38z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M826 18l22 40l22 -38z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M888 18l22 40l22 -38z" fill="#34b8b5" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M950 18l22 40l22 -38z" fill="#ffffff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M1012 18l22 40l22 -38z" fill="#ef5b93" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M1074 18l22 40l22 -38z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M1136 18l22 40l22 -38z" fill="#34b8b5" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><path d="M1198 18l22 40l22 -38z" fill="#ffffff" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path></svg>
+
+<i class="fin-rain" style="left: 551px; background: #ffd84d; animation-duration: 3.26s; animation-delay: 1.5s"></i>
+<i class="fin-rain" style="left: 630px; background: #ef5b93; animation-duration: 4.25s; animation-delay: 0.76s"></i>
+<i class="fin-rain" style="left: 584px; background: #34b8b5; animation-duration: 3.72s; animation-delay: 1.25s"></i>
+<i class="fin-rain" style="left: 775px; background: #ffffff; animation-duration: 5.06s; animation-delay: 0.15s"></i>
+<i class="fin-rain" style="left: 349px; background: #c2185b; animation-duration: 4.01s; animation-delay: 2.97s"></i>
+<i class="fin-rain" style="left: 192px; background: #a9e8e3; animation-duration: 3.39s; animation-delay: 1.48s"></i>
+<i class="fin-rain" style="left: 541px; background: #ffd84d; animation-duration: 4.34s; animation-delay: 2.79s"></i>
+<i class="fin-rain" style="left: 448px; background: #ef5b93; animation-duration: 4.51s; animation-delay: 1.01s"></i>
+<i class="fin-rain" style="left: 755px; background: #34b8b5; animation-duration: 4.26s; animation-delay: 2.44s"></i>
+<i class="fin-rain" style="left: 659px; background: #ffffff; animation-duration: 3.98s; animation-delay: 1.02s"></i>
+<i class="fin-rain" style="left: 1126px; background: #c2185b; animation-duration: 5.14s; animation-delay: 0.22s"></i>
+<i class="fin-rain" style="left: 501px; background: #a9e8e3; animation-duration: 5.0s; animation-delay: 0.13s"></i>
+<i class="fin-rain" style="left: 371px; background: #ffd84d; animation-duration: 3.74s; animation-delay: 2.3s"></i>
+<i class="fin-rain" style="left: 233px; background: #ef5b93; animation-duration: 4.58s; animation-delay: 2.61s"></i>
+<i class="fin-rain" style="left: 1061px; background: #34b8b5; animation-duration: 4.69s; animation-delay: 1.71s"></i>
+<i class="fin-rain" style="left: 909px; background: #ffffff; animation-duration: 3.21s; animation-delay: 0.66s"></i>
+<i class="fin-rain" style="left: 431px; background: #c2185b; animation-duration: 4.95s; animation-delay: 0.04s"></i>
+<i class="fin-rain" style="left: 347px; background: #a9e8e3; animation-duration: 4.74s; animation-delay: 1.19s"></i>
+<i class="fin-rain" style="left: 890px; background: #ffd84d; animation-duration: 4.3s; animation-delay: 2.63s"></i>
+<i class="fin-rain" style="left: 523px; background: #ef5b93; animation-duration: 4.42s; animation-delay: 0.49s"></i>
+<i class="fin-rain" style="left: 1075px; background: #34b8b5; animation-duration: 4.08s; animation-delay: 2.75s"></i>
+<i class="fin-rain" style="left: 271px; background: #ffffff; animation-duration: 4.39s; animation-delay: 0.1s"></i>
+<i class="fin-rain" style="left: 1111px; background: #c2185b; animation-duration: 3.71s; animation-delay: 1.68s"></i>
+<i class="fin-rain" style="left: 394px; background: #a9e8e3; animation-duration: 3.36s; animation-delay: 0.12s"></i>
+<i class="fin-rain" style="left: 131px; background: #ffd84d; animation-duration: 3.89s; animation-delay: 0.89s"></i>
+<i class="fin-rain" style="left: 263px; background: #ef5b93; animation-duration: 4.29s; animation-delay: 0.26s"></i>
+
+
+<div style="position: absolute; left: 120px; right: 120px; top: 66px; text-align: center">
+<div style="font-size: 16px; font-weight: 800; letter-spacing: .12em; color: #c2185b">ALLE 20 ARBEJDSDAGE KLARET</div>
+<h1 class="fin-title" style="margin: 4px 0 0; font-family: Fredoka, system-ui, sans-serif; font-size: 68px; line-height: 70px; font-weight: 700; color: #1d2b3a">Du er KONTRAKTCHEF!</h1>
+</div>
+
+<div class="fin-bo" style="position: absolute; left: 118px; top: 330px; width: 238px; height: 272px">${boSVG('jubel', 238)}</div>
+<div style="position: absolute; left: 116px; top: 196px; width: 250px; box-sizing: border-box; padding: 14px 18px; border: 3px solid #1d2b3a; border-radius: 18px; background: #ffffff; box-shadow: 4px 4px 0 #1d2b3a; font-family: Fredoka, system-ui, sans-serif; font-size: 22px; line-height: 27px; font-weight: 600">Prøvetiden er SLUT! Du er ansat. For altid!</div>
+
+<div style="position: absolute; left: 392px; top: 170px; width: 470px; height: 440px; box-sizing: border-box; padding: 16px; background: #fffaf0; border: 4px solid #1d2b3a; border-radius: 10px; box-shadow: 8px 8px 0 #1d2b3a; transform: rotate(-2deg)">
+<div style="height: 100%; box-sizing: border-box; border: 3px double #c2185b; outline: 2px solid #ffd84d; outline-offset: -9px; border-radius: 6px; padding: 22px 26px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px">
+<div style="position: absolute; right: -18px; top: -22px; transform: rotate(12deg)"><svg width="84" height="84" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4l9 10l13-4l3 13l13 3l-4 13l10 9l-10 9l4 13l-13 3l-3 13l-13-4l-9 10l-9-10l-13 4l-3-13l-13-3l4-13l-10-9l10-9l-4-13l13-3l3-13l13 4z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path><circle cx="50" cy="50" r="24" fill="#f2c230" stroke="#1d2b3a" stroke-width="3"></circle><path d="M50 36l4 9l10 1l-7 7l2 10l-9 -5l-9 5l2 -10l-7 -7l10 -1z" fill="#ffffff" stroke="#1d2b3a" stroke-width="2" stroke-linejoin="round"></path></svg></div>
+<div style="font-family: Fredoka, system-ui, sans-serif; font-size: 42px; line-height: 44px; font-weight: 700; letter-spacing: .14em">DIPLOM</div>
+<div style="font-size: 15px; font-weight: 800; color: #4d5f6e">Kontraktkontoret A/S udnævner hermed</div>
+<div style="font-family: Caveat, cursive; font-size: ${v.finNameSize}px; line-height: 64px; font-weight: 700; color: #c2185b; border-bottom: 2px solid #1d2b3a; padding: 0 30px; white-space: nowrap">${esc(v.playerName)}</div>
+<div style="font-size: 15px; font-weight: 800; color: #4d5f6e; margin-top: 4px">til</div>
+<div style="font-family: Fredoka, system-ui, sans-serif; font-size: 34px; line-height: 38px; font-weight: 700; color: #0b7477">KONTRAKTCHEF</div>
+<div style="font-size: 14px; font-weight: 800; color: #4d5f6e; margin-top: 6px">${MAX_DAY} arbejdsdage · ${v.finContracts} kontrakter · ${esc(v.finEarned)} tjent</div>
+<div style="margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end">
+<div style="text-align: left">
+<svg width="150" height="50" viewBox="0 0 300 100" aria-hidden="true"><path d="M10 70c20-50 40-60 50-30s-20 50 10 40 30-60 50-40-10 50 20 30 40-50 60-20M150 80q60 20 140 -30" fill="none" stroke="#1d2b3a" stroke-width="5" stroke-linecap="round"></path><path d="M272 20l6 12l13 2l-9 9l2 13l-12 -6l-12 6l2 -13l-9 -9l13 -2z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"></path></svg>
+<div style="border-top: 2px solid #1d2b3a; font-size: 12px; font-weight: 800; color: #4d5f6e; padding-top: 2px">Chef Bo, direktør</div>
+</div>
+
+</div>
+</div>
+<div class="fin-stamp" style="position: absolute; right: 26px; bottom: 34px; padding: 8px 18px; border: 6px solid #0b7477; border-radius: 12px; color: #0b7477; font-family: Fredoka, system-ui, sans-serif; font-size: 40px; line-height: 40px; font-weight: 700; letter-spacing: .08em; background: rgba(255,255,255,.6)">GODKENDT</div>
+</div>
+
+<div class="fin-boom" style="position: absolute; left: 846px; top: 404px; width: 170px; height: 130px">
+<svg width="170" height="130" viewBox="0 0 170 130" aria-hidden="true"><path d="M85 4l14 28l30-14l-4 32l36 4l-26 22l24 26l-34 -2l-4 32l-26 -22l-24 24l-6 -32l-34 6l18 -28l-26 -20l34 -8l-6 -32l30 14z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4" stroke-linejoin="round"></path><text x="85" y="76" text-anchor="middle" font-family="Fredoka, system-ui, sans-serif" font-weight="700" font-size="30" fill="#c2185b">BOOM!</text></svg>
+</div>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffd84d; --dx: -196px; --dy: -13px; --rot: -101deg; animation-delay: 1.55s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #ef5b93; --dx: -164px; --dy: 24px; --rot: -32deg; animation-delay: 1.62s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #34b8b5; --dx: -191px; --dy: -313px; --rot: 94deg; animation-delay: 1.4600000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffffff; --dx: -420px; --dy: -108px; --rot: -46deg; animation-delay: 1.76s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #c2185b; --dx: -493px; --dy: -17px; --rot: -47deg; animation-delay: 1.76s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #a9e8e3; --dx: -100px; --dy: -165px; --rot: 141deg; animation-delay: 1.5s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffd84d; --dx: -164px; --dy: -383px; --rot: 10deg; animation-delay: 1.77s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #ef5b93; --dx: -371px; --dy: 57px; --rot: 79deg; animation-delay: 1.6900000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #34b8b5; --dx: -248px; --dy: -21px; --rot: 100deg; animation-delay: 1.4900000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffffff; --dx: -60px; --dy: -121px; --rot: 180deg; animation-delay: 1.5s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #c2185b; --dx: -139px; --dy: -355px; --rot: 31deg; animation-delay: 1.6s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #a9e8e3; --dx: -240px; --dy: -87px; --rot: -61deg; animation-delay: 1.58s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffd84d; --dx: -443px; --dy: -75px; --rot: -157deg; animation-delay: 1.37s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #ef5b93; --dx: -456px; --dy: -199px; --rot: 151deg; animation-delay: 1.61s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #34b8b5; --dx: -247px; --dy: -112px; --rot: -80deg; animation-delay: 1.85s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffffff; --dx: -476px; --dy: 88px; --rot: 45deg; animation-delay: 1.6700000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #c2185b; --dx: -285px; --dy: -36px; --rot: -16deg; animation-delay: 1.7200000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #a9e8e3; --dx: -159px; --dy: -135px; --rot: -149deg; animation-delay: 1.51s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffd84d; --dx: -151px; --dy: -169px; --rot: -59deg; animation-delay: 1.6400000000000001s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #ef5b93; --dx: -493px; --dy: 50px; --rot: -167deg; animation-delay: 1.5s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #34b8b5; --dx: -396px; --dy: 88px; --rot: -34deg; animation-delay: 1.8s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffffff; --dx: -274px; --dy: -340px; --rot: -33deg; animation-delay: 1.36s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #c2185b; --dx: -209px; --dy: -41px; --rot: 137deg; animation-delay: 1.6800000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #a9e8e3; --dx: -117px; --dy: -118px; --rot: 47deg; animation-delay: 1.6600000000000001s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffd84d; --dx: -246px; --dy: -37px; --rot: -99deg; animation-delay: 1.6500000000000001s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #ef5b93; --dx: -158px; --dy: -33px; --rot: -94deg; animation-delay: 1.37s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #34b8b5; --dx: -427px; --dy: -113px; --rot: 112deg; animation-delay: 1.85s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffffff; --dx: -506px; --dy: 70px; --rot: -74deg; animation-delay: 1.56s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #c2185b; --dx: -181px; --dy: 20px; --rot: 124deg; animation-delay: 1.7200000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #a9e8e3; --dx: -134px; --dy: -133px; --rot: 71deg; animation-delay: 1.37s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffd84d; --dx: -208px; --dy: -145px; --rot: 90deg; animation-delay: 1.37s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #ef5b93; --dx: -510px; --dy: -77px; --rot: -78deg; animation-delay: 1.6800000000000002s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 3px; width: 11px; height: 20px; background: #34b8b5; --dx: -214px; --dy: -99px; --rot: -162deg; animation-delay: 1.56s"></i>
+<i class="fin-burst" style="left: 944px; top: 492px; border-radius: 999px; width: 14px; height: 14px; background: #ffffff; --dx: -319px; --dy: -13px; --rot: 39deg; animation-delay: 1.6700000000000002s"></i>
+
+<div class="fin-cannon" style="position: absolute; left: 900px; top: 420px; width: 300px; height: 230px">
+<svg width="300" height="230" viewBox="0 0 300 230" aria-hidden="true">
+<path d="M246 170q10 -20 26 -28" fill="none" stroke="#1d2b3a" stroke-width="4" stroke-linecap="round"></path>
+<path d="M272 142l5 -9l4 9l9 3l-9 4l-4 9l-5 -9l-9 -4z" fill="#ffd84d" stroke="#1d2b3a" stroke-width="2" stroke-linejoin="round"></path>
+<g transform="rotate(32 150 150)">
+<rect x="40" y="112" width="220" height="76" rx="30" fill="#1d2b3a"></rect>
+<rect x="32" y="104" width="220" height="76" rx="30" fill="#34b8b5" stroke="#1d2b3a" stroke-width="5"></rect>
+<rect x="92" y="104" width="22" height="76" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4"></rect>
+<rect x="172" y="104" width="22" height="76" fill="#ffd84d" stroke="#1d2b3a" stroke-width="4"></rect>
+<path d="M140 128l5 10l11 1l-8 8l2 11l-10 -5l-10 5l2 -11l-8 -8l11 -1z" fill="#ffffff" stroke="#1d2b3a" stroke-width="2.5" stroke-linejoin="round"></path>
+<rect x="14" y="96" width="30" height="92" rx="10" fill="#ef5b93" stroke="#1d2b3a" stroke-width="5"></rect>
+<ellipse cx="22" cy="142" rx="8" ry="30" fill="#1d2b3a"></ellipse>
+</g>
+<path d="M70 180h170l-16 34h-138z" fill="#c2185b" stroke="#1d2b3a" stroke-width="5" stroke-linejoin="round"></path>
+<g class="fin-wheel"><circle cx="96" cy="196" r="30" fill="#ffd84d" stroke="#1d2b3a" stroke-width="5"></circle><path d="M96 168v56M68 196h56M76 176l40 40M116 176l-40 40" stroke="#1d2b3a" stroke-width="4"></path><circle cx="96" cy="196" r="7" fill="#1d2b3a"></circle></g>
+<g class="fin-wheel"><circle cx="214" cy="196" r="30" fill="#ffd84d" stroke="#1d2b3a" stroke-width="5"></circle><path d="M214 168v56M186 196h56M194 176l40 40M234 176l-40 40" stroke="#1d2b3a" stroke-width="4"></path><circle cx="214" cy="196" r="7" fill="#1d2b3a"></circle></g>
+</svg>
+</div>
+</div></div>
+<div class="fin-bottom">
+<div class="mission">
+<div class="mission-kicker">DIN NÆSTE MISSION</div>
+<div class="disp mission-title">Åbn Kontraktkontoret derhjemme!</div>
+<div class="mission-list">
+<div>✓ Papir og en blyant</div><div>✓ Et stempel (eller et viskelæder, der lader som om)</div>
+<div>✓ Kunder: familie, venner eller naboer — de ved det bare ikke endnu!</div><div>✓ En chef — og det er dig!</div>
+</div>
+</div>
+<div class="fin-buttons">
+<button class="btn btn-go" type="button" data-on="${on(v.startGame)}">Spil igen fra dag 1</button>
+<button class="btn" type="button" data-on="${on(v.goHome)}">Til forsiden</button>
+</div>
+</div>
+</div>
+</main>`;
+}
+
 function doneHTML(v) {
   return `<main class="screen center-screen" data-key="done">
 <div class="card done-card pop">
@@ -2494,6 +2703,8 @@ function render() {
   else if (v.showRoom) body = officeHTML(v);
   else if (v.isReview) body = reviewHTML(v);
   else if (v.isDone) body = doneHTML(v);
+  else if (v.isFinalName) body = finalNameHTML(v);
+  else if (v.isFinale) body = finaleHTML(v);
   else if (v.isEvent) body = eventHTML(v);
   else if (v.isShop) body = shopHTML(v);
   else body = titleHTML(v);
