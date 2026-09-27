@@ -509,7 +509,11 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
   .roomwrap .note{position:absolute;left:3.4%;top:74.3%;width:45.5%;max-width:none;margin:0;z-index:3;transform:rotate(-3deg)}
 }
 .name-pill{position:absolute;left:24px;top:478px;padding:4px 12px;border:3px solid #1d2b3a;border-radius:999px;background:#fff;font-size:15px;font-weight:800}
-.deco-sticky{position:absolute;left:22px;top:596px;width:270px;padding:14px 18px;border:3px solid #1d2b3a;border-radius:8px;box-shadow:6px 6px 0 #1d2b3a;transform:rotate(-3deg)}
+.family-note{border:3px solid #1d2b3a;border-radius:16px;background:#ffe0ec;box-shadow:4px 4px 0 #1d2b3a;padding:10px 14px;font-size:15px;font-weight:700;line-height:22px;text-align:center}
+.note.crumple{transform:rotate(2.5deg) skewX(-2deg)}
+.note .note-stain{position:absolute;right:8px;bottom:6px;width:46px;height:36px;background:radial-gradient(ellipse at 42% 40%,#8a4b2a 0%,#a05a30 55%,rgba(160,90,48,.5) 74%,transparent 78%);border-radius:58% 42% 55% 45%/48% 60% 40% 52%;opacity:.85;mix-blend-mode:multiply;pointer-events:none}
+.note .note-heart{position:absolute;right:12px;top:6px;font-size:18px;color:#c2185b;transform:rotate(14deg);pointer-events:none}
+.deco-sticky{position:absolute;left:22px;top:570px;width:270px;padding:14px 18px;border:3px solid #1d2b3a;border-radius:8px;box-shadow:6px 6px 0 #1d2b3a;transform:rotate(-3deg)}
 .slot .pynt{position:absolute;left:0;top:0}
 
 .contract{position:relative;padding:26px clamp(14px,3vw,24px) 18px;border-radius:22px;display:flex;flex-direction:column;gap:12px}
@@ -668,6 +672,7 @@ const SERVICES = [
 const DURATIONS = ['1 uge', '2 uger', '3 uger', '1 måned', '3 måneder'];
 const WEEKS = { '1 uge': 1, '2 uger': 2, '3 uger': 3 };
 const DAY_MIN = 480; /* arbejdsdagen: 08:00–16:00 = 480 spil-minutter */
+const MAX_DAY = 8; /* spillet slutter, når alle 8 arbejdsdage er klaret */
 const TICK_MS = 500; /* ét spil-minut varer et halvt sekund */
 const DATES = ['2. juni', '5. juni', '9. juni', '12. juni', '16. juni', '20. juni'];
 const PRICES = [50, 100, 150, 200, 250, 300];
@@ -745,7 +750,7 @@ const CLOSERS = [
   'Tak! Jeg har skrevet det hele ned. Tror jeg.',
   'Kig på sedlen — den er lidt krøllet, men den er rigtig.',
   'Min mor hjalp mig med sedlen. Hun er meget grundig.',
-  'Sedlen er klar! Jeg har tegnet et hjerte på bagsiden.'
+  'Sedlen er klar! Jeg har tegnet et hjerte i hjørnet.'
 ];
 const TYPO_LINES = [
   'PS: Min lillebror skrev sedlen. Mit navn staves {navn} — {spell}!',
@@ -1066,8 +1071,9 @@ function buildDay(day, recent) {
     const base = {
       navn, shape: pick(SHAPES), body: pick(BODIES), acc: pick(ACCS),
       service, duration: pick(DURATIONS), date: pick(DATES), price: pick(PRICES),
-      hello: pick(HELLO[service]), closer: pick(CLOSERS), noteFont: pick(NOTE_FONTS), notePaper: pick(NOTE_PAPERS), sig: makeSig(navn)
+      hello: pick(HELLO[service]), closer: pick(CLOSERS), noteFont: pick(NOTE_FONTS), notePaper: pick(NOTE_PAPERS), sig: makeSig(navn), doodle: ''
     };
+    base.doodle = /kakao/.test(base.closer) ? 'kakao' : /krøllet/.test(base.closer) ? 'kroel' : /hjerte/.test(base.closer) ? 'hjerte' : '';
     const tw = twistsFor(day, i);
     const t = { typo: tw.includes('typo'), change: tw.includes('change'), kaj: tw.includes('kaj'), math: tw.includes('math') };
     if (t.math) {
@@ -1104,8 +1110,8 @@ function buildDay(day, recent) {
   return list;
 }
 
-const SLOT_TYPE = { H1: 'haeng', H4: 'haeng', H5: 'haeng', H2: 'haeng', W1: 'haeng', W2: 'haeng', W3: 'haeng', W4: 'haeng', W5: 'haeng', S1: 'staa', S2: 'staa', S3: 'staa', S4: 'staa', D1: 'staa', D2: 'staa', D3: 'staa', D4: 'staa', D5: 'staa', D6: 'staa', B1: 'alle', B2: 'alle', B3: 'alle', H3: 'alle', B4: 'alle', B5: 'alle' };
-const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', W1: 'Væggen, midten', W2: 'Væggen, under uret', W3: 'Væggen, venstre, nederst', W4: 'Væggen, højre, nederst', W5: 'Væggen, yderst, nederst', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
+const SLOT_TYPE = { H1: 'haeng', H4: 'haeng', H5: 'haeng', H2: 'haeng', W1: 'haeng', W2: 'haeng', W3: 'haeng', W4: 'haeng', W5: 'haeng', S1: 'staa', S2: 'staa', S3: 'staa', S4: 'staa', D1: 'staa', D2: 'staa', D3: 'staa', D4: 'staa', D5: 'staa', D6: 'staa', F1: 'staa', B1: 'alle', B2: 'alle', B3: 'alle', H3: 'alle', B4: 'alle', B5: 'alle' };
+const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', W1: 'Væggen, midten', W2: 'Væggen, under uret', W3: 'Væggen, venstre, nederst', W4: 'Væggen, højre, nederst', W5: 'Væggen, yderst, nederst', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', F1: 'Gulvet', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
 SLOT_NAME.H3 = 'Det røde bånd 4';
 const ITEM_TYPE = { kaktus: 'staa', plante: 'staa', kugle: 'staa', lava: 'staa', kat: 'staa', kop: 'staa', globus: 'staa', tyggegummi: 'staa', guldabe: 'staa', akvarie: 'staa', stork: 'staa', plakat: 'haeng', lys: 'haeng', disko: 'haeng', vaerdier: 'haeng', fladfisk: 'haeng', kukur: 'haeng', neon: 'haeng', medarbejder: 'haeng', radio: 'staa', bamse: 'staa', yoyo: 'haeng', trofae: 'staa', palme: 'staa', dino: 'staa', vimpel: 'haeng' };
 function fits(id, k) { return SLOT_TYPE[k] === 'alle' || SLOT_TYPE[k] === ITEM_TYPE[id]; }
@@ -1137,7 +1143,7 @@ const SHOP = [
   { id: 'disko', name: 'Diskokugle', price: 800, desc: 'Til de helt store stempel-fester.' },
   { id: 'guldabe', name: 'Siddende guldabe', price: 900, desc: 'Ingen ved, hvorfor den er der. Alle vil have en.' },
   { id: 'akvarie', name: 'Akvarie', price: 1000, desc: 'Med Gunnars kusine Gerda. Hun er lidt fornem.' },
-  { id: 'kat', name: 'Kontorkatten Muffin', price: 1200, desc: 'Sover 23 timer i døgnet. Den sidste time spiser hun.' },
+  { id: 'kat', name: 'Kontorhunden Gård', price: 1200, desc: 'Dansk-svensk gårdhund. Vagter kontoret — og kaffekoppen.' },
   { id: 'stork', name: 'Udstoppet stork', price: 1500, desc: 'Den hedder Storkeline og holder øje med alt.' },
   { id: 'radio', name: 'Radio', price: 500, desc: 'Tryk på den — så spiller den kontor-hits.' },
   { id: 'yoyo', name: 'Yoyo', price: 150, desc: 'Den hopper op og ned hele dagen. Tryk på den for et trick!' },
@@ -1150,7 +1156,7 @@ const SHOP = [
 const UNLOCK = { medarbejder: 1, kaktus: 1, kop: 1, plakat: 1, plante: 1, kugle: 1, vaerdier: 2, globus: 2, lys: 2, fladfisk: 3, kukur: 3, lava: 3, tyggegummi: 4, neon: 4, radio: 4, disko: 5, guldabe: 5, bamse: 1, yoyo: 1, akvarie: 6, kat: 6, vimpel: 6, stork: 7, trofae: 7, palme: 8, dino: 8 };
 const POKE = {
   kaktus: ['Hov! Det stikker, undskyld!', 'pop'], plante: ['Rasle-rasle', 'pop'], kop: ['Slurp!', 'pop'], globus: ['Snurre-snurr!', 'ding'],
-  lava: ['Blub-blub!', 'pop'], kat: ['Mjav?', 'meow'], tyggegummi: ['Klonk! Et tyggegummi!', 'coin'], guldabe: ['Uh-uh-ah-ah!', 'kuk'],
+  lava: ['Blub-blub!', 'pop'], kat: ['Voff! Voff!', 'bark'], tyggegummi: ['Klonk! Et tyggegummi!', 'coin'], guldabe: ['Uh-uh-ah-ah!', 'kuk'],
   akvarie: ['Blub!', 'pop'], stork: ['Klap-klap-klap!', 'klap'], plakat: ['Hæng i!', 'blip'], lys: ['Blink-blink!', 'ding'],
   disko: ['DISKO!', 'jingle'], vaerdier: ['P.A.P.I.R.!', 'blip'], fladfisk: ['Flap!', 'boing'], kukur: ['Kukkuk! Kukkuk!', 'kuk'],
   neon: ['Bzzzzt!', 'buzz'], medarbejder: ['Det er dig!', 'coin'], radio: ['♪ Dum-di-dum ♪', 'jingle'], bamse: ['Ninus vil have et kram!', 'pop'], yoyo: ['Yo-yo-yo!', 'yoyo'],
@@ -1159,7 +1165,7 @@ const POKE = {
 const SHOP_QUOTES = [
   'Jeg har selv købt en rystekugle med en rystekugle indeni. Den ryster dobbelt!',
   'Husk: en potteplante lytter bedre end Kaj.',
-  'Kontorkatten Muffin? Hun sov på mit stempel i en hel uge.',
+  'Kontorhunden Gård? Den vagter mit stempel. Meget professionelt, siger den.',
   'Diskokuglen er IKKE kun til fredag. Den er også til torsdag.',
   'Guldaben? Jeg har også én derhjemme. Den hedder Chef Bo 2.',
   'Storken kigger på mig. Jeg kigger tilbage. Det er en konkurrence.',
@@ -1167,7 +1173,7 @@ const SHOP_QUOTES = [
 ];
 const NOTICE = {
   lava: ['Flot lavalampe! Den bobler ligesom min mave.', 'Uh, en lavalampe! Min onkel har én fra 1970.'],
-  kat: ['Åh, en kontorkat! Må jeg ae den? …Den sover.', 'Hej, mis! Hun ligner min tante.'],
+  kat: ['Åh, en dansk-svensk gårdhund! Må jeg klø den bag øret?', 'Wuff! Den ser ud til at vagte kaffekoppen.'],
   stork: ['Er det … en udstoppet stork? Den kigger på mig.', 'Wow, en stork! Kommer den med babyer eller kontrakter?'],
   guldabe: ['Er den abe af RIGTIGT guld?!', 'Sikke en fin guldabe. Den sidder bedre end mig.'],
   tyggegummi: ['Må jeg få et tyggegummi? Bare et lille ét?', 'En tyggegummi automat! Det her er byens bedste kontor.'],
@@ -1210,7 +1216,7 @@ function loadSave() {
       let place = {};
       if (v.place && typeof v.place === 'object') Object.keys(v.place).forEach(k => { if (SLOT_TYPE[k] && owned.includes(v.place[k]) && fits(v.place[k], k)) place[k] = v.place[k]; });
       else owned.forEach(id => { place = autoPlace(place, id); });
-      return { money: v.money, earned: v.earned || 0, owned, place, day: v.day || 1, cleared: v.cleared || 0 };
+      return { money: v.money, earned: v.earned || 0, owned, place, day: Math.min(v.day || 1, MAX_DAY), cleared: Math.min(v.cleared || 0, MAX_DAY) };
     }
   } catch (e) { }
   return { money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 };
@@ -1240,7 +1246,7 @@ class Component extends DCLogic {
       revStep: 0, verdict: null, retryNote: '',
       money: save.money, earned: save.earned, owned: save.owned, place: save.place, saveDay: save.day, cleared: save.cleared,
       clock: 0, timeUp: false, warned: false, signed: false, signing: false, signN: 0, poke: null, disco: false,
-      event: null, giftDone: false, meetingDone: false, bonus: 0, newItems: [], decoSel: null, decoMsg: '', recent: [], steps: ['', '', '', '', ''], boLine: '', doneQuote: '', introTip: '', introTitle: '', shopFrom: 'title', justBought: null, globe: 0, snowing: false,
+      event: null, giftDone: false, meetingDone: false, bonus: 0, newItems: [], decoSel: null, decoMsg: '', recent: [], steps: ['', '', '', '', ''], boLine: '', doneQuote: '', final: false, justWiped: false, introTip: '', introTitle: '', shopFrom: 'title', justBought: null, globe: 0, snowing: false,
       dayMoney: 0, dayStars: 0, results: [], muted: false, best: loadBest()
     };
     this.tickT = setInterval(() => this.tick(), TICK_MS);
@@ -1299,6 +1305,7 @@ class Component extends DCLogic {
       if (name === 'yoyo') { tone(320, 0.28, 'sine', 0, 0.13, 760); tone(760, 0.3, 'sine', 0.3, 0.13, 300); }
       if (name === 'pop') tone(420, 0.12, 'sine', 0, 0.14, 900);
       if (name === 'meow') { tone(620, 0.18, 'sine', 0, 0.12, 900); tone(900, 0.25, 'sine', 0.18, 0.1, 520); }
+      if (name === 'bark') { tone(240, 0.1, 'square', 0, 0.1, 190); tone(200, 0.12, 'square', 0.14, 0.1, 150); }
       if (name === 'kuk') { tone(780, 0.16, 'sine', 0, 0.14); tone(620, 0.22, 'sine', 0.2, 0.14); tone(780, 0.16, 'sine', 0.55, 0.12); tone(620, 0.22, 'sine', 0.75, 0.12); }
       if (name === 'roar') tone(160, 0.6, 'sawtooth', 0, 0.12, 60);
       if (name === 'buzz') tone(110, 0.45, 'sawtooth', 0, 0.06, 118);
@@ -1313,9 +1320,11 @@ class Component extends DCLogic {
   continueGame() { this.sfx('blip'); this.startDay(this.state.saveDay || 1, this.state.money); }
   newGame() {
     if (!window.confirm('Vil du slette alt det gemte (penge, pynt og dage) og starte helt forfra?')) return;
-    wipeSave();
     this.clearTimers();
-    this.setState({ screen: 'title', money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, best: null, day: 1 });
+    this.setState({ screen: 'title', money: 0, earned: 0, owned: [], place: {}, saveDay: 1, cleared: 0, best: null, day: 1, dayMoney: 0, dayStars: 0, results: [], customers: [], idx: 0, justWiped: true });
+    wipeSave();
+    saveSave({ money: 0, earned: 0, owned: [], place: {}, day: 1, cleared: 0 });
+    this.later(3000, () => this.setState({ justWiped: false }));
   }
   persist(patch) {
     const s = Object.assign({}, this.state, patch);
@@ -1389,7 +1398,7 @@ class Component extends DCLogic {
     const recent = this.state.recent.concat(customers.map(c => c.navn.split(' ')[0])).slice(-30);
     const info = DAYS[day - 1] || pick(OVERTIME);
     this.persist({ screen: 'intro', day, idx: 0, customers, recent, money, dayMoney: 0, dayStars: 0, results: [], introTitle: info.title, introTip: info.tip, introValue: pick(VALUES), award: false, starRecord: false,
-      saveDay: day, clock: 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false });
+      saveDay: day, clock: 0, timeUp: false, warned: false, giftDone: false, meetingDone: false, event: null, bonus: 0, newItems: [], poke: null, disco: false, final: false });
   }
   openDesk() { this.startCustomer(0); }
   startCustomer(idx) {
@@ -1512,8 +1521,9 @@ class Component extends DCLogic {
     }
     const cleared = passed ? Math.max(s.cleared, s.day) : s.cleared;
     const newItems = cleared > s.cleared ? SHOP.filter(it => UNLOCK[it.id] === cleared + 1).map(it => ({ kind: it.id, name: it.name })) : [];
+    const final = passed && s.day >= MAX_DAY;
     const upd = {
-      screen: 'done', best, cleared, newItems, bonus: early, starRecord, saveDay: passed ? s.day + 1 : s.day,
+      screen: 'done', best, cleared, newItems, bonus: early, starRecord, final, saveDay: passed && s.day < MAX_DAY ? s.day + 1 : s.day,
       money: s.money + early, earned: s.earned + early, dayMoney: s.dayMoney + early, award: false
     };
     const perfect = !s.timeUp && s.results.length > 0 && s.results.every(r => r.stars === 3);
@@ -1522,6 +1532,7 @@ class Component extends DCLogic {
     } else {
       upd.doneQuote = perfect ? 'Perfekt dag! Igen! Jeg er nødt til at lave et skilt til skiltet.' : (s.timeUp && !passed ? pick(TIMEUP_NO) : pick(passed ? DONE_YES : DONE_NO));
     }
+    if (final) upd.doneQuote = 'VI RULLER KONFETTI-KANONEN IND! Du har klaret alle otte arbejdsdage. Du er officielt kontorchef!';
     this.persist(upd);
     if (passed) this.sfx('fanfare'); else this.sfx('boing');
   }
@@ -1628,6 +1639,7 @@ class Component extends DCLogic {
       canContinue: (s.saveDay || 1) > 1, continueLabel: 'Fortsæt: Dag ' + (s.saveDay || 1) + ' · ' + dayDate(s.saveDay || 1).weekday,
       continueGame: () => this.continueGame(), newGame: () => this.newGame(),
       hasSave: (s.saveDay || 1) > 1 || s.owned.length > 0 || s.money > 0,
+      justWiped: !!s.justWiped,
       bonusText: s.bonus ? 'Tidlig fyraften kl. ' + clockText(s.clock) + ': +' + fmtKr(s.bonus) + ' i bonus!' : '',
       timeUpText: s.timeUp ? 'Klokken blev 16:00 — fyraften! Kunder, der ikke nåede at blive betjent, gik hjem.' : '',
       newItems: s.newItems || [], showNew: !!(s.newItems && s.newItems.length),
@@ -1667,8 +1679,9 @@ class Component extends DCLogic {
       introTip: dayInfo.tip,
       introValue: { letter: (s.introValue || VALUES[0])[0], text: (s.introValue || VALUES[0])[1] },
       showAward: !!s.award,
-      noteCls: 'tilt-note ' + (c.notePaper || 'np-yellow'),
+      noteCls: 'tilt-note ' + (c.notePaper || 'np-yellow') + ((c.doodle === 'kroel' && (!c.t || (!c.t.typo && !c.t.change))) ? ' crumple' : ''),
       noteFontCls: c.noteFont || 'nf-hand',
+      noteDoodle: (!c.t || (!c.t.typo && !c.t.change)) ? (c.doodle || '') : '',
       introGoal: 'Dagens mål: ' + goal + ' stjerner. Rigtigt i første forsøg giver 3 stjerner — rettet giver 1. Mødetid 08:00, fyraften 16:00 — bliver du færdig før tid, får du bonus!',
       introMood: s.day >= 5 ? 'tosset' : 'glad',
       openDesk: () => this.openDesk(),
@@ -1728,7 +1741,8 @@ class Component extends DCLogic {
       showCoin: revealed && v.ok,
       coinText: '+' + fmtKr(c.correct ? c.correct.price : 0),
 
-      doneTitle: passed ? (s.timeUp ? 'Fyraften — og dagen er klaret!' : 'Dagen er klaret!') : (s.timeUp ? 'Fyraften! Tiden løb ud' : 'Næsten! Prøv igen'),
+      doneTitle: passed ? ((s.final || s.day >= MAX_DAY) ? 'Du har klaret alle 8 dage!' : (s.timeUp ? 'Fyraften — og dagen er klaret!' : 'Dagen er klaret!')) : (s.timeUp ? 'Fyraften! Tiden løb ud' : 'Næsten! Prøv igen'),
+      final: !!(s.final && passed),
       doneQuote: s.doneQuote,
       doneMood: passed ? 'jubel' : 'glad',
       doneBoCls: passed ? 'bo-jump' : 'bo-tilt',
@@ -1738,7 +1752,7 @@ class Component extends DCLogic {
       doneMoney: fmtKr(s.dayMoney),
       resultRows: s.results.map(r => ({ navn: r.navn, text: r.missed ? 'Nåede ikke — fyraften!' : r.ok ? (r.tries === 1 ? 'Godkendt i første forsøg' : 'Godkendt efter rettelse') : 'Sendt hjem', stars: r.stars ? '★'.repeat(r.stars) : '–' })),
       donePassed: passed,
-      nextDayLabel: s.day >= 5 ? 'Tag på overarbejde' : 'Næste dag',
+      nextDayLabel: (s.day >= 5 ? 'Tag på overarbejde' : 'Næste dag') + ' · ' + (s.day + 1) + ' af ' + MAX_DAY,
       nextDay: () => { this.sfx('blip'); this.startDay(s.day + 1, s.money); },
       retryDay: () => { this.sfx('blip'); const m = Math.max(0, s.money - s.dayMoney); this.persist({ money: m, earned: Math.max(0, s.earned - s.dayMoney) }); this.startDay(s.day, m); },
       retryDayCls: passed ? 'btn' : 'btn btn-go btn-big ready'
@@ -1860,7 +1874,7 @@ const PYNT = {
  "plakat": "<rect x=\"12\" y=\"8\" width=\"76\" height=\"86\" rx=\"4\" fill=\"#fff4c2\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M30 14h40\" stroke=\"#34b8b5\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M50 14v14\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><path d=\"M42 28h16\" stroke=\"#1d2b3a\" stroke-width=\"5\" stroke-linecap=\"round\"/><path d=\"M36 44l2 -12l8 8M64 44l-2 -12l-8 8\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"16\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"44\" cy=\"48\" r=\"2.2\" fill=\"#1d2b3a\"/><circle cx=\"56\" cy=\"48\" r=\"2.2\" fill=\"#1d2b3a\"/><path d=\"M46 55q4 3 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><text x=\"50\" y=\"84\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#c2185b\">HÆNG I!</text><circle cx=\"50\" cy=\"8\" r=\"4\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
  "lys": "<path d=\"M0 22Q25 44 50 22T100 22\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><ellipse class=\"tw1\" cx=\"12\" cy=\"32\" rx=\"5\" ry=\"7\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw2\" cx=\"30\" cy=\"36\" rx=\"5\" ry=\"7\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw3\" cx=\"50\" cy=\"28\" rx=\"5\" ry=\"7\" fill=\"#34b8b5\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw1\" cx=\"70\" cy=\"16\" rx=\"5\" ry=\"7\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><ellipse class=\"tw2\" cx=\"88\" cy=\"16\" rx=\"5\" ry=\"7\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
  "disko": "<path d=\"M50 0v22\" stroke=\"#1d2b3a\" stroke-width=\"2.5\"/><g class=\"sway\"><circle cx=\"50\" cy=\"50\" r=\"28\" fill=\"#cfe3ea\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><path d=\"M24 40h52M22 52h56M26 64h48M40 24v52M52 22v56M64 26v48\" stroke=\"#1d2b3a\" stroke-width=\"1.5\" opacity=\"0.5\"/><rect class=\"tw1\" x=\"41\" y=\"41\" width=\"10\" height=\"10\" fill=\"#ffffff\"/><rect class=\"tw2\" x=\"53\" y=\"53\" width=\"10\" height=\"10\" fill=\"#ef5b93\"/><rect class=\"tw3\" x=\"29\" y=\"53\" width=\"10\" height=\"10\" fill=\"#ffd84d\"/></g><path class=\"tw2\" d=\"M14 70l3 7l7 3l-7 3l-3 7l-3 -7l-7 -3l7 -3z\" fill=\"#ffd84d\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><path class=\"tw3\" d=\"M86 20l3 6l6 3l-6 3l-3 6l-3 -6l-6 -3l6 -3z\" fill=\"#ef5b93\" stroke=\"#1d2b3a\" stroke-width=\"2\"/>",
- "kat": "<path class=\"tail\" d=\"M80 82q16 0 14 -18q-1 -8 -8 -8\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"10\" stroke-linecap=\"round\"/><path class=\"tail\" d=\"M80 82q16 0 14 -18q-1 -8 -8 -8\" fill=\"none\" stroke=\"#ffb347\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"56\" cy=\"80\" rx=\"30\" ry=\"16\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M50 70q6 -4 12 0M58 68q6 -4 12 0\" fill=\"none\" stroke=\"#c2185b\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M14 62l2 -16l10 10M38 62l-2 -16l-10 10\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"26\" cy=\"72\" r=\"15\" fill=\"#ffb347\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M18 72q3 3 6 0M28 72q3 3 6 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><ellipse cx=\"18\" cy=\"78\" rx=\"4\" ry=\"2.5\" fill=\"#ff7aa8\" opacity=\"0.6\"/><ellipse cx=\"34\" cy=\"78\" rx=\"4\" ry=\"2.5\" fill=\"#ff7aa8\" opacity=\"0.6\"/><text class=\"zzz\" x=\"40\" y=\"44\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"14\" fill=\"#0b7477\">z Z</text>",
+ "kat": "<path class=\"tail\" d=\"M76 84q18 4 18 -14q0 -8 -8 -10\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"10\" stroke-linecap=\"round\"/><path class=\"tail\" d=\"M76 84q18 4 18 -14q0 -8 -8 -10\" fill=\"none\" stroke=\"#8d8171\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"56\" cy=\"74\" rx=\"28\" ry=\"20\" fill=\"#8d8171\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M42 56q8 -10 18 -8M60 52q8 -4 14 2\" fill=\"none\" stroke=\"#5f574a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M36 88V72\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"11\" stroke-linecap=\"round\"/><path d=\"M36 88V72\" fill=\"none\" stroke=\"#8d8171\" stroke-width=\"6\" stroke-linecap=\"round\"/><path d=\"M48 88V72\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"11\" stroke-linecap=\"round\"/><path d=\"M48 88V72\" fill=\"none\" stroke=\"#8d8171\" stroke-width=\"6\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"50\" r=\"17\" fill=\"#8d8171\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M14 36q-8 4 -6 18q9 3 13 -4z\" fill=\"#5f574a\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M34 34q10 0 14 12q-9 5 -16 0z\" fill=\"#5f574a\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M12 52q0 14 12 16q12 -2 14 -14q-2 18 -14 20q-12 -2 -12 -22z\" fill=\"#cfc6b8\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"24\" cy=\"49\" r=\"3.2\" fill=\"#1d2b3a\"/><circle cx=\"18\" cy=\"42\" r=\"2\" fill=\"#1d2b3a\"/><circle cx=\"30\" cy=\"42\" r=\"2\" fill=\"#1d2b3a\"/><path d=\"M20 56q4 3 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/>",
  "guldabe": "<path d=\"M22 86h56v10h-56z\" fill=\"#0b7477\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M68 80q18 2 16 -16q-1 -8 -8 -6\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M68 80q18 2 16 -16q-1 -8 -8 -6\" fill=\"none\" stroke=\"#f2c230\" stroke-width=\"4\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"68\" rx=\"21\" ry=\"18\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"72\" rx=\"11\" ry=\"10\" fill=\"#ffe58a\"/><ellipse cx=\"36\" cy=\"84\" rx=\"11\" ry=\"6\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"64\" cy=\"84\" rx=\"11\" ry=\"6\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M32 60q-4 14 8 20M68 60q4 14 -8 20\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"34\" cy=\"34\" r=\"8\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"66\" cy=\"34\" r=\"8\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"36\" r=\"16\" fill=\"#f2c230\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><ellipse cx=\"50\" cy=\"42\" rx=\"10\" ry=\"7\" fill=\"#ffe58a\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"44\" cy=\"32\" r=\"2.2\" fill=\"#1d2b3a\"/><circle cx=\"56\" cy=\"32\" r=\"2.2\" fill=\"#1d2b3a\"/><path d=\"M45 44q5 4 10 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><path class=\"tw1\" d=\"M80 14l2.5 6l6 2.5l-6 2.5l-2.5 6l-2.5 -6l-6 -2.5l6 -2.5z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><path d=\"M40 26q4 -6 10 -6\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/>",
  "fladfisk": "<path d=\"M50 20l-12 -12M50 20l12 -12\" stroke=\"#1d2b3a\" stroke-width=\"2\"/><circle cx=\"50\" cy=\"7\" r=\"3\" fill=\"#c2185b\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><rect x=\"6\" y=\"20\" width=\"88\" height=\"62\" rx=\"14\" fill=\"#c98a4b\" stroke=\"#1d2b3a\" stroke-width=\"3\"/><path d=\"M14 51q22 -26 54 -8l18 -12l-2 38l-16 -10q-32 18 -54 -8z\" fill=\"#e8c07a\" stroke=\"#1d2b3a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"44\" cy=\"54\" r=\"2.5\" fill=\"#c2185b\"/><circle cx=\"54\" cy=\"46\" r=\"2\" fill=\"#c2185b\"/><circle cx=\"58\" cy=\"57\" r=\"2.5\" fill=\"#c2185b\"/><circle cx=\"26\" cy=\"46\" r=\"3.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"26\" cy=\"46\" r=\"1.5\" fill=\"#1d2b3a\"/><circle cx=\"33\" cy=\"42\" r=\"3.5\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"1.5\"/><circle cx=\"33\" cy=\"42\" r=\"1.5\" fill=\"#1d2b3a\"/><path d=\"M20 56q4 2 8 0\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M30 36q16 -8 30 -2\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\" opacity=\"0.8\"/>",
  "kop": "<path class=\"tw2\" d=\"M40 22q-4 -6 0 -12M52 22q-4 -6 0 -12\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M72 44h6a10 10 0 0 1 0 20h-6\" fill=\"none\" stroke=\"#1d2b3a\" stroke-width=\"6\"/><path d=\"M22 28h52v56a10 10 0 0 1 -10 10h-32a10 10 0 0 1 -10 -10z\" fill=\"#ffffff\" stroke=\"#1d2b3a\" stroke-width=\"3.5\"/><text x=\"48\" y=\"50\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"7.5\" fill=\"#1d2b3a\">VERDENS</text><text x=\"48\" y=\"60\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"600\" font-size=\"7.5\" fill=\"#1d2b3a\">BEDSTE</text><text x=\"48\" y=\"74\" text-anchor=\"middle\" font-family=\"Fredoka, system-ui, sans-serif\" font-weight=\"700\" font-size=\"11\" fill=\"#c2185b\">KOLLEGA</text><path d=\"M44 82l2 3h3l-2.5 2l1 3l-3.5 -2l-3.5 2l1 -3l-2.5 -2h3z\" fill=\"#ffd84d\"/>",
@@ -1926,7 +1940,8 @@ const ROOM_SLOTS = {
   W1: [130, 130, 84], W2: [240, 120, 84], W3: [10, 306, 60], W4: [350, 284, 84], W5: [452, 284, 84],
   S1: [20, 368, 76], S2: [346, 368, 76], S3: [440, 368, 76], S4: [526, 368, 76],
   B1: [14, 478, 80], B2: [116, 478, 80], B3: [218, 478, 80], H3: [320, 478, 80], B4: [422, 478, 80], B5: [524, 478, 80],
-  D1: [308, 584, 96], D2: [410, 584, 96], D3: [512, 584, 96], D4: [308, 686, 92], D5: [410, 686, 92], D6: [512, 686, 92]
+  D1: [308, 584, 96], D2: [410, 584, 96], D3: [512, 584, 96], D4: [308, 686, 92], D5: [410, 686, 92], D6: [512, 686, 92],
+  F1: [20, 698, 84]
 };
 function slotHTML(v, k) {
   const sl = v.sl[k];
@@ -1957,14 +1972,14 @@ function titleHTML(v) {
 <div class="title-text">
 <div class="disp pop kicker">Dit allerførste job!</div>
 <h1 class="disp title-h1">Kontrakt<br><span class="wobble">kontoret</span></h1>
-<p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel.</p>
+<p class="lead">Kunderne står i kø! Læs godt efter, udfyld deres kontrakter helt rigtigt — og vent spændt på, om den lidt tossede Chef Bo slår sit stempel. Der er <b>otte arbejdsdage</b> — klar dem alle, og du får konfetti!</p>
 <div class="btn-row">
 ${v.canContinue ? `<button class="btn btn-go btn-big ready" type="button" data-key="cont" data-on="${on(v.continueGame)}">${esc(v.continueLabel)} ${ICON.arrow}</button>
 <button class="btn" type="button" data-key="start1" data-on="${on(v.startGame)}">Start på dag 1</button>`
 : `<button class="btn btn-go btn-big ready" type="button" data-key="start" data-on="${on(v.startGame)}">Start arbejdsdagen ${ICON.arrow}</button>`}
 <button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Kontorbutikken</button>
 </div>
-<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk.${v.hasSave ? ` <button class="linkbtn" type="button" data-key="wipe" data-on="${on(v.newGame)}">Slet alt og start forfra</button>` : ''}</div>
+${v.justWiped ? '<div class="muted-text">🧹 Alt er slettet! Penge, pynt og dage er borte — nu starter du helt fra bunden.</div>' : `<div class="muted-text">${esc(v.bestText)} · Spillet gemmes automatisk.${v.hasSave ? ` <button class="linkbtn" type="button" data-key="wipe" data-on="${on(v.newGame)}">Slet alt og start forfra</button>` : ''}</div>`}
 <div class="howto">
 <div class="howto-card"><div class="num done static">1</div><div class="disp h3">Læs kunden</div><div class="small">Læs sedlen og kundens talebobler. Pas på: nogle skifter mening!</div></div>
 <div class="howto-card"><div class="num done static">2</div><div class="disp h3">Udfyld kontrakten</div><div class="small">Navn, ydelse, varighed, dato og pris.</div></div>
@@ -2046,7 +2061,7 @@ function roomHTML(v) {
   const c = v.cust;
   const walls = ['H1', 'H4', 'H5', 'H2', 'W1', 'W2', 'W3', 'W4', 'W5'].map(k => slotHTML(v, k)).join('');
   const counter = ['S1', 'S2', 'S3', 'S4', 'B1', 'B2', 'B3', 'H3', 'B4', 'B5'].map(k => slotHTML(v, k)).join('');
-  const desk = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'].map(k => slotHTML(v, k)).join('');
+  const desk = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'F1'].map(k => slotHTML(v, k)).join('');
   let pokePop = '';
   if (v.poke && ROOM_SLOTS[v.poke.k]) {
     const pp = ROOM_SLOTS[v.poke.k];
@@ -2088,6 +2103,7 @@ ${v.bubbles.map((b, i) => `<div class="${b.cls}" data-key="b${i}">${esc(b.text)}
 </div>
 <div class="${v.noteCls} note" data-key="note">
 <div class="tape" aria-hidden="true"></div>
+${v.noteDoodle === 'kakao' ? '<div class="note-stain" aria-hidden="true"></div>' : ''}${v.noteDoodle === 'hjerte' ? '<div class="note-heart" aria-hidden="true">♥</div>' : ''}
 <div class="lbl" style="margin-bottom:4px;font-size:11px">Kundens bestillingsseddel</div>
 <div class="${v.noteFontCls}">
 <div>Navn: ${esc(v.note.name)}</div><div>Jeg vil have: ${esc(v.note.service)}</div><div>Hvor længe: ${esc(v.note.duration)}</div><div>Start: ${esc(v.note.date)}</div><div>Jeg betaler: ${esc(v.note.price)}</div>
@@ -2211,8 +2227,16 @@ function boardChart(i) {
   return `<svg viewBox="0 0 220 110" width="220" height="110" style="display:block;max-width:100%;margin-top:10px" aria-hidden="true"><path d="M10 100H210M10 100V8" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/>${bars.map((b, j) => `<rect x="${24 + j * 46}" y="${100 - b}" width="30" height="${b}" rx="4" fill="${cols[j]}" stroke="#1d2b3a" stroke-width="2.5"/>`).join('')}<path d="M18 80 Q60 20 110 60 T206 16" fill="none" stroke="#1d2b3a" stroke-width="2.5" stroke-dasharray="6 5"/><text x="150" y="30" font-family="'Caveat', cursive" font-size="20" fill="#c2185b">synergi!</text></svg>`;
 }
 
-function confettiHTML() {
-  return '<div class="confetti" data-key="confetti" aria-hidden="true">' + '<i></i>'.repeat(20) + '</div>';
+function confettiHTML(big) {
+  if (!big) return '<div class="confetti" data-key="confetti" aria-hidden="true">' + '<i></i>'.repeat(20) + '</div>';
+  const cols = ['#ef5b93', '#34b8b5', '#ffd84d', '#c2185b', '#a9e8e3'];
+  let s = '';
+  for (let i = 0; i < 60; i++) {
+    const l = (Math.random() * 96 + 2).toFixed(1);
+    const d = (Math.random() * 0.8).toFixed(2);
+    s += '<i style="left:' + l + '%;background:' + cols[i % cols.length] + ';animation:fall 2.4s linear ' + (1 + (i % 4)) + ' both;animation-delay:' + d + 's"></i>';
+  }
+  return '<div class="confetti" data-key="confetti" aria-hidden="true">' + s + '</div>';
 }
 
 function doneHTML(v) {
@@ -2235,17 +2259,18 @@ ${v.timeUpText ? `<div class="timeup-note">${esc(v.timeUpText)}</div>` : ''}
 ${v.bonusText ? `<div class="bonus-note pop d1">${esc(v.bonusText)}</div>` : ''}
 ${v.doneRecord ? `<div class="record-note pop d2">🏆 ${esc(v.doneRecord)}</div>` : ''}
 ${v.showAward ? '<div class="award pop d2">Chef Bo har hængt et Månedens medarbejder-skilt op på dit kontor!</div>' : ''}
+${v.final ? '<div class="family-note pop d2">🎉 Nu ved DU, hvordan man laver kontrakter! Hiv din mor og far ud af sofaen — og lav et RIGTIGT kontraktkontor derhjemme. Papir, en blyant og ét stempel er nok!</div>' : ''}
 ${v.showNew ? `<div class="new-items pop d2"><div class="disp new-title">Nye varer i butikken!</div><div class="new-row">${v.newItems.map(it => `<div class="new-item">${pyntSVG(it.kind, 54)}<span>${esc(it.name)}</span></div>`).join('')}</div><button class="btn btn-teal btn-small" type="button" data-on="${on(v.openShop)}">Se de nye varer</button></div>` : ''}
 <div class="muted-text">${esc(v.bestText)}</div>
 <div class="btn-row">
-${v.donePassed ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.nextDay)}">${esc(v.nextDayLabel)} ${ICON.arrow}</button>` : ''}
-<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>
+${v.donePassed && !v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.nextDay)}">${esc(v.nextDayLabel)} ${ICON.arrow}</button>` : ''}
+${v.final ? '<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.openDecorate)}">Indret dit færdige kontor</button>' : `<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>`}
 <button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Gå i butikken</button>
 <button class="btn" type="button" data-on="${on(v.goHome)}">Til forsiden</button>
 </div>
 </div>
 </div>
-${v.donePassed ? confettiHTML() : ''}
+${v.final ? confettiHTML(true) : (v.donePassed ? confettiHTML() : '')}
 </main>`;
 }
 
