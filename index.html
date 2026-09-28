@@ -412,6 +412,11 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 .meeting-card{width:100%;max-width:880px;padding:clamp(18px,3vw,30px);display:flex;flex-direction:column;gap:20px}
 .vote-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .vote-opt{padding:8px 14px;border:3px dashed #b9d9ca;border-radius:12px;font-weight:800;font-size:17px;color:#4d5f6e}
+/* Før man har stemt, er forslagene på tavlen selv knapperne */
+button.vote-opt{display:block;width:100%;text-align:left;font-family:inherit;cursor:pointer}
+.vote-opt.pick{border-style:solid;border-color:#1d2b3a;background:#fff;color:#1d2b3a;box-shadow:3px 3px 0 #1d2b3a;transition:transform .12s,box-shadow .12s}
+.vote-opt.pick:hover{background:#fff4c2}
+.vote-opt.pick:active{transform:translate(3px,3px);box-shadow:0 0 0 #1d2b3a}
 .vote-opt.on{border-style:solid;border-color:#1d2b3a;background:#fff4c2;color:#1d2b3a;box-shadow:3px 3px 0 #1d2b3a;animation:chipPop .45s cubic-bezier(.3,1.8,.5,1)}
 /* Finalen: konfettikanon, diplom og mission */
 .fin-cannon{animation:finRollIn 1.3s cubic-bezier(.2,1.1,.4,1) both, finRecoil 2.6s ease-out 1.35s infinite}
@@ -444,7 +449,7 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 .name-card .bo-box{max-width:200px}
 .whiteboard{border:4px solid #1d2b3a;border-radius:16px;background:#fff;padding:18px 22px;min-height:190px;box-shadow:inset 0 0 0 6px #eefaf4}
 .board-title{font-size:clamp(24px,4vw,34px);font-weight:700;color:#0b7477;line-height:1.1}
-.board-sub{font-family:'Caveat',cursive;font-size:24px;color:#c2185b;margin-top:6px}
+.board-sub{font-family:'Patrick Hand',cursive;font-size:24px;line-height:1.25;color:#1d2b3a;margin-top:6px}
 .meeting-bottom{display:grid;gap:18px;align-items:end}
 @media (min-width:640px){ .meeting-bottom{grid-template-columns:170px 1fr} }
 .small-bo{max-width:170px}
@@ -1031,8 +1036,8 @@ function buildDay(day, recent) {
   return list;
 }
 
-const SLOT_TYPE = { H1: 'haeng', H4: 'haeng', H5: 'haeng', H2: 'haeng', W1: 'haeng', W2: 'haeng', W3: 'haeng', W4: 'haeng', W5: 'haeng', S1: 'staa', S2: 'staa', S3: 'staa', S4: 'staa', D1: 'staa', D2: 'staa', D3: 'staa', D4: 'staa', D5: 'staa', D6: 'staa', F1: 'staa', B1: 'alle', B2: 'alle', B3: 'alle', H3: 'alle', B4: 'alle', B5: 'alle' };
-const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', W1: 'Væggen, midten', W2: 'Væggen, under uret', W3: 'Væggen, venstre, nederst', W4: 'Væggen, højre, nederst', W5: 'Væggen, yderst, nederst', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', F1: 'Væggen, højre, øverst', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
+const SLOT_TYPE = { H1: 'haeng', H4: 'haeng', H5: 'haeng', H2: 'haeng', W1: 'haeng', W2: 'haeng', W3: 'haeng', W4: 'haeng', W5: 'haeng', S1: 'staa', S2: 'staa', S3: 'staa', S4: 'staa', D1: 'staa', D2: 'staa', D3: 'staa', D4: 'staa', D5: 'staa', D6: 'staa', F1: 'haeng', B1: 'alle', B2: 'alle', B3: 'alle', H3: 'alle', B4: 'alle', B5: 'alle' };
+const SLOT_NAME = { H1: 'Væggen, midt', H4: 'Væggen, øverst', H5: 'Væggen, nederst', H2: 'Loftet', W1: 'Væggen, midten', W2: 'Væggen, under uret', W3: 'Væggen, venstre, nederst', W4: 'Væggen, højre, nederst', W5: 'Væggen, yderst, nederst', H3: 'Skrankens forside', S1: 'Skranken, venstre', S2: 'Skranken, midten', S3: 'Skranken, højre', S4: 'Skranken, helt ude', D1: 'Skrivebordet, bagerst venstre', D2: 'Skrivebordet, bagerst midt', D3: 'Skrivebordet, bagerst højre', D4: 'Skrivebordet, forrest venstre', D5: 'Skrivebordet, forrest midt', D6: 'Skrivebordet, forrest højre', F1: 'Væggen, helt ude til højre', B1: 'Det røde bånd 1', B2: 'Det røde bånd 2', B3: 'Det røde bånd 3', B4: 'Det røde bånd 5', B5: 'Det røde bånd 6' };
 SLOT_NAME.H3 = 'Det røde bånd 4';
 const ITEM_TYPE = { kaktus: 'staa', plante: 'staa', kugle: 'staa', lava: 'staa', kat: 'staa', kop: 'staa', globus: 'staa', tyggegummi: 'staa', guldabe: 'staa', akvarie: 'staa', stork: 'staa', plakat: 'haeng', lys: 'haeng', disko: 'haeng', vaerdier: 'haeng', fladfisk: 'haeng', kukur: 'haeng', neon: 'haeng', medarbejder: 'haeng', radio: 'staa', bamse: 'staa', yoyo: 'haeng', trofae: 'staa', palme: 'staa', dino: 'staa', vimpel: 'haeng' };
 function fits(id, k) { return SLOT_TYPE[k] === 'alle' || SLOT_TYPE[k] === ITEM_TYPE[id]; }
@@ -1152,6 +1157,8 @@ function saveSave(v) {
 function loadBest() {
   try { const raw = window.localStorage.getItem('kontraktkontoret-best'); return raw ? Object.assign({ day: 0, money: 0, stars: 0 }, JSON.parse(raw)) : null; } catch (e) { return null; }
 }
+/* Ældre rekorder har ikke 'earned' — så er den højeste saldo (money) det bedste bud */
+function bestEarned(b) { return b ? (b.earned || b.money || 0) : 0; }
 function saveBest(b) {
   try { window.localStorage.setItem('kontraktkontoret-best', JSON.stringify(b)); } catch (e) { }
 }
@@ -1450,7 +1457,8 @@ class Component extends DCLogic {
     const starRecord = passed && s.dayStars > ((s.best && s.best.stars) || 0);
     if (passed) {
       const b = best || { day: 0, money: 0, stars: 0 };
-      best = { day: Math.max(b.day, s.day), money: Math.max(b.money, s.money), stars: Math.max(b.stars, s.dayStars) };
+      /* earned: mest tjent i ét spil — gemmes i rekorden, så det overlever 'Slet alt' ligesom dage og stjerner */
+      best = { day: Math.max(b.day, s.day), money: Math.max(b.money, s.money), stars: Math.max(b.stars, s.dayStars), earned: Math.max(bestEarned(b), s.earned + early) };
       saveBest(best);
     }
     const cleared = passed ? Math.max(s.cleared, s.day) : s.cleared;
@@ -1535,7 +1543,7 @@ class Component extends DCLogic {
 
     const passed = s.dayStars >= goal;
     const best = s.best;
-    const bestText = best ? 'Din rekord: dag ' + best.day + ' klaret · ' + fmtKr(s.earned) + ' tjent i alt' + (best.stars ? ' · ' + best.stars + ' ★ på en dag' : '') : 'Ingen rekord endnu — bliv den første!';
+    const bestText = best ? 'Din rekord: dag ' + best.day + ' klaret · ' + fmtKr(Math.max(bestEarned(best), s.earned)) + ' tjent i alt' + (best.stars ? ' · ' + best.stars + ' ★ på en dag' : '') : 'Ingen rekord endnu — bliv den første!';
     const owns = (id) => s.owned.includes(id);
     const editing = s.screen === 'decorate';
     const sl = {};
@@ -1894,11 +1902,11 @@ function on(fn) { HANDLERS.push(fn); return HANDLERS.length - 1; }
 /* Plads-koordinater i rummet (616 × 784) */
 const ROOM_SLOTS = {
   H1: [22, 110, 96], H4: [104, 8, 84], H5: [22, 222, 84], H2: [196, -4, 84],
-  W1: [130, 130, 84], W2: [240, 120, 84], W3: [10, 306, 60], W4: [350, 284, 84], W5: [452, 284, 84],
+  W1: [130, 130, 84], W2: [240, 120, 84], W3: [10, 306, 60], W4: [346, 284, 84], W5: [434, 284, 84],
   S1: [20, 368, 76], S2: [346, 368, 76], S3: [440, 368, 76], S4: [526, 368, 76],
   B1: [14, 478, 80], B2: [116, 478, 80], B3: [218, 478, 80], H3: [320, 478, 80], B4: [422, 478, 80], B5: [524, 478, 80],
   D1: [308, 584, 96], D2: [410, 584, 96], D3: [512, 584, 96], D4: [308, 686, 92], D5: [410, 686, 92], D6: [512, 686, 92],
-  F1: [360, 110, 84]
+  F1: [522, 284, 84]
 };
 function slotHTML(v, k) {
   const sl = v.sl[k];
@@ -2017,9 +2025,9 @@ ${v.canStore ? `<button class="btn btn-berry" type="button" data-key="store" dat
 
 function roomHTML(v) {
   const c = v.cust;
-  const walls = ['H1', 'H4', 'H5', 'H2', 'W1', 'W2', 'W3', 'W4', 'W5'].map(k => slotHTML(v, k)).join('');
+  const walls = ['H1', 'H4', 'H5', 'H2', 'W1', 'W2', 'W3', 'W4', 'W5', 'F1'].map(k => slotHTML(v, k)).join('');
   const counter = ['S1', 'S2', 'S3', 'S4', 'B1', 'B2', 'B3', 'H3', 'B4', 'B5'].map(k => slotHTML(v, k)).join('');
-  const desk = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'F1'].map(k => slotHTML(v, k)).join('');
+  const desk = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'].map(k => slotHTML(v, k)).join('');
   let pokePop = '';
   if (v.poke && ROOM_SLOTS[v.poke.k]) {
     const pp = ROOM_SLOTS[v.poke.k];
@@ -2159,9 +2167,11 @@ ${ev.phase === 'yes' ? confettiHTML() : ''}
     const pt = ev.points[ev.i];
     const votes = pt[2];
     board = `<div class="lbl">Punkt ${ev.i + 1} af ${total}${votes ? ' · AFSTEMNING' : ''}</div><div class="disp board-title">${esc(pt[0])}</div>` +
-      (votes ? `<div class="vote-list">${votes.map(c => `<div class="vote-opt${ev.chosen === c[0] ? ' on' : ''}">${ev.chosen === c[0] ? '✓ ' : ''}${esc(c[0])}</div>`).join('')}</div>` : boardChart(ev.i, pt[0]));
+      (votes ? `<div class="vote-list">${votes.map((c, j) => ev.answer
+        ? `<div class="vote-opt${ev.chosen === c[0] ? ' on' : ''}">${ev.chosen === c[0] ? '✓ ' : ''}${esc(c[0])}</div>`
+        : `<button class="vote-opt pick" type="button" data-key="vote-${j}" data-on="${on(() => game.meetingVote(j))}">${esc(c[0])}</button>`).join('')}</div>` : boardChart(ev.i, pt[0]));
     bubble = ev.answer || pt[1];
-    if (votes && !ev.answer) btn = `<div class="btn-row">${votes.map((c, j) => `<button class="btn btn-teal" type="button" data-on="${on(() => game.meetingVote(j))}">Stem: ${esc(c[0])}</button>`).join('')}</div>`;
+    if (votes && !ev.answer) btn = ''; /* Man stemmer ved at trykke på forslagene på tavlen */
     else btn = `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.meetingNext)}">${votes ? 'Videre til næste punkt' : esc(ev.reply)} (${MEETING_POINT} min)</button>`;
     boMood = ev.answer ? 'jubel' : (ev.i % 2 ? 'hmm' : 'glad');
   } else {

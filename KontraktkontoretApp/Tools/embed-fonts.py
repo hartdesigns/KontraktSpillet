@@ -60,7 +60,7 @@ def main(src_path, out_path):
     style = "<style>\n/* Fonts er indlejret, så spillet kører offline */\n" + "\n".join(new_blocks) + "\n</style>\n"
 
     # Erstatt <link>-tagene (3 stk) med style-blokken
-    links = re.findall(r'<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>\n?', html)
+    links = re.findall(r'<link[^>]*fonts\.(?:googleapis|gstatic)\.com[^>]*>\n?', html)
     if len(links) != 3:
         sys.exit(f"Forventede 3 Google Fonts <link>-tags, fandt {len(links)}")
     for i, l in enumerate(links):
