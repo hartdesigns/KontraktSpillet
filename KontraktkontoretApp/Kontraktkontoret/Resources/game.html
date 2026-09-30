@@ -666,7 +666,7 @@ button.vote-opt{display:block;width:100%;text-align:left;font-family:inherit;cur
 .whiteboard{border:4px solid #1d2b3a;border-radius:16px;background:#fff;padding:18px 22px;min-height:190px;box-shadow:inset 0 0 0 6px #eefaf4}
 .board-title{font-size:clamp(24px,4vw,34px);font-weight:700;color:#0b7477;line-height:1.1}
 .board-sub{font-family:'Patrick Hand',cursive;font-size:24px;line-height:1.25;color:#1d2b3a;margin-top:6px}
-.meeting-bottom{display:grid;gap:18px;align-items:end}
+.meeting-bottom{display:grid;gap:18px;align-items:center}
 @media (min-width:640px){ .meeting-bottom{grid-template-columns:170px 1fr} }
 .small-bo{max-width:170px}
 
@@ -2409,7 +2409,7 @@ ${ev.phase === 'yes' ? confettiHTML() : ''}
 <div class="${boCls} bo-box small-bo" style="transform-origin:50% 100%">${boSVG(boMood)}</div>
 <div class="stack"><div class="bubble boss tail-l ${ev.i % 2 ? 'popB' : 'pop'}" data-key="mb-${ev.phase}-${ev.i}-${ev.answer ? 'a' : 'q'}">${esc(bubble)}</div>
 <div class="muted-text">Klokken er ${v.clockText}. Kunderne venter …</div>
-<div>${btn}</div></div>
+${btn ? `<div>${btn}</div>` : ''}</div>
 </div>
 </div>
 </main>`;
