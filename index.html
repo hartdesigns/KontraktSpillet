@@ -240,7 +240,7 @@ body{background:#eefaf4 radial-gradient(#cdebdc 1.6px,transparent 1.8px) 0 0/22p
 }
 @media (max-width:400px){ .brand-name{display:none} .controls{margin-left:0;justify-content:flex-start;width:100%} }
 
-.screen{flex:1;width:100%;max-width:1440px;margin:0 auto;padding:16px 16px 28px;position:relative}
+.screen{flex:1;width:100%;max-width:1366px;margin:0 auto;padding:16px 16px 28px;position:relative}
 @media (min-width:900px){ .screen{padding:22px 24px 32px} }
 .center-screen{display:flex;align-items:flex-start;justify-content:center}
 @media (min-height:760px) and (min-width:900px){ .center-screen{align-items:center} }
@@ -2381,6 +2381,12 @@ function doneHTML(v) {
 <div class="stat" style="background:#ffe0ec"><div class="lbl">Dagens mål</div><div class="disp stat-num">${esc(v.doneGoal)}</div></div>
 <div class="stat" style="background:#d3f4f1"><div class="lbl">Tjent i dag</div><div class="disp stat-num">${esc(v.doneMoney)}</div></div>
 </div>
+<div class="btn-row">
+${v.donePassed && !v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.nextDay)}">${esc(v.nextDayLabel)} ${ICON.arrow}</button>` : ''}
+${v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.openDecorate)}">Indret dit færdige kontor</button>` : `<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>`}
+<button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Gå i butikken</button>
+<button class="btn" type="button" data-on="${on(v.goHome)}">Til forsiden</button>
+</div>
 <div class="stack-tight">${v.resultRows.map(r => `<div class="result-row"><div class="disp" style="font-size:18px;font-weight:600;flex-grow:1">${esc(r.navn)}</div><div class="small strong">${esc(r.text)}</div><div class="disp" style="font-size:18px;font-weight:700;min-width:60px;text-align:right">${esc(r.stars)}</div></div>`).join('')}</div>
 ${v.timeUpText ? `<div class="timeup-note">${esc(v.timeUpText)}</div>` : ''}
 ${v.bonusText ? `<div class="bonus-note pop d1">${esc(v.bonusText)}</div>` : ''}
@@ -2388,12 +2394,6 @@ ${v.doneRecord ? `<div class="record-note pop d2">🏆 ${esc(v.doneRecord)}</div
 ${v.showAward ? '<div class="award pop d2">Chef Bo har hængt et Månedens medarbejder-skilt op på dit kontor!</div>' : ''}
 ${v.showNew ? `<div class="new-items pop d2"><div class="disp new-title">Nye varer i butikken!</div><div class="new-row">${v.newItems.map(it => `<div class="new-item">${pyntSVG(it.kind, 54)}<span>${esc(it.name)}</span></div>`).join('')}</div><button class="btn btn-teal btn-small" type="button" data-on="${on(v.openShop)}">Se de nye varer</button></div>` : ''}
 <div class="muted-text">${esc(v.bestText)}</div>
-<div class="btn-row">
-${v.donePassed && !v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.nextDay)}">${esc(v.nextDayLabel)} ${ICON.arrow}</button>` : ''}
-${v.final ? `<button class="btn btn-go btn-big ready" type="button" data-on="${on(v.openDecorate)}">Indret dit færdige kontor</button>` : `<button class="${v.retryDayCls}" type="button" data-on="${on(v.retryDay)}">Prøv dagen igen</button>`}
-<button class="btn btn-teal" type="button" data-on="${on(v.openShop)}">Gå i butikken</button>
-<button class="btn" type="button" data-on="${on(v.goHome)}">Til forsiden</button>
-</div>
 </div>
 </div>
 ${v.final ? confettiHTML(true) : (v.donePassed ? confettiHTML() : '')}
