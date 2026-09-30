@@ -1995,7 +1995,7 @@ ${v.showRetry ? `<div class="bubble boss wiggle retry-note" data-key="retry">${e
 </div>
 <div class="field">
 <label for="kunde-navn" class="field-head"><span class="${v.numCls.name}">1</span><span class="lbl">Kundens navn</span><span class="hint">Tjek stavningen — læs, hvad kunden siger!</span></label>
-<input id="kunde-navn" class="name-input" type="text" autocomplete="off" spellcheck="false" placeholder="Skriv for- og efternavn" value="${esc(v.form.name)}" data-oninput="${on(v.onName)}" data-onkey="${on(v.onNameKey)}">
+<input id="kunde-navn" class="name-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" placeholder="Skriv for- og efternavn" value="${esc(v.form.name)}" data-oninput="${on(v.onName)}" data-onkey="${on(v.onNameKey)}">
 </div>
 <div class="field"><div class="field-head"><span class="${v.numCls.service}">2</span><span class="lbl">Ydelse</span></div><div class="chips g-svc" role="group" aria-label="Ydelse">${chipsHTML(v.services, true)}</div></div>
 <div class="field"><div class="field-head"><span class="${v.numCls.duration}">3</span><span class="lbl">Varighed</span></div><div class="chips g-dur" role="group" aria-label="Varighed">${chipsHTML(v.durations)}</div></div>
@@ -2220,7 +2220,7 @@ function finalNameHTML(v) {
 <h2 class="disp h-big">Vent lige et øjeblik …</h2>
 <div class="bubble boss tail-l">Før jeg ruller konfettikanonen ind, skal jeg vide én ting: Hvad hedder du egentlig? Det skal stå på dit diplom!</div>
 <label for="spiller-navn" class="lbl">Dit navn</label>
-<input id="spiller-navn" class="name-input" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="Skriv dit navn" value="${esc(v.nameDraft)}" data-oninput="${on(v.onNameDraft)}" data-onkey="${on(v.onNameDraftKey)}">
+<input id="spiller-navn" class="name-input" type="text" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" placeholder="Skriv dit navn" value="${esc(v.nameDraft)}" data-oninput="${on(v.onNameDraft)}" data-onkey="${on(v.onNameDraftKey)}">
 <div><button class="btn btn-go btn-big ready" type="button" data-on="${on(v.setName)}" ${v.nameDraft.trim() ? '' : 'disabled'}>Det er mig! ${ICON.arrow}</button></div>
 </div>
 </div>
